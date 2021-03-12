@@ -19,6 +19,7 @@
     "test": "direflow-scripts test"
   },
   "dependencies": {
+    "antd": "^4.13.1",
     "direflow-component": "3.5.3",
     "direflow-scripts": "3.5.3",
     "react": "16.13.1",
