@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { EventContext, Styled } from 'direflow-component';
 import styles from './App.css';
+import Table from './Table';
 
 const App = (props) => {
   const dispatch = useContext(EventContext);
@@ -20,6 +21,8 @@ const App = (props) => {
   return (
     <Styled styles={styles}>
       <div className='app'>
+        <Table/>
+        {/*
         <div className='top'>
           <div className='header-image' />
         </div>
@@ -30,6 +33,7 @@ const App = (props) => {
             Click me!
           </button>
         </div>
+        */}
       </div>
     </Styled>
   );
