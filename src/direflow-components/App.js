@@ -1,58 +1,29 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { EventContext, Styled } from 'direflow-component';
-import styles from './App.css';
-import Table from './Table';
+import React from "react";
+import { Layout, Menu } from "antd";
+import "./App.css";
 
-const App = (props) => {
-  const dispatch = useContext(EventContext);
-
-  const handleClick = () => {
-    const event = new Event('my-event');
-    dispatch(event);
-  };
-
-  const renderSampleList = props.sampleList.map((sample) => (
-    <div key={sample} className='sample-text'>
-      → {sample}
-    </div>
-  ));
-
+const App = () => {
+  const { Header, Content, Footer, Sider } = Layout;
   return (
-    <Styled styles={styles}>
-      <div className='app'>
-        <Table/>
-        {/*
-        <div className='top'>
-          <div className='header-image' />
-        </div>
-        <div className='bottom'>
-          <div className='header-title'>{props.componentTitle}</div>
-          <div>{renderSampleList}</div>
-          <button className='button' onClick={handleClick}>
-            Click me!
-          </button>
-        </div>
-        */}
-      </div>
-    </Styled>
+    <div>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Sider collapsible collapsed={true}>
+          <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+            <Menu.Item key="1">Option 1</Menu.Item>
+            <Menu.Item key="2">Option 2</Menu.Item>
+            <Menu.Item key="9">Files</Menu.Item>
+          </Menu>
+        </Sider>
+        <Layout className="site-layout">
+          <Header className="site-layout-background" style={{ padding: 0 }} />
+          <Content style={{ margin: "0 16px" }}>
+            <h1>Welcome!</h1>
+          </Content>
+          <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+        </Layout>
+      </Layout>
+    </div>
   );
-};
-
-App.defaultProps = {
-  url: '',
-  componentTitle: 'Simfinity Web',
-  sampleList: [
-    'Create with React',
-    'Build as Web Component',
-    'Use it anywhere!',
-  ],
-}
-
-App.propTypes = {
-  url: PropTypes.string,
-  componentTitle: PropTypes.string,
-  sampleList: PropTypes.array,
 };
 
 export default App;
