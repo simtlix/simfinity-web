@@ -1,9 +1,21 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { EventContext, Styled } from 'direflow-component';
+import { requestEntities }  from './utils';
 import styles from './App.css';
 
+const EntitiesContext = React.createContext();
+
 const App = (props) => {
+  const [entities, setEntities] = useState();
+  useEffect(() => {
+    requestEntities(props.url).then(entities => {
+      if (entities) {
+        setEntities(entities);
+      }
+    });
+  }, [props.url]);
+
   const dispatch = useContext(EventContext);
 
   const handleClick = () => {
@@ -18,20 +30,22 @@ const App = (props) => {
   ));
 
   return (
-    <Styled styles={styles}>
-      <div className='app'>
-        <div className='top'>
-          <div className='header-image' />
+    <EntitiesContext.Provider value={entities}>
+      <Styled styles={styles}>
+        <div className='app'>
+          <div className='top'>
+            <div className='header-image' />
+          </div>
+          <div className='bottom'>
+            <div className='header-title'>{props.componentTitle}</div>
+            <div>{renderSampleList}</div>
+            <button className='button' onClick={handleClick}>
+              Click me!
+            </button>
+          </div>
         </div>
-        <div className='bottom'>
-          <div className='header-title'>{props.componentTitle}</div>
-          <div>{renderSampleList}</div>
-          <button className='button' onClick={handleClick}>
-            Click me!
-          </button>
-        </div>
-      </div>
-    </Styled>
+      </Styled>
+    </EntitiesContext.Provider>
   );
 };
 
