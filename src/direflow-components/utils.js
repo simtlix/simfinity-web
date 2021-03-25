@@ -1,6 +1,8 @@
 import axios from 'axios';
 
-const excludedTypes = ['RootQueryType', 'Mutation', '__Schema', '__Type' , '__Field', '__InputValue', '__EnumValue', '__Directive'];
+const excludedTypes = [
+  'RootQueryType', 'Mutation', '__Schema', 'FieldExtensionsType', 'RelationType',
+  '__Type' , '__Field', '__InputValue', '__EnumValue', '__Directive'];
 const objectKind = 'OBJECT';
 
 export const requestEntities = async (url) => {
@@ -13,6 +15,12 @@ export const requestEntities = async (url) => {
                   kind
                   fields {
                     name
+                    extensions {
+                      relation {
+                        embedded
+                        connectionField
+                      }
+                    }
                     type {
                       kind
                       name
