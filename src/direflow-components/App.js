@@ -1,19 +1,49 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Layout, Menu } from "antd";
-import { Styled } from "direflow-component";
-import styles from "./App.css";
+import { EventContext, Styled } from "direflow-component";
+import PropTypes from "prop-types";
+import { requestEntities } from "./utils";
 import TableOfEntities from "./Table";
+import styles from "./App.css";
 
-const App = () => {
+const App = (props) => {
   const { Header, Content, Footer, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
+
+  const EntitiesContext = React.createContext();
+  const [entities, setEntities] = useState();
+
+  useEffect(() => {
+    requestEntities(props.url).then((entities) => {
+      if (entities) {
+        setEntities(entities);
+      }
+    });
+  }, [props.url]);
+
+  const dispatch = useContext(EventContext);
+
+  const handleClick = () => {
+    const event = new Event("my-event");
+    dispatch(event);
+  };
+
+  const renderSampleList = props.sampleList.map((sample) => (
+    <div key={sample} className="sample-text">
+      → {sample}
+    </div>
+  ));
 
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
   return (
-    <Styled styles={styles}>
-      <div>
+    <EntitiesContext.Provider value={entities}>
+      <Styled styles={styles}>
+        {/* <div>{renderSampleList}</div>
+        <button className="button" onClick={handleClick}>
+          Click me!
+        </button> */}
         <Layout style={{ minHeight: "100vh" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
             <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
@@ -27,14 +57,30 @@ const App = () => {
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
               <h1>Welcome!</h1>
-              <TableOfEntities/>
+              <TableOfEntities />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
         </Layout>
-      </div>
-    </Styled>
+      </Styled>
+    </EntitiesContext.Provider>
   );
+};
+
+App.defaultProps = {
+  url: "",
+  componentTitle: "Simfinity Web",
+  sampleList: [
+    "Create with React",
+    "Build as Web Component",
+    "Use it anywhere!",
+  ],
+};
+
+App.propTypes = {
+  url: PropTypes.string,
+  componentTitle: PropTypes.string,
+  sampleList: PropTypes.array,
 };
 
 export default App;
