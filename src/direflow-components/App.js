@@ -7,11 +7,12 @@ import TableOfEntities from "./Table";
 import styles from "./App.css";
 
 const App = (props) => {
+  console.log("props:", props);
   const { Header, Content, Footer, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
 
   const EntitiesContext = React.createContext();
-  const [entities, setEntities] = useState();
+  const [entities, setEntities] = useState([]);
 
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
@@ -20,7 +21,7 @@ const App = (props) => {
       }
     });
   }, [props.url]);
-
+  console.log("entities", entities);
   const dispatch = useContext(EventContext);
 
   const handleClick = () => {
@@ -28,10 +29,14 @@ const App = (props) => {
     dispatch(event);
   };
 
-  const renderSampleList = props.sampleList.map((sample) => (
-    <div key={sample} className="sample-text">
-      → {sample}
-    </div>
+  // const renderSampleList = props.sampleList.map((sample) => (
+  //   <div key={sample} className="sample-text">
+  //     → {sample}
+  //   </div>
+  // ));
+
+  const renderEntities = entities.map((entity, index) => (
+    <Menu.Item key={index}>{entity.name}</Menu.Item>
   ));
 
   const onCollapse = (collapsed) => {
@@ -47,10 +52,7 @@ const App = (props) => {
         <Layout style={{ minHeight: "100vh" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
             <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
-              <Menu.Item key="1">Entidades</Menu.Item>
-              <Menu.Item key="2">Option 1</Menu.Item>
-              <Menu.Item key="3">Option 2</Menu.Item>
-              <Menu.Item key="9">Files</Menu.Item>
+              {renderEntities}
             </Menu>
           </Sider>
           <Layout className="site-layout">
