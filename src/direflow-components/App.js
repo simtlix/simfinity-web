@@ -7,12 +7,13 @@ import TableOfEntities from "./Table";
 import styles from "./App.css";
 
 const App = (props) => {
-  console.log("props:", props);
   const { Header, Content, Footer, Sider } = Layout;
   const [collapsed, setCollapsed] = useState(false);
 
   const EntitiesContext = React.createContext();
+
   const [entities, setEntities] = useState([]);
+  const [currentEntitites, setCurrentEntities] = useState("");
 
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
@@ -21,12 +22,12 @@ const App = (props) => {
       }
     });
   }, [props.url]);
+
   console.log("entities", entities);
   const dispatch = useContext(EventContext);
 
-  const handleClick = () => {
-    const event = new Event("my-event");
-    dispatch(event);
+  const handleClick = (entity) => {
+    setCurrentEntities(entity);
   };
 
   // const renderSampleList = props.sampleList.map((sample) => (
@@ -36,7 +37,9 @@ const App = (props) => {
   // ));
 
   const renderEntities = entities.map((entity, index) => (
-    <Menu.Item key={index}>{entity.name}</Menu.Item>
+    <Menu.Item key={index} onClick={() => handleClick(entity.name)}>
+      {entity.name}
+    </Menu.Item>
   ));
 
   const onCollapse = (collapsed) => {
@@ -51,7 +54,7 @@ const App = (props) => {
         </button> */}
         <Layout style={{ minHeight: "100vh" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-            <Menu theme="dark" defaultSelectedKeys={["1"]} mode="inline">
+            <Menu theme="dark" defaultSelectedKeys={["0"]} mode="inline">
               {renderEntities}
             </Menu>
           </Sider>
@@ -59,7 +62,7 @@ const App = (props) => {
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
               <h1>Welcome!</h1>
-              <TableOfEntities />
+              <TableOfEntities currentEntitites={currentEntitites} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
