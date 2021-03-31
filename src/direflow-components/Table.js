@@ -32,7 +32,7 @@ const data = [
 const TableOfEntities = (props) => {
   const [filteredInfo, setFilteredInfo] = useState(null);
   const [sortedInfo, setSortedInfo] = useState(null);
-  const [episodes, setEpisodes] = useState(null);
+  const [episodes, setEpisodes] = useState([]);
   const [columns1, setColumns1] = useState([]);
   const [keys, setKeys] = useState([]);
   console.log(props);
@@ -55,7 +55,6 @@ const TableOfEntities = (props) => {
       (response) => {
         console.log("La llamada es: ");
         console.log(response.data.data.episodes);
-        //this.state.episodes = response.data.data.episodes;
         setEpisodes(response.data.data.episodes);
         console.log("Estoy dentro de la llamada");
         console.log(episodes);
@@ -134,7 +133,7 @@ const TableOfEntities = (props) => {
         <Button onClick={this.clearFilters}>Clear filters</Button>
         <Button onClick={this.clearAll}>Clear filters and sorters</Button>
   </Space>*/}
-      {console.log(props.episodes + "AAAAAAAAAAAAAA")}
+      {console.log(props.episodes + "Dentro del return")}
       <Table columns={columns} dataSource={data} onChange={handleChange} />
     </>
   );
