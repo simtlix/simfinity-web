@@ -1,5 +1,6 @@
 import React from "react";
 import { Table, Button, Space } from "antd";
+import axios from "axios";
 
 const data = [
   {
@@ -32,8 +33,49 @@ class TableOfEntities extends React.Component {
   state = {
     filteredInfo: null,
     sortedInfo: null,
+    episodes: [],
+    columns1: [],
+    keys: [],
   };
-  //componentDidUpdate//useEffect
+
+  componentDidMount() {
+    const data = JSON.stringify({
+      query: `{
+        episodes{
+          id, number
+        }
+      }`,
+    });
+
+    axios({
+      method: "post",
+      headers: { "Content-Type": "application/json" },
+      url: "https://multiscreen-techgroup.rj.r.appspot.com/graphql",
+      data: data,
+    }).then(
+      (response) => {
+        console.log(response.data.data.episodes);
+        this.episodes = response.data.data.episodes;
+        if (this.episodes.length > 0) {
+          this.keys = Object.keys(this.episodes[0]);
+          console.log(this.keys);
+          /*for (var i = 0; i++; keys.length){
+          var obj = {
+            title: keys[i],
+            dataIndex: keys[i],
+            key: keys[i],
+          }
+          console.log(obj);
+          this.columns1.push(obj);
+        }*/
+          console.log(this.columns1);
+        }
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
 
   handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);
