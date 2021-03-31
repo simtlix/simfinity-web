@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Table, Button, Space } from "antd";
 import axios from "axios";
 
@@ -29,16 +29,15 @@ const data = [
   },
 ];
 
-class TableOfEntities extends React.Component {
-  state = {
-    filteredInfo: null,
-    sortedInfo: null,
-    episodes: [],
-    columns1: [],
-    keys: [],
-  };
+const TableOfEntities = (props) => {
+  const [filteredInfo, setFilteredInfo] = useState(null);
+  const [sortedInfo, setSortedInfo] = useState(null);
+  const [episodes, setEpisodes] = useState(null);
+  const [columns1, setColumns1] = useState([]);
+  const [keys, setKeys] = useState([]);
+  console.log(props);
 
-  componentDidMount() {
+  useEffect(() => {
     const data = JSON.stringify({
       query: `{
         episodes{
@@ -54,173 +53,91 @@ class TableOfEntities extends React.Component {
       data: data,
     }).then(
       (response) => {
+        console.log("La llamada es: ");
         console.log(response.data.data.episodes);
-        this.episodes = response.data.data.episodes;
-        if (this.episodes.length > 0) {
-          this.keys = Object.keys(this.episodes[0]);
-          console.log(this.keys);
-          /*for (var i = 0; i++; keys.length){
-          var obj = {
-            title: keys[i],
-            dataIndex: keys[i],
-            key: keys[i],
-          }
-          console.log(obj);
-          this.columns1.push(obj);
-        }*/
-          console.log(this.columns1);
-        }
+        //this.state.episodes = response.data.data.episodes;
+        setEpisodes(response.data.data.episodes);
+        console.log("Estoy dentro de la llamada");
+        console.log(episodes);
       },
       (error) => {
         console.log(error);
       }
     );
-  }
+  }, []);
 
-  handleChange = (pagination, filters, sorter) => {
+  const handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);
-    this.setState({
-      filteredInfo: filters,
-      sortedInfo: sorter,
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
+  };
+
+  const clearFilters = () => {
+    setFilteredInfo(null);
+  };
+
+  const clearAll = () => {
+    setFilteredInfo(null);
+    setSortedInfo(null);
+  };
+
+  const setAgeSort = () => {
+    setSortedInfo({
+      order: "descend",
+      columnKey: "age",
     });
   };
 
-  clearFilters = () => {
-    this.setState({ filteredInfo: null });
-  };
+  const columns = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      /*filters: [
+        { text: "Joe", value: "Joe" },
+        { text: "Jim", value: "Jim" },
+      ],
+      filteredValue: filteredInfo.name || null,
+      onFilter: (value, record) => record.name.includes(value),
+      sorter: (a, b) => a.name.length - b.name.length,
+      sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
+      ellipsis: true,*/
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+      /*sorter: (a, b) => a.age - b.age,
+      sortOrder: sortedInfo.columnKey === "age" && sortedInfo.order,
+      ellipsis: true,*/
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      /*filters: [
+        { text: "London", value: "London" },
+        { text: "New York", value: "New York" },
+      ],
+      filteredValue: filteredInfo.address || null,
+      onFilter: (value, record) => record.address.includes(value),
+      sorter: (a, b) => a.address.length - b.address.length,
+      sortOrder: sortedInfo.columnKey === "address" && sortedInfo.order,
+      ellipsis: true,*/
+    },
+  ];
 
-  clearAll = () => {
-    this.setState({
-      filteredInfo: null,
-      sortedInfo: null,
-    });
-  };
-
-  setAgeSort = () => {
-    this.setState({
-      sortedInfo: {
-        order: "descend",
-        columnKey: "age",
-      },
-    });
-  };
-
-  render() {
-    let { sortedInfo, filteredInfo } = this.state;
-    sortedInfo = sortedInfo || {};
-    filteredInfo = filteredInfo || {};
-    const columns = [
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        filters: [
-          { text: "Joe", value: "Joe" },
-          { text: "Jim", value: "Jim" },
-        ],
-        filteredValue: filteredInfo.name || null,
-        onFilter: (value, record) => record.name.includes(value),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortOrder: sortedInfo.columnKey === "name" && sortedInfo.order,
-        ellipsis: true,
-      },
-      {
-        title: "Age",
-        dataIndex: "age",
-        key: "age",
-        sorter: (a, b) => a.age - b.age,
-        sortOrder: sortedInfo.columnKey === "age" && sortedInfo.order,
-        ellipsis: true,
-      },
-      {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-        filters: [
-          { text: "London", value: "London" },
-          { text: "New York", value: "New York" },
-        ],
-        filteredValue: filteredInfo.address || null,
-        onFilter: (value, record) => record.address.includes(value),
-        sorter: (a, b) => a.address.length - b.address.length,
-        sortOrder: sortedInfo.columnKey === "address" && sortedInfo.order,
-        ellipsis: true,
-      },
-    ];
-    return (
-      <>
-        <Space style={{ marginBottom: 16 }}>
-          <Button onClick={this.setAgeSort}>Sort age</Button>
-          <Button onClick={this.clearFilters}>Clear filters</Button>
-          <Button onClick={this.clearAll}>Clear filters and sorters</Button>
-        </Space>
-        <Table
-          columns={columns}
-          dataSource={data}
-          onChange={this.handleChange}
-        />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      {/*<Space style={{ marginBottom: 16 }}>
+        <Button onClick={this.setAgeSort}>Sort age</Button>
+        <Button onClick={this.clearFilters}>Clear filters</Button>
+        <Button onClick={this.clearAll}>Clear filters and sorters</Button>
+  </Space>*/}
+      {console.log(props.episodes + "AAAAAAAAAAAAAA")}
+      <Table columns={columns} dataSource={data} onChange={handleChange} />
+    </>
+  );
+};
 
 export default TableOfEntities;
-
-/*import React from "react";
-
-const Table = () => {
-  return <div>Table</div>;
-};
-export default Table;*/
-// class Table extends Component {
-//    constructor(props) {
-//       super(props)
-//       //hardcoded data to test
-//       this.state = {
-//          students: [
-//             { id: 1, name: 'Joel', age: 21, email: 'joel@simtlix.com' },
-//             { id: 2, name: 'Monse', age: 19, email: 'monse@simtlix.com' },
-//             { id: 3, name: 'Marian', age: 16, email: 'marian@simtlix.com' },
-//             { id: 4, name: 'Emi', age: 25, email: 'emi@simtlix.com' }
-//          ]
-//       }
-//    }
-
-//    renderTableData(){
-//     return this.state.students.map((student, index) => {
-//         const { id, name, age, email } = student //destructuring
-//         console.log(student);
-//         return (
-//            <tr key={id}>
-//               <td>{id}</td>
-//               <td>{name}</td>
-//               <td>{age}</td>
-//               <td>{email}</td>
-//            </tr>
-//         )
-//      })
-//    }
-
-//    renderTableHeader(){
-//     let header = Object.keys(this.state.students[0])
-//     return header.map((key, index) => {
-//        return <th key={index}>{key.toUpperCase()}</th>
-//     })
-//    }
-
-//    render() {
-//     return (
-//         <Styled styles={tableStyles}>
-//             <div>
-//                 <h1 id='title'>Render a table to display all the entries of an entity</h1>
-//                 <table id='students'>
-//                     <tbody>
-//                         <tr>{this.renderTableHeader()}</tr>
-//                         {this.renderTableData()}
-//                     </tbody>
-//                 </table>
-//             </div>
-//         </Styled>
-//      )
-//    }
-// }
