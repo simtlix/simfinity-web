@@ -13,7 +13,7 @@ const App = (props) => {
   const EntitiesContext = React.createContext();
 
   const [entities, setEntities] = useState([]);
-  const [currentEntitites, setCurrentEntities] = useState("");
+  const [currentEntities, setCurrentEntities] = useState("");
 
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
@@ -23,18 +23,11 @@ const App = (props) => {
     });
   }, [props.url]);
 
-  console.log("entities", entities);
   const dispatch = useContext(EventContext);
 
   const handleClick = (entity) => {
     setCurrentEntities(entity);
   };
-
-  // const renderSampleList = props.sampleList.map((sample) => (
-  //   <div key={sample} className="sample-text">
-  //     → {sample}
-  //   </div>
-  // ));
 
   const renderEntities = entities.map((entity, index) => (
     <Menu.Item key={index} onClick={() => handleClick(entity.name)}>
@@ -48,10 +41,6 @@ const App = (props) => {
   return (
     <EntitiesContext.Provider value={entities}>
       <Styled styles={styles}>
-        {/* <div>{renderSampleList}</div>
-        <button className="button" onClick={handleClick}>
-          Click me!
-        </button> */}
         <Layout style={{ minHeight: "100vh" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
             <Menu theme="dark" defaultSelectedKeys={["0"]} mode="inline">
@@ -62,7 +51,7 @@ const App = (props) => {
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
               <h1>Welcome!</h1>
-              <TableOfEntities currentEntitites={currentEntitites} />
+              <TableOfEntities displayEntities={currentEntities} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
