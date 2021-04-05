@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Table as TableAntd, Button, Space } from "antd";
-import { requestEntity } from "./Table/utils";
+import { requestEntity } from "./utils";
 
 const data = [
   {

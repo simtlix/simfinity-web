@@ -3,7 +3,7 @@ import { Layout, Menu } from "antd";
 import { EventContext, Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
-import Table from "./Table";
+import Table from "./Table/Table";
 import styles from "./App.css";
 
 const App = (props) => {
