@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Space } from "antd";
-import axios from "axios";
+import { Table as TableAntd, Button, Space } from "antd";
+import { requestEntity } from "./Table/utils";
 
 const data = [
   {
@@ -29,40 +29,33 @@ const data = [
   },
 ];
 
-const TableOfEntities = (props) => {
+const Table = (props) => {
   const [filteredInfo, setFilteredInfo] = useState(null);
   const [sortedInfo, setSortedInfo] = useState(null);
-  const [episodes, setEpisodes] = useState([]);
+  const [entity, setEntity] = useState([]);
   const [columns1, setColumns1] = useState([]);
   const [keys, setKeys] = useState([]);
+  console.log("al iniciar");
   console.log(props);
+  console.log(props.displayEntities.fields);
+  var columnas = [];
+
+  if (props.displayEntities.fields) {
+    columnas = props.displayEntities.fields.map((entity, index) => entity.name);
+    //console.log(columnas);
+    //setColumns1(columnas);
+  }
+  console.log("columnas");
+  console.log(columnas);
 
   useEffect(() => {
-    const data = JSON.stringify({
-      query: `{
-        episodes{
-          id, number
-        }
-      }`,
-    });
-
-    axios({
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      url: "https://multiscreen-techgroup.rj.r.appspot.com/graphql",
-      data: data,
-    }).then(
-      (response) => {
-        console.log("La llamada es: ");
-        console.log(response.data.data.episodes);
-        setEpisodes(response.data.data.episodes);
-        console.log("Estoy dentro de la llamada");
-        console.log(episodes);
-      },
-      (error) => {
-        console.log(error);
+    requestEntity().then(() => {
+      if (entity) {
+        setEntity(entity);
       }
-    );
+      console.log("Entity consultada");
+      console.log(entity);
+    });
   }, []);
 
   const handleChange = (pagination, filters, sorter) => {
@@ -134,9 +127,9 @@ const TableOfEntities = (props) => {
         <Button onClick={this.clearAll}>Clear filters and sorters</Button>
   </Space>*/}
       {console.log(props.episodes + "Dentro del return")}
-      <Table columns={columns} dataSource={data} onChange={handleChange} />
+      <TableAntd columns={columns} dataSource={data} onChange={handleChange} />
     </>
   );
 };
 
-export default TableOfEntities;
+export default Table;

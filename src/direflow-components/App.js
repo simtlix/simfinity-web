@@ -3,7 +3,7 @@ import { Layout, Menu } from "antd";
 import { EventContext, Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
-import TableOfEntities from "./Table";
+import Table from "./Table";
 import styles from "./App.css";
 
 const App = (props) => {
@@ -20,6 +20,8 @@ const App = (props) => {
       if (entities) {
         setEntities(entities);
       }
+      console.log(entities);
+      console.log("entities");
     });
   }, [props.url]);
 
@@ -30,7 +32,7 @@ const App = (props) => {
   };
 
   const renderEntities = entities.map((entity, index) => (
-    <Menu.Item key={index} onClick={() => handleClick(entity.name)}>
+    <Menu.Item key={index} onClick={() => handleClick(entity)}>
       {entity.name}
     </Menu.Item>
   ));
@@ -51,7 +53,7 @@ const App = (props) => {
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
               <h1>Welcome!</h1>
-              <TableOfEntities displayEntities={currentEntities} />
+              <Table displayEntities={currentEntities} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
