@@ -49,7 +49,7 @@ const Table = (props) => {
   console.log(columnas);
 
   useEffect(() => {
-    requestEntity().then(() => {
+    requestEntity().then((entity) => {
       if (entity) {
         setEntity(entity);
       }
