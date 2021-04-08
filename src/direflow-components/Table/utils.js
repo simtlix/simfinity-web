@@ -5,7 +5,7 @@ export const requestEntity = async () => {
     const data = JSON.stringify({
       query: `{
               episodes{
-                id, number
+                id, number, name, date
               }
             }`,
     });

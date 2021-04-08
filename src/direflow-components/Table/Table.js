@@ -2,60 +2,41 @@ import React, { useEffect, useState } from "react";
 import { Table as TableAntd, Button, Space } from "antd";
 import { requestEntity } from "./utils";
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York No. 1 Lake Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 42,
-    address: "London No. 1 Lake Park",
-  },
-  {
-    key: "3",
-    name: "Joe Black",
-    age: 32,
-    address: "Sidney No. 1 Lake Park",
-  },
-  {
-    key: "4",
-    name: "Jim Red",
-    age: 32,
-    address: "London No. 2 Lake Park",
-  },
-];
-
 const Table = (props) => {
   const [filteredInfo, setFilteredInfo] = useState(null);
   const [sortedInfo, setSortedInfo] = useState(null);
-  const [entity, setEntity] = useState([]);
-  const [columns1, setColumns1] = useState([]);
+  const [currentEntity, setCurrentEntity] = useState([]);
+  const [columns, setColumns] = useState([]);
   const [keys, setKeys] = useState([]);
-  console.log("al iniciar");
-  console.log(props);
-  console.log(props.displayEntities.fields);
-  var columnas = [];
-
-  if (props.displayEntities.fields) {
-    columnas = props.displayEntities.fields.map((entity, index) => entity.name);
-    //console.log(columnas);
-    //setColumns1(columnas);
-  }
-  console.log("columnas");
-  console.log(columnas);
 
   useEffect(() => {
-    requestEntity().then((entity) => {
-      if (entity) {
-        setEntity(entity);
-      }
-      console.log("Entity consultada");
-      console.log(entity);
-    });
+    if (props.displayEntities) {
+      console.log(props.displayEntities.fields);
+      setColumns(
+        props.displayEntities.fields.map((entity) => {
+          return {
+            title: entity.name,
+            dataIndex: entity.name,
+            key: entity.name,
+          };
+        })
+      );
+
+      /*Falta ver de donde sacar el nombre correcto de la entidad. entity.name no existe */
+      requestEntity().then((entity) => {
+        if (entity) {
+          if (entity[/*entity.name*/ "episodes"]) {
+            var newObj = entity[/*entity.name*/ "episodes"].map((element) => {
+              return {
+                key: element.id,
+                ...element,
+              };
+            });
+            setCurrentEntity(newObj);
+          }
+        }
+      });
+    }
   }, []);
 
   const handleChange = (pagination, filters, sorter) => {
@@ -80,7 +61,7 @@ const Table = (props) => {
     });
   };
 
-  const columns = [
+  const harcodedColumns = [
     {
       title: "Name",
       dataIndex: "name",
@@ -126,8 +107,11 @@ const Table = (props) => {
         <Button onClick={this.clearFilters}>Clear filters</Button>
         <Button onClick={this.clearAll}>Clear filters and sorters</Button>
   </Space>*/}
-      {console.log(props.episodes + "Dentro del return")}
-      <TableAntd columns={columns} dataSource={data} onChange={handleChange} />
+      <TableAntd
+        columns={columns}
+        dataSource={currentEntity}
+        onChange={handleChange}
+      />
     </>
   );
 };
