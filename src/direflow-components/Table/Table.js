@@ -11,6 +11,8 @@ const Table = (props) => {
 
   useEffect(() => {
     if (props.displayEntities) {
+      console.log("entity recibida en Table");
+      console.log(props.displayEntities);
       console.log(props.displayEntities.fields);
       setColumns(
         props.displayEntities.fields.map((entity) => {
@@ -22,22 +24,20 @@ const Table = (props) => {
         })
       );
 
-      /*Falta ver de donde sacar el nombre correcto de la entidad. entity.name no existe */
-      requestEntity().then((entity) => {
+      requestEntity(props.displayEntities.fields).then((entity) => {
+        var name = Object.keys(entity);
         if (entity) {
-          if (entity[/*entity.name*/ "episodes"]) {
-            var newObj = entity[/*entity.name*/ "episodes"].map((element) => {
-              return {
-                key: element.id,
-                ...element,
-              };
-            });
-            setCurrentEntity(newObj);
-          }
+          var newObj = entity[name[0]].map((element) => {
+            return {
+              key: element.id,
+              ...element,
+            };
+          });
+          setCurrentEntity(newObj);
         }
       });
     }
-  }, []);
+  }, [props.displayEntities.fields]);
 
   const handleChange = (pagination, filters, sorter) => {
     console.log("Various parameters", pagination, filters, sorter);

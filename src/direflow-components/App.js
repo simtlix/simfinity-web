@@ -20,8 +20,6 @@ const App = (props) => {
       if (entities) {
         setEntities(entities);
       }
-      console.log(entities);
-      console.log("entities");
     });
   }, [props.url]);
 
