@@ -15,7 +15,7 @@ const App = (props) => {
   const EntitiesContext = React.createContext();
 
   const [entities, setEntities] = useState([]);
-  const [currentEntities, setCurrentEntities] = useState("");
+  const [currentEntity, setCurrentEntity] = useState("");
   const [resultTitle, setResultTitle] = useState("");
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const App = (props) => {
   const dispatch = useContext(EventContext);
 
   const handleClick = (entity) => {
-    setCurrentEntities(entity);
+    setCurrentEntity(entity);
     setResultTitle(`Resultados de ${entity.name}`);
   };
 
@@ -65,7 +65,7 @@ const App = (props) => {
               <Title level={2} style={{ textAlign: "center" }}>
                 {resultTitle}
               </Title>
-              <Table displayEntities={currentEntities} />
+              <Table displayEntities={currentEntity} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
