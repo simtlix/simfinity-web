@@ -41,7 +41,7 @@ const App = (props) => {
   return (
     <EntitiesContext.Provider value={entities}>
       <Styled styles={styles}>
-        <Layout style={{ minHeight: "100vh" }}>
+        <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
             <Menu theme="dark" defaultSelectedKeys={["0"]} mode="inline">
               {renderEntities}
@@ -50,7 +50,6 @@ const App = (props) => {
           <Layout className="site-layout">
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
-              <h1>Welcome!</h1>
               <Table displayEntities={currentEntities} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
