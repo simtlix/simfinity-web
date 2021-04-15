@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Typography } from "antd";
 import { EventContext, Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
 import styles from "./App.css";
+
+const { Title, Paragraph } = Typography;
 
 const App = (props) => {
   const { Header, Content, Footer, Sider } = Layout;
@@ -14,6 +16,7 @@ const App = (props) => {
 
   const [entities, setEntities] = useState([]);
   const [currentEntities, setCurrentEntities] = useState("");
+  const [resultTitle, setResultTitle] = useState("");
 
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
@@ -27,11 +30,20 @@ const App = (props) => {
 
   const handleClick = (entity) => {
     setCurrentEntities(entity);
+    setResultTitle(`Resultados de ${entity.name}`);
   };
 
   const renderEntities = entities.map((entity, index) => (
     <Menu.Item key={index} onClick={() => handleClick(entity)}>
-      {entity.name}
+      <Paragraph
+        style={{
+          color: "white",
+          textTransform: "uppercase",
+          fontWeight: "bold",
+        }}
+      >
+        {entity.name}
+      </Paragraph>
     </Menu.Item>
   ));
 
@@ -50,6 +62,9 @@ const App = (props) => {
           <Layout className="site-layout">
             <Header className="site-layout-background" style={{ padding: 0 }} />
             <Content style={{ margin: "0 16px" }}>
+              <Title level={2} style={{ textAlign: "center" }}>
+                {resultTitle}
+              </Title>
               <Table displayEntities={currentEntities} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>

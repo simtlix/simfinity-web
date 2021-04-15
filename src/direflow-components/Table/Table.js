@@ -111,6 +111,7 @@ const Table = (props) => {
         columns={columns}
         dataSource={currentEntity}
         onChange={handleChange}
+        pagination={{ position: ["bottomCenter"] }}
       />
     </>
   );
