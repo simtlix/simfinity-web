@@ -24,7 +24,7 @@ const Table = (props) => {
         })
       );
 
-      requestEntity(props.displayEntities.fields).then((entity) => {
+      requestEntity(props.displayEntities).then((entity) => {
         var name = Object.keys(entity);
         if (entity) {
           var newObj = entity[name[0]].map((element) => {
