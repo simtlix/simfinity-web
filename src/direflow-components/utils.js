@@ -4,6 +4,7 @@ const excludedTypes = [
   'RootQueryType', 'Mutation', '__Schema', 'FieldExtensionsType', 'RelationType',
   '__Type' , '__Field', '__InputValue', '__EnumValue', '__Directive'];
 const objectKind = 'OBJECT';
+const listKind = 'LIST';
 
 export const requestEntities = async (url) => {
   try {
@@ -45,9 +46,24 @@ export const requestEntities = async (url) => {
     const response = await axios(config);
     const responseData = response.data && response.data.data;
     const types = responseData && responseData.__schema && responseData.__schema.types;
+    const rootQueryTypes = types.find(type => type.name === 'RootQueryType').fields.filter(field => field.type.kind === listKind);
 
     if (types) {
-      return types.filter(type => type.kind === objectKind && excludedTypes.indexOf(type.name) === -1);
+      let filteredTypes = types.filter(type => type.kind === objectKind && excludedTypes.indexOf(type.name) === -1);
+
+      for (const queryType of rootQueryTypes) {
+        const typeName = queryType.type.ofType.name;
+        const queryAllName = queryType.name;
+
+        filteredTypes = filteredTypes.map(type => {
+          if (type.name === typeName) {
+            type.queryAll = queryAllName;
+          }
+          return type;
+        })
+      }
+
+      return filteredTypes;
     }
   } catch (error) {
     console.log(error);
