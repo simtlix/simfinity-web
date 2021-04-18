@@ -32,9 +32,14 @@ export const requestEntity = async (displayEntities) => {
   for (let i = 0; i < fields.length; i++) {
     if (fields[i].extensions == null) {
       queryFields.push(fields[i].name);
-      console.log(queryFields);
     } else {
-      //Aca hay que hacer algo para obtener los sub fields
+      if (fields[i].type.kind === "OBJECT") {
+        console.log(fields[i].type.kind);
+        // Ver como obtener subcampos, por ejemplo series se rompe
+        //let obj = `${fields[i].name}{id}`;
+        //queryFields.push(obj);
+        //console.log(queryFields);
+      }
     }
   }
   let formatQueryFields = "";
