@@ -16,7 +16,6 @@ const Table = (props) => {
       console.log(props.displayEntities.fields);
       setColumns(
         props.displayEntities.fields.map((entity) => {
-          console.log("entity", entity);
           if (entity.name !== "id") {
             return {
               title: entity.name,

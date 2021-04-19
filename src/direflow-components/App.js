@@ -17,6 +17,7 @@ const App = (props) => {
   const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState("");
   const [resultTitle, setResultTitle] = useState("");
+  const [selectedKey, setSelectedKey] = useState("0");
 
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
@@ -28,13 +29,14 @@ const App = (props) => {
 
   const dispatch = useContext(EventContext);
 
-  const handleClick = (entity) => {
+  const handleClick = (entity, ind) => {
     setCurrentEntity(entity);
     setResultTitle(`Resultados de ${entity.name}`);
+    setSelectedKey(ind.toString());
   };
-
+  console.log("SelectedKey", selectedKey);
   const renderEntities = entities.map((entity, index) => (
-    <Menu.Item key={index} onClick={() => handleClick(entity)}>
+    <Menu.Item key={index} onClick={() => handleClick(entity, index)}>
       <Paragraph
         style={{
           color: "white",
@@ -55,7 +57,7 @@ const App = (props) => {
       <Styled styles={styles}>
         <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-            <Menu theme="dark" defaultSelectedKeys={["0"]} mode="inline">
+            <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
               {renderEntities}
             </Menu>
           </Sider>
