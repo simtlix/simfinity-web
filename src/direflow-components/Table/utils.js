@@ -1,33 +1,8 @@
 import axios from "axios";
 
 export const requestEntity = async (displayEntities) => {
-  const name = displayEntities.name;
+  const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
-  let pluralName = "";
-  //const queryFields = fields.map((element) => element.name);
-  //harcoded name of entities
-  switch (name) {
-    case "episode":
-      pluralName = "episodes";
-      break;
-    case "season":
-      pluralName = "seasons";
-      break;
-    case "star":
-      pluralName = "stars";
-      break;
-    case "serie":
-      pluralName = "series";
-      break;
-    case "director":
-      pluralName = "directors";
-      break;
-    case "assignedStarAndSerie":
-      pluralName = "assignedStarsAndSeries";
-      break;
-    default:
-      console.log("default");
-  }
   let queryFields = [];
   for (let i = 0; i < fields.length; i++) {
     if (fields[i].extensions == null) {
@@ -51,7 +26,7 @@ export const requestEntity = async (displayEntities) => {
   try {
     const data = JSON.stringify({
       query: `{
-        ${pluralName}{
+        ${entityName}{
                 ${formatQueryFields}
               }
             }`,
