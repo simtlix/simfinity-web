@@ -20,6 +20,7 @@ export const requestEntities = async (url) => {
                       relation {
                         embedded
                         connectionField
+                        displayField
                       }
                     }
                     type {
