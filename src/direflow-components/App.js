@@ -22,7 +22,13 @@ const App = (props) => {
   useEffect(() => {
     requestEntities(props.url).then((entities) => {
       if (entities) {
-        setEntities(entities);
+        let filterEmbeddedEntity = [];
+        for (let i = 0; i < entities.length; i++) {
+          if (entities[i].queryAll !== undefined) {
+            filterEmbeddedEntity.push(entities[i]);
+          }
+        }
+        setEntities(filterEmbeddedEntity);
       }
     });
   }, [props.url]);
