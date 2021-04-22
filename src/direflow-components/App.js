@@ -24,7 +24,7 @@ const App = (props) => {
       if (entities) {
         let filterEmbeddedEntity = [];
         for (let i = 0; i < entities.length; i++) {
-          if (entities[i].queryAll !== undefined) {
+          if (entities[i].queryAll) {
             filterEmbeddedEntity.push(entities[i]);
           }
         }
