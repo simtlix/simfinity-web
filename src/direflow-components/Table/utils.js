@@ -4,16 +4,19 @@ export const requestEntity = async (displayEntities) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
+  //console.log(fields);
   for (let i = 0; i < fields.length; i++) {
     if (fields[i].extensions == null) {
       queryFields.push(fields[i].name);
     } else {
-      if (fields[i].type.kind === "OBJECT") {
-        console.log(fields[i].type.kind);
-        // Ver como obtener subcampos, por ejemplo series se rompe
-        //let obj = `${fields[i].name}{id}`;
-        //queryFields.push(obj);
-        //console.log(queryFields);
+      if (
+        fields[i].type.kind !== "LIST" &&
+        fields[i]?.extensions?.relation?.displayField //!fields[i]?.extensions?.relation?.embedded Esto es por el name de star? saca director
+      ) {
+        console.log(fields[i].extensions.relation.displayField);
+        let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}}`;
+        queryFields.push(obj);
+        console.log(queryFields);
       }
     }
   }
@@ -40,6 +43,7 @@ export const requestEntity = async (displayEntities) => {
     };
 
     const response = await axios(config);
+    console.log(response);
     const responseData = response.data && response.data.data;
     return responseData;
   } catch (error) {

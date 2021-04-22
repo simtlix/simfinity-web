@@ -16,12 +16,25 @@ const Table = (props) => {
       console.log(props.displayEntities.fields);
       setColumns(
         props.displayEntities.fields.map((entity) => {
-          if (entity.name !== "id") {
-            return {
-              title: entity.name,
-              dataIndex: entity.name,
-              key: entity.name,
-            };
+          if (entity.name !== "id" && entity.type.kind !== "LIST") {
+            //si extension es distinto de null chequeo que no sea embedded
+            if (entity.extensions) {
+              if (!entity?.extensions?.relation?.embedded) {
+                return {
+                  title: entity.name,
+                  dataIndex: entity.name,
+                  key: entity.name,
+                };
+              } else {
+                return columns;
+              }
+            } else {
+              return {
+                title: entity.name,
+                dataIndex: entity.name,
+                key: entity.name,
+              };
+            }
           } else {
             return columns;
           }
