@@ -15,7 +15,6 @@ const Table = (props) => {
       setColumns(
         props.displayEntities.fields.map((entity) => {
           if (entity.name !== "id" && entity.type.kind !== "LIST") {
-            //si extension es distinto de null chequeo que no sea embedded
             if (entity.extensions) {
               if (!entity?.extensions?.relation?.embedded) {
                 return {
@@ -63,7 +62,6 @@ const Table = (props) => {
   }, [props.displayEntities.fields]);
 
   const handleChange = (pagination, filters, sorter) => {
-    console.log("Various parameters", pagination, filters, sorter);
     setFilteredInfo(filters);
     setSortedInfo(sorter);
   };

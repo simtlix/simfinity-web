@@ -9,12 +9,10 @@ export const requestEntity = async (displayEntities) => {
       queryFields.push(fields[i].name);
     } else {
       if (fields[i].type.kind !== "LIST") {
-        //Este es para no agregar el field director
         if (fields[i]?.extensions?.relation?.displayField) {
           let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}}`;
           queryFields.push(obj);
         } else if (fields[i]?.extensions?.relation == null) {
-          //Este caso es solo para el field name de serie
           queryFields.push(fields[i].name);
         }
       }
