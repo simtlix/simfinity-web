@@ -4,19 +4,19 @@ export const requestEntity = async (displayEntities) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
-  //console.log(fields);
   for (let i = 0; i < fields.length; i++) {
     if (fields[i].extensions == null) {
       queryFields.push(fields[i].name);
     } else {
-      if (
-        fields[i].type.kind !== "LIST" &&
-        fields[i]?.extensions?.relation?.displayField //!fields[i]?.extensions?.relation?.embedded Esto es por el name de star? saca director
-      ) {
-        console.log(fields[i].extensions.relation.displayField);
-        let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}}`;
-        queryFields.push(obj);
-        console.log(queryFields);
+      if (fields[i].type.kind !== "LIST") {
+        //Este es para no agregar el field director
+        if (fields[i]?.extensions?.relation?.displayField) {
+          let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}}`;
+          queryFields.push(obj);
+        } else if (fields[i]?.extensions?.relation == null) {
+          //Este caso es solo para el field name de serie
+          queryFields.push(fields[i].name);
+        }
       }
     }
   }
@@ -43,7 +43,6 @@ export const requestEntity = async (displayEntities) => {
     };
 
     const response = await axios(config);
-    console.log(response);
     const responseData = response.data && response.data.data;
     return responseData;
   } catch (error) {

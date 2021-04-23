@@ -11,9 +11,6 @@ const Table = (props) => {
 
   useEffect(() => {
     if (props.displayEntities) {
-      console.log("entity recibida en Table");
-      console.log(props.displayEntities);
-      console.log(props.displayEntities.fields);
       setColumns(
         props.displayEntities.fields.map((entity) => {
           if (entity.name !== "id" && entity.type.kind !== "LIST") {
