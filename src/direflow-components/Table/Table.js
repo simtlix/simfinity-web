@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table as TableAntd } from "antd";
 import { requestEntity } from "./utils";
+import { capitalize } from "../../util/utils_string";
 
 const Table = (props) => {
   const [filteredInfo, setFilteredInfo] = useState(null);
@@ -18,7 +19,7 @@ const Table = (props) => {
             if (entity.extensions) {
               if (!entity?.extensions?.relation?.embedded) {
                 return {
-                  title: entity.name,
+                  title: capitalize(entity.name),
                   dataIndex: entity.name,
                   key: entity.name,
                 };
@@ -27,7 +28,7 @@ const Table = (props) => {
               }
             } else {
               return {
-                title: entity.name,
+                title: capitalize(entity.name),
                 dataIndex: entity.name,
                 key: entity.name,
               };
