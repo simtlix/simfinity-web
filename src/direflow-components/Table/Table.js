@@ -55,6 +55,7 @@ const Table = (props) => {
                 myObj[prop] = element[prop];
               }
             }
+            myObj.key = element.id;
             return myObj;
           });
           setCurrentEntity(newObj);
