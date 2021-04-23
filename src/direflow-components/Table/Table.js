@@ -44,11 +44,18 @@ const Table = (props) => {
       requestEntity(props.displayEntities).then((entity) => {
         if (entity) {
           let name = Object.keys(entity);
+          let _keys = Object.keys(entity[name[0]][0]);
           let newObj = entity[name[0]].map((element) => {
-            return {
-              key: element.id,
-              ...element,
-            };
+            var myObj = new Object();
+            for (let prop in element) {
+              if (typeof element[prop] === "object") {
+                let _valueObject = Object.values(element[prop]);
+                myObj[prop] = _valueObject[0];
+              } else {
+                myObj[prop] = element[prop];
+              }
+            }
+            return myObj;
           });
           setCurrentEntity(newObj);
         }
