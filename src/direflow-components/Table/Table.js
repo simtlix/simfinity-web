@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table as TableAntd } from "antd";
 import { requestEntity } from "./utils";
-import { capitalize } from "../../util/utils_string";
+import { capitalize } from "../../utils/utils_string";
 
 const Table = (props) => {
   const [filteredInfo, setFilteredInfo] = useState(null);
