@@ -4,13 +4,13 @@ import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 
-const Table = ({ displayEntities = null }) => {
-  const [currentEntity, setCurrentEntity] = useState([]);
+const Table = ({ displayEntity = null }) => {
+  const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
-    if (displayEntities) {
-      const filteredColumns = displayEntities.fields.filter(
+    if (displayEntity) {
+      const filteredColumns = displayEntity.fields.filter(
         (entity) =>
           entity.name !== "id" &&
           entity.type.kind !== "LIST" &&
@@ -23,40 +23,40 @@ const Table = ({ displayEntities = null }) => {
       }));
       setColumns(pasedColumns);
 
-      requestEntity(displayEntities).then((entity) => {
-        if (entity) {
-          let name = Object.keys(entity);
-          let _keys = Object.keys(entity[name[0]][0]);
-          let newObj = entity[name[0]].map((element) => {
-            var myObj = new Object();
-            for (let prop in element) {
-              if (typeof element[prop] === "object") {
-                let _valueObject = Object.values(element[prop]);
-                myObj[prop] = _valueObject[0];
-              } else {
-                myObj[prop] = element[prop];
+      requestEntity(displayEntity).then((response) => {
+        if (response) {
+          const parserResponse = response[displayEntity.queryAll].map(
+            (element) => {
+              const myObj = {};
+              for (const prop in element) {
+                if (typeof element[prop] === "object") {
+                  let _valueObject = Object.values(element[prop]);
+                  myObj[prop] = _valueObject[0];
+                } else {
+                  myObj[prop] = element[prop];
+                }
               }
+              myObj.key = element.id;
+              return myObj;
             }
-            myObj.key = element.id;
-            return myObj;
-          });
-          setCurrentEntity(newObj);
+          );
+          setResultList(parserResponse);
         }
       });
     }
-  }, [displayEntities]);
+  }, [displayEntity]);
 
   return (
     <TableAntd
       columns={columns}
-      dataSource={currentEntity}
+      dataSource={resultList}
       pagination={{ position: ["bottomCenter"] }}
     />
   );
 };
 
 Table.propTypes = {
-  displayEntities: PropTypes.shape({
+  displayEntity: PropTypes.shape({
     name: PropTypes.string,
     kind: PropTypes.string,
     fields: PropTypes.array,

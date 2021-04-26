@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Layout, Menu, Typography } from "antd";
-import { EventContext, Styled } from "direflow-component";
+import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
@@ -27,8 +27,6 @@ const App = ({ url }) => {
       }
     });
   }, [url]);
-
-  const dispatch = useContext(EventContext);
 
   const handleClick = (entity, ind) => {
     setCurrentEntity(entity);
@@ -67,7 +65,7 @@ const App = ({ url }) => {
               <Title level={2} style={{ textAlign: "center" }}>
                 {resultTitle}
               </Title>
-              <Table displayEntities={currentEntity} />
+              <Table displayEntity={currentEntity} />
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
