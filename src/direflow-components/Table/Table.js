@@ -1,44 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Table as TableAntd } from "antd";
+import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 
-const Table = (props) => {
-  const [filteredInfo, setFilteredInfo] = useState(null);
-  const [sortedInfo, setSortedInfo] = useState(null);
+const Table = ({ displayEntities = null }) => {
   const [currentEntity, setCurrentEntity] = useState([]);
   const [columns, setColumns] = useState([]);
-  const [keys, setKeys] = useState([]);
 
   useEffect(() => {
-    if (props.displayEntities) {
-      setColumns(
-        props.displayEntities.fields.map((entity) => {
-          if (entity.name !== "id" && entity.type.kind !== "LIST") {
-            if (entity.extensions) {
-              if (!entity?.extensions?.relation?.embedded) {
-                return {
-                  title: capitalize(entity.name),
-                  dataIndex: entity.name,
-                  key: entity.name,
-                };
-              } else {
-                return columns;
-              }
-            } else {
-              return {
-                title: capitalize(entity.name),
-                dataIndex: entity.name,
-                key: entity.name,
-              };
-            }
-          } else {
-            return columns;
-          }
-        })
+    if (displayEntities) {
+      const filteredColumns = displayEntities.fields.filter(
+        (entity) =>
+          entity.name !== "id" &&
+          entity.type.kind !== "LIST" &&
+          !entity?.extensions?.relation?.embedded
       );
+      const pasedColumns = filteredColumns.map((entity) => ({
+        title: capitalize(entity.name),
+        dataIndex: entity.name,
+        key: entity.name,
+      }));
+      setColumns(pasedColumns);
 
-      requestEntity(props.displayEntities).then((entity) => {
+      requestEntity(displayEntities).then((entity) => {
         if (entity) {
           let name = Object.keys(entity);
           let _keys = Object.keys(entity[name[0]][0]);
@@ -59,39 +44,24 @@ const Table = (props) => {
         }
       });
     }
-  }, [props.displayEntities.fields]);
-
-  const handleChange = (pagination, filters, sorter) => {
-    setFilteredInfo(filters);
-    setSortedInfo(sorter);
-  };
-
-  const clearFilters = () => {
-    setFilteredInfo(null);
-  };
-
-  const clearAll = () => {
-    setFilteredInfo(null);
-    setSortedInfo(null);
-  };
-
-  const setAgeSort = () => {
-    setSortedInfo({
-      order: "descend",
-      columnKey: "age",
-    });
-  };
+  }, [displayEntities]);
 
   return (
-    <>
-      <TableAntd
-        columns={columns}
-        dataSource={currentEntity}
-        onChange={handleChange}
-        pagination={{ position: ["bottomCenter"] }}
-      />
-    </>
+    <TableAntd
+      columns={columns}
+      dataSource={currentEntity}
+      pagination={{ position: ["bottomCenter"] }}
+    />
   );
+};
+
+Table.propTypes = {
+  displayEntities: PropTypes.shape({
+    name: PropTypes.string,
+    kind: PropTypes.string,
+    fields: PropTypes.array,
+    queryAll: PropTypes.string,
+  }),
 };
 
 export default Table;

@@ -7,31 +7,26 @@ import Table from "./Table/Table";
 import styles from "./App.css";
 
 const { Title, Paragraph } = Typography;
+const { Header, Content, Footer, Sider } = Layout;
+const EntitiesContext = React.createContext();
 
-const App = (props) => {
-  const { Header, Content, Footer, Sider } = Layout;
+const App = ({ url }) => {
   const [collapsed, setCollapsed] = useState(false);
-
-  const EntitiesContext = React.createContext();
-
   const [entities, setEntities] = useState([]);
-  const [currentEntity, setCurrentEntity] = useState("");
+  const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
   const [selectedKey, setSelectedKey] = useState("0");
 
   useEffect(() => {
-    requestEntities(props.url).then((entities) => {
+    requestEntities(url).then((entities) => {
       if (entities) {
-        let filterEmbeddedEntity = [];
-        for (let i = 0; i < entities.length; i++) {
-          if (entities[i].queryAll) {
-            filterEmbeddedEntity.push(entities[i]);
-          }
-        }
+        const filterEmbeddedEntity = entities.filter(
+          (entity) => entity?.queryAll
+        );
         setEntities(filterEmbeddedEntity);
       }
     });
-  }, [props.url]);
+  }, [url]);
 
   const dispatch = useContext(EventContext);
 
@@ -84,18 +79,10 @@ const App = (props) => {
 
 App.defaultProps = {
   url: "",
-  componentTitle: "Simfinity Web",
-  sampleList: [
-    "Create with React",
-    "Build as Web Component",
-    "Use it anywhere!",
-  ],
 };
 
 App.propTypes = {
   url: PropTypes.string,
-  componentTitle: PropTypes.string,
-  sampleList: PropTypes.array,
 };
 
 export default App;
