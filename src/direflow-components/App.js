@@ -1,68 +1,86 @@
-import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import { EventContext, Styled } from 'direflow-component';
-import { requestEntities }  from './utils';
-import styles from './App.css';
+import React, { useEffect, useState } from "react";
+import { Layout, Menu, Typography } from "antd";
+import { Styled } from "direflow-component";
+import PropTypes from "prop-types";
+import { requestEntities } from "./utils";
+import Table from "./Table/Table";
+import styles from "./App.css";
 
+const { Title, Paragraph } = Typography;
+const { Header, Content, Footer, Sider } = Layout;
 const EntitiesContext = React.createContext();
 
-const App = (props) => {
-  const [entities, setEntities] = useState();
+const App = ({ url }) => {
+  const [collapsed, setCollapsed] = useState(false);
+  const [entities, setEntities] = useState([]);
+  const [currentEntity, setCurrentEntity] = useState(null);
+  const [resultTitle, setResultTitle] = useState("");
+  const [selectedKey, setSelectedKey] = useState("0");
+
   useEffect(() => {
-    requestEntities(props.url).then(entities => {
+    requestEntities(url).then((entities) => {
       if (entities) {
-        setEntities(entities);
+        const filterEmbeddedEntity = entities.filter(
+          (entity) => entity?.queryAll
+        );
+        setEntities(filterEmbeddedEntity);
       }
     });
-  }, [props.url]);
+  }, [url]);
 
-  const dispatch = useContext(EventContext);
-
-  const handleClick = () => {
-    const event = new Event('my-event');
-    dispatch(event);
+  const handleClick = (entity, ind) => {
+    setCurrentEntity(entity);
+    setResultTitle(`Resultados de ${entity.name}`);
+    setSelectedKey(ind.toString());
   };
-
-  const renderSampleList = props.sampleList.map((sample) => (
-    <div key={sample} className='sample-text'>
-      → {sample}
-    </div>
+  const renderEntities = entities.map((entity, index) => (
+    <Menu.Item key={index} onClick={() => handleClick(entity, index)}>
+      <Paragraph
+        style={{
+          color: "white",
+          textTransform: "uppercase",
+          fontWeight: "bold",
+        }}
+      >
+        {entity.name}
+      </Paragraph>
+    </Menu.Item>
   ));
 
+  const onCollapse = (collapsed) => {
+    setCollapsed(collapsed);
+  };
   return (
     <EntitiesContext.Provider value={entities}>
       <Styled styles={styles}>
-        <div className='app'>
-          <div className='top'>
-            <div className='header-image' />
-          </div>
-          <div className='bottom'>
-            <div className='header-title'>{props.componentTitle}</div>
-            <div>{renderSampleList}</div>
-            <button className='button' onClick={handleClick}>
-              Click me!
-            </button>
-          </div>
-        </div>
+        <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+          <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+            <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+              {renderEntities}
+            </Menu>
+          </Sider>
+          <Layout className="site-layout">
+            <Header className="site-layout-background" style={{ padding: 0 }} />
+            <Content style={{ margin: "0 16px" }}>
+              <Title level={2} style={{ textAlign: "center" }}>
+                {resultTitle}
+              </Title>
+              <Table displayEntity={currentEntity} />
+            </Content>
+            <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+          </Layout>
+        </Layout>
       </Styled>
     </EntitiesContext.Provider>
   );
 };
 
 App.defaultProps = {
-  url: '',
-  componentTitle: 'Simfinity Web',
-  sampleList: [
-    'Create with React',
-    'Build as Web Component',
-    'Use it anywhere!',
-  ],
-}
+  url: "",
+};
 
 App.propTypes = {
   url: PropTypes.string,
-  componentTitle: PropTypes.string,
-  sampleList: PropTypes.array,
 };
 
 export default App;
