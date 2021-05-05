@@ -1,0 +1,11 @@
+{
+    "entity.season.simple" : "Season",
+    "entity.season.plural" : "Seasons",
+    "entity.season.fields.serie": "Serie",
+    "entity.season.fields.number": "Number",
+    "table.search":"Search {field}",
+    "table.filter.search": "Sarch",
+    "table.filter.reset": "Reset",
+    "table.filter.filter": "Filter"
+
+}
