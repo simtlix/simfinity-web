@@ -25,6 +25,7 @@
     "direflow-scripts": "3.5.3",
     "react": "16.13.1",
     "react-dom": "16.13.1",
+    "react-hook-form": "^7.4.0",
     "react-scripts": "3.4.1"
   },
   "devDependencies": {
