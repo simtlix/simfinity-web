@@ -4,6 +4,7 @@ import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
+import Form from "./Form/Form";
 import styles from "./App.css";
 import {FormattedMessage, useIntl} from 'react-intl';
 
@@ -23,6 +24,7 @@ const App = ({ url }) => {
   const [selectedKey, setSelectedKey] = useState("0");
   const intl = useIntl();
 
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     requestEntities(url).then((entities) => {
@@ -56,33 +58,42 @@ const App = ({ url }) => {
     </Menu.Item>
   ));
 
+  const onShowFormBtn = () => {
+    let updatedState = !showForm;
+    setShowForm(updatedState);
+  };
+
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
   return (
     <EntitiesContext.Provider value={entities}>
-      <ConfigProvider getPopupContainer={() => popupRef.current } locale="en">
-          <Styled styles={styles}>
-            <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
-              <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
-                  {renderEntities}
-                </Menu>
-              </Sider>
-              <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0 }} />
-                <Content style={{ margin: "0 16px" }}>
-                  <Title level={2} style={{ textAlign: "center" }}>
-                    {resultTitle}
-                  </Title>
-                  <Table displayEntity={currentEntity} url={url} key={currentEntity?.name} entities={allEntities}/>
-                </Content>
-                <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
-                <div ref={popupRef}></div>
-              </Layout>
-            </Layout>
-          </Styled>
-      </ConfigProvider>
+      <Styled styles={styles}>
+        <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+          <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+            <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+              {renderEntities}
+            </Menu>
+          </Sider>
+          <Layout className="site-layout">
+            <Header className="site-layout-background" style={{ padding: 0 }} />
+            <Content style={{ margin: "0 16px" }}>
+              <Title level={2} style={{ textAlign: "center" }}>
+                {resultTitle}
+              </Title>
+              <button onClick={onShowFormBtn}>
+                {showForm ? "showTable" : "Add new entity"}
+              </button>
+              {showForm ? (
+                <Form displayEntity={currentEntity} />
+              ) : (
+                <Table displayEntity={currentEntity} />
+              )}
+            </Content>
+            <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+          </Layout>
+        </Layout>
+      </Styled>
     </EntitiesContext.Provider>
   );
 };

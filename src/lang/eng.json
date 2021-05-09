@@ -6,6 +6,7 @@
     "table.search":"Search {field}",
     "table.filter.search": "Sarch",
     "table.filter.reset": "Reset",
-    "table.filter.filter": "Filter"
+    "table.filter.filter": "Filter",
+    "table.total": "Total {total} items"
 
 }
