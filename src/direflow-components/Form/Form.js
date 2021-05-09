@@ -7,25 +7,18 @@ const Form = ({ displayEntity = null }) => {
 
   const [fieldsFormList, setFieldsFormList] = useState([]);
 
-  console.log(displayEntity?.fields);
-
   const onSubmit = (data) => {
     alert(JSON.stringify(data));
   };
 
   useEffect(() => {
     if (displayEntity) {
-      const fieldsFormList = displayEntity?.fields.map(
-        (field, index) => field.name
-      );
-      console.log(fieldsFormList);
+      const fieldsFormList = displayEntity?.fields.map((field) => field.name);
       setFieldsFormList(fieldsFormList);
-      console.log(fieldsFormList);
     }
   }, [displayEntity]);
 
   const renderFormFields = fieldsFormList.map((field, index) => {
-    console.log(field);
     return (
       <div key={index}>
         <label>{field}</label>
