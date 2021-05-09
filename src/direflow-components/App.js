@@ -4,6 +4,7 @@ import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
+import Form from "./Form/Form";
 import styles from "./App.css";
 
 const { Title, Paragraph } = Typography;
@@ -16,6 +17,7 @@ const App = ({ url }) => {
   const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
   const [selectedKey, setSelectedKey] = useState("0");
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     requestEntities(url).then((entities) => {
@@ -47,6 +49,11 @@ const App = ({ url }) => {
     </Menu.Item>
   ));
 
+  const onShowFormBtn = () => {
+    let updatedState = !showForm;
+    setShowForm(updatedState);
+  };
+
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
@@ -65,7 +72,14 @@ const App = ({ url }) => {
               <Title level={2} style={{ textAlign: "center" }}>
                 {resultTitle}
               </Title>
-              <Table displayEntity={currentEntity} />
+              <button onClick={onShowFormBtn}>
+                {showForm ? "showTable" : "Add new entity"}
+              </button>
+              {showForm ? (
+                <Form displayEntity={currentEntity} />
+              ) : (
+                <Table displayEntity={currentEntity} />
+              )}
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
