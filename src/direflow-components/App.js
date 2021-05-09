@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu, Typography, Button } from "antd";
 import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
@@ -50,8 +50,7 @@ const App = ({ url }) => {
   ));
 
   const onShowFormBtn = () => {
-    let updatedState = !showForm;
-    setShowForm(updatedState);
+    setShowForm(!showForm);
   };
 
   const onCollapse = (collapsed) => {
@@ -67,14 +66,22 @@ const App = ({ url }) => {
             </Menu>
           </Sider>
           <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }} />
+            <Header className="site-layout-background" style={{ padding: 0 }}>
+              {" "}
+            </Header>
             <Content style={{ margin: "0 16px" }}>
               <Title level={2} style={{ textAlign: "center" }}>
                 {resultTitle}
               </Title>
-              <button onClick={onShowFormBtn}>
-                {showForm ? "showTable" : "Add new entity"}
-              </button>
+              <Button
+                type="primary"
+                size="large"
+                onClick={onShowFormBtn}
+                style={{ float: "right" }}
+              >
+                {showForm ? "Show Table" : "Add new entry"}
+              </Button>
+
               {showForm ? (
                 <Form displayEntity={currentEntity} />
               ) : (
