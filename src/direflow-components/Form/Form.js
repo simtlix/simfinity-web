@@ -30,7 +30,7 @@ const Form = ({ displayEntity = null }) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       {renderFormFields}
-      <input type="submit" />
+      {displayEntity != null ? <input type="submit" /> : null}
     </form>
   );
 };
