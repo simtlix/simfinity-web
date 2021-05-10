@@ -82,20 +82,23 @@ const App = ({ url }) => {
               <Title level={2} style={{ textAlign: "center" }}>
                 {resultTitle}
               </Title>
+
               <Button
+                style={{ float: "right" }}
                 type="primary"
                 size="large"
                 onClick={onShowFormBtn}
-                style={{ float: "right" }}
               >
                 {showForm ? "Show Table" : "Add new entry"}
               </Button>
 
-              {showForm ? (
-                <Form displayEntity={currentEntity} />
-              ) : (
-                <Table displayEntity={currentEntity} entities={allEntities}/>
-              )}
+              <div>
+                {showForm ? (
+                  <Form displayEntity={currentEntity} />
+                ) : (
+                  <Table displayEntity={currentEntity}  entities={allEntities}/>
+                )}
+              </div>
             </Content>
             <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
           </Layout>
