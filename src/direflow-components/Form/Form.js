@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {Form as FormAntd, Button, Input} from "antd"
+import { Form as FormAntd, Button, Input, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
 import "./Form.css";
 
@@ -21,24 +21,27 @@ const Form = ({ displayEntity = null }) => {
 
   const renderFormFields = fieldsFormList.map((field, index) => {
     return (
-      <FormAntd.Item key={index} label={field}>
+      <FormAntd.Item key={index} label={field.toUpperCase()}>
         <Input {...register(field, { required: true })} />
       </FormAntd.Item>
     );
   });
 
   return (
-    <FormAntd onSubmit={handleSubmit(onSubmit)}>
-      {renderFormFields}
-      {displayEntity != null ? 
-        <FormAntd.Item>
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-        </FormAntd.Item> : 
-          null}
-    </FormAntd>
-
+    <Row>
+      <Col>
+        <FormAntd size="large" onSubmit={handleSubmit(onSubmit)}>
+          {renderFormFields}
+          {displayEntity != null ? (
+            <FormAntd.Item>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </FormAntd.Item>
+          ) : null}
+        </FormAntd>
+      </Col>
+    </Row>
 
     //<form onSubmit={handleSubmit(onSubmit)}>
     //  {renderFormFields}
