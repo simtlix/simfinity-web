@@ -16,6 +16,7 @@ export const requestEntities = async (url) => {
                   kind
                   fields {
                     name
+                    description
                     extensions {
                       relation {
                         embedded
@@ -48,6 +49,7 @@ export const requestEntities = async (url) => {
     const responseData = response.data && response.data.data;
     const types = responseData && responseData.__schema && responseData.__schema.types;
     const rootQueryTypes = types.find(type => type.name === 'RootQueryType').fields.filter(field => field.type.kind === listKind);
+    const mutations = types.find(type => type.name === 'Mutation').fields;
 
     if (types) {
       let filteredTypes = types.filter(type => type.kind === objectKind && excludedTypes.indexOf(type.name) === -1);
@@ -59,6 +61,17 @@ export const requestEntities = async (url) => {
         filteredTypes = filteredTypes.map(type => {
           if (type.name === typeName) {
             type.queryAll = queryAllName;
+          }
+          return type;
+        })
+      }
+
+      for (const mutation of mutations) {
+        const typeName = mutation.type.name;
+
+        filteredTypes = filteredTypes.map(type => {
+          if (type.name === typeName) {
+            type.mutations = { ...type.mutations, [mutation.description || mutation.name]: mutation.name }
           }
           return type;
         })
