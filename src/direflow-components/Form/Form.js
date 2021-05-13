@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form as FormAntd, Button, Input, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
-import "./Form.css";
 
 const Form = ({ displayEntity = null }) => {
   const { register, handleSubmit } = useForm();
