@@ -12,8 +12,12 @@ const Form = ({ displayEntity = null }) => {
   };
 
   useEffect(() => {
+    //se sacan los list ?
     if (displayEntity) {
-      const fieldsFormList = displayEntity?.fields.map((field) => field.name);
+      const filteredFields = displayEntity.fields.filter(
+        (field) => field.name !== "id" && field.type.kind !== "LIST"
+      );
+      const fieldsFormList = filteredFields.map((field) => field.name);
       setFieldsFormList(fieldsFormList);
     }
   }, [displayEntity]);
