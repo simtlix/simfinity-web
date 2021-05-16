@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Form as FormAntd, Button, Input, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
+import { requestEntity } from "./utils";
 
 const Form = ({ displayEntity = null }) => {
   const { register, handleSubmit } = useForm();
@@ -8,6 +9,9 @@ const Form = ({ displayEntity = null }) => {
   const [fieldsFormList, setFieldsFormList] = useState([]);
 
   const onSubmit = (data) => {
+    requestEntity(displayEntity, data).then((response) => {
+      console.log(response);
+    });
     alert(JSON.stringify(data));
   };
 
@@ -31,7 +35,7 @@ const Form = ({ displayEntity = null }) => {
   });
 
   return (
-    <Row>
+    /*{<Row>
       <Col>
         <FormAntd size="large" onSubmit={handleSubmit(onSubmit)}>
           {renderFormFields}
@@ -44,12 +48,22 @@ const Form = ({ displayEntity = null }) => {
           ) : null}
         </FormAntd>
       </Col>
-    </Row>
+    </Row>}*/
 
-    //<form onSubmit={handleSubmit(onSubmit)}>
-    //  {renderFormFields}
-    //  {displayEntity != null ? <input type="submit" /> : null}
-    //</form>
+    <Row>
+      <Col>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {renderFormFields}
+          {displayEntity != null ? (
+            <FormAntd.Item>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </FormAntd.Item>
+          ) : null}
+        </form>
+      </Col>
+    </Row>
   );
 };
 
