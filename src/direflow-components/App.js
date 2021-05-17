@@ -9,7 +9,7 @@ import styles from "./App.css";
 
 const { Title, Paragraph } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
-const EntitiesContext = React.createContext();
+export const EntitiesContext = React.createContext();
 
 const App = ({ url }) => {
   const [collapsed, setCollapsed] = useState(false);

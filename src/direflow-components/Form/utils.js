@@ -2,7 +2,6 @@ import axios from "axios";
 
 export const requestEntity = async (displayEntities, userInput) => {
   const mutationField = displayEntities.mutations.add;
-  //donde definimos que queremos ver en la respuesta del servicio
   const responseFields = "id";
   const objUserInput = userInput;
   // we have the format {"propertyName": "propertyValue"}
@@ -17,7 +16,6 @@ export const requestEntity = async (displayEntities, userInput) => {
                 ${responseFields}
               }
             }`,
-      variables: null,
     });
 
     const config = {
