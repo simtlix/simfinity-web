@@ -1,17 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Form as FormAntd, Button, Input, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
-import { requestEntity } from "./utils";
+import { yupResolver } from "@hookform/resolvers/yup";
+import {capitalize} from "../../utils/utils_string.js"
+import * as yup from "yup";
+
+const FormValidationSchema = yup.object().shape({
+  name: yup.string().required(),
+  director: yup.string().required()
+});
 
 const Form = ({ displayEntity = null }) => {
-  const { register, handleSubmit } = useForm();
-
   const [fieldsFormList, setFieldsFormList] = useState([]);
 
-  const onSubmit = (data) => {
-    requestEntity(displayEntity, data).then((response) => {
-      console.log(response);
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({
+    resolver: yupResolver(FormValidationSchema)
+  });
+
+  const submitForm = (data) => {
+    console.log("Submiting....")
+    console.log(data);
     alert(JSON.stringify(data));
   };
 
@@ -29,15 +41,23 @@ const Form = ({ displayEntity = null }) => {
   const renderFormFields = fieldsFormList.map((field, index) => {
     return (
       <FormAntd.Item key={index} label={field.toUpperCase()}>
-        <Input {...register(field, { required: true })} />
+        <Input {...register(field)} />
+        {
+          errors && errors[field] && errors[field].message && 
+          <p style={{color: "red"}}>
+            {
+              capitalize(errors[field].message)
+            }
+          </p>
+        }
       </FormAntd.Item>
     );
   });
 
   return (
-    /*{<Row>
+    <Row>
       <Col>
-        <FormAntd size="large" onSubmit={handleSubmit(onSubmit)}>
+        <FormAntd size="large" onFinish={handleSubmit(submitForm)}>
           {renderFormFields}
           {displayEntity != null ? (
             <FormAntd.Item>
@@ -48,22 +68,12 @@ const Form = ({ displayEntity = null }) => {
           ) : null}
         </FormAntd>
       </Col>
-    </Row>}*/
-
-    <Row>
-      <Col>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {renderFormFields}
-          {displayEntity != null ? (
-            <FormAntd.Item>
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-            </FormAntd.Item>
-          ) : null}
-        </form>
-      </Col>
     </Row>
+
+    //<form onSubmit={handleSubmit(onSubmit)}>
+    //  {renderFormFields}
+    //  {displayEntity != null ? <input type="submit" /> : null}
+    //</form>
   );
 };
 
