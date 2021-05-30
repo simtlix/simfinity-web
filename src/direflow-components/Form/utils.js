@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const requestEntity = async (displayEntities, userInput) => {
+export const requestAddNewEntity = async (displayEntities, userInput) => {
   const mutationField = displayEntities.mutations.add;
   const responseFields = "id";
   const objUserInput = userInput;
@@ -16,6 +16,7 @@ export const requestEntity = async (displayEntities, userInput) => {
                 ${responseFields}
               }
             }`,
+      variables: null,
     });
 
     const config = {
@@ -26,9 +27,8 @@ export const requestEntity = async (displayEntities, userInput) => {
     };
 
     const response = await axios(config);
-    return response;
-    //const responseData = response.data && response.data.data;
-    //return responseData;
+    const responseData = response.data && response.data.data;
+    return responseData;
   } catch (error) {
     console.log(error);
   }
