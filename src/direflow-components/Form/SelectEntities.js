@@ -11,11 +11,9 @@ export const SelectEntities = ({ field, register }) => {
   useEffect(() => {
     const selectEntity = entitiesContext.find((e) => e.name === field.name);
 
-    console.log(selectEntity);
-
     requestEntity(selectEntity).then((response) => {
       if (response) {
-        setResponseEntity(response.series);
+        setResponseEntity(response[selectEntity.queryAll]);
       }
     });
   }, [entitiesContext]);
