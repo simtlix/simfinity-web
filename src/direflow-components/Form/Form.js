@@ -25,14 +25,32 @@ const Form = ({ displayEntity = null }) => {
     }
   }, [displayEntity]);
 
+  console.log(displayEntity);
+
   const renderFormFields = filteredFieldsList.map((field, index) => {
     const nameField = field?.name != null ? field.name : "";
     if (
       field?.type?.kind === "OBJECT" &&
-      field?.extensions?.relation?.embedded == null /*||
-      field?.type?.kind === "ENUM"*/
+      field?.extensions?.relation?.embedded == null
     ) {
       return <SelectEntities key={index} field={field} register={register} />;
+    } else if (field?.type?.kind === "ENUM") {
+      /*field.enumValues.map((field) => {
+        console.log(field.name);
+      });*/
+      return (
+        <FormAntd.Item key={index} label={nameField.toUpperCase()}>
+          <select {...register(nameField)}>
+            {field?.enumValues.map((field) => {
+              return (
+                <option key={field.name} value={field.name}>
+                  {field.name}
+                </option>
+              );
+            })}
+          </select>
+        </FormAntd.Item>
+      );
     } else {
       if (field?.type?.name === "Int") {
         return (
