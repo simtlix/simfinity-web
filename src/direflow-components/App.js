@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Layout, Menu, Typography } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Layout, Menu, Typography, ConfigProvider} from "antd";
 import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
@@ -11,6 +11,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const EntitiesContext = React.createContext();
 
 const App = ({ url }) => {
+  const popupRef = useRef();
   const [collapsed, setCollapsed] = useState(false);
   const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
@@ -52,25 +53,28 @@ const App = ({ url }) => {
   };
   return (
     <EntitiesContext.Provider value={entities}>
-      <Styled styles={styles}>
-        <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
-          <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-            <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
-              {renderEntities}
-            </Menu>
-          </Sider>
-          <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }} />
-            <Content style={{ margin: "0 16px" }}>
-              <Title level={2} style={{ textAlign: "center" }}>
-                {resultTitle}
-              </Title>
-              <Table displayEntity={currentEntity} />
-            </Content>
-            <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+      <ConfigProvider getPopupContainer={() => popupRef.current }>
+        <Styled styles={styles}>
+          <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+              <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+                {renderEntities}
+              </Menu>
+            </Sider>
+            <Layout className="site-layout">
+              <Header className="site-layout-background" style={{ padding: 0 }} />
+              <Content style={{ margin: "0 16px" }}>
+                <Title level={2} style={{ textAlign: "center" }}>
+                  {resultTitle}
+                </Title>
+                <Table displayEntity={currentEntity} />
+              </Content>
+              <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+              <div ref={popupRef}></div>
+            </Layout>
           </Layout>
-        </Layout>
-      </Styled>
+        </Styled>
+      </ConfigProvider>
     </EntitiesContext.Provider>
   );
 };
