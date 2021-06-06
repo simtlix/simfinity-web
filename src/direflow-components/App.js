@@ -13,6 +13,7 @@ export const EntitiesContext = React.createContext();
 
 const App = ({ url }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [allEntities, setAllEntities] = useState([]);
   const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
@@ -22,7 +23,8 @@ const App = ({ url }) => {
   useEffect(() => {
     requestEntities(url).then((entities) => {
       if (entities) {
-        console.log(entities);
+        //console.log(entities);
+        setAllEntities(entities);
         const filterEmbeddedEntity = entities.filter(
           (entity) => entity?.queryAll
         );
@@ -58,7 +60,7 @@ const App = ({ url }) => {
     setCollapsed(collapsed);
   };
   return (
-    <EntitiesContext.Provider value={entities}>
+    <EntitiesContext.Provider value={allEntities}>
       <Styled styles={styles}>
         <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>

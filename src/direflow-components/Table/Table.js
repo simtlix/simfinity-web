@@ -29,11 +29,15 @@ const Table = ({ displayEntity = null }) => {
             (element) => {
               const myObj = {};
               for (const prop in element) {
-                if (typeof element[prop] === "object") {
-                  let _valueObject = Object.values(element[prop]);
-                  myObj[prop] = _valueObject[0];
+                if (element[prop] === null) {
+                  myObj[prop] = null;
                 } else {
-                  myObj[prop] = element[prop];
+                  if (typeof element[prop] === "object") {
+                    let _valueObject = Object.values(element[prop]);
+                    myObj[prop] = _valueObject[0];
+                  } else {
+                    myObj[prop] = element[prop];
+                  }
                 }
               }
               myObj.key = element.id;
