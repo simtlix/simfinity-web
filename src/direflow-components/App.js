@@ -17,8 +17,8 @@ export const EntitiesContext = React.createContext();
 const App = ({ url }) => {
   const popupRef = useRef();
   const [collapsed, setCollapsed] = useState(false);
-  const [entities, setEntities] = useState([]);
   const [allEntities, setAllEntities] = useState([]);
+  const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
   const [selectedKey, setSelectedKey] = useState("0");
@@ -66,7 +66,7 @@ const App = ({ url }) => {
     setCollapsed(collapsed);
   };
   return (
-    <EntitiesContext.Provider value={entities}>
+    <EntitiesContext.Provider value={allEntities}>
       <Styled styles={styles}>
         <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
           <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
