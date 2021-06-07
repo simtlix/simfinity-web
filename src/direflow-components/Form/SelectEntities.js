@@ -4,7 +4,6 @@ import { Form as FormAntd } from "antd";
 import { requestEntity } from "../Table/utils";
 
 export const SelectEntities = ({ field, register }) => {
-  console.log(field.extensions.relation.displayField);
   const displayField = field?.extensions?.relation?.displayField;
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
@@ -23,7 +22,7 @@ export const SelectEntities = ({ field, register }) => {
   const renderSelect = responseEntity?.map((field) => {
     return (
       <option key={field.id} value={field.id}>
-        {field.name}
+        {field[displayField]}
       </option>
     );
   });
