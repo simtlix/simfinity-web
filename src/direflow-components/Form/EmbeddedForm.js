@@ -1,10 +1,8 @@
 import React, { useContext } from "react";
 import { EntitiesContext } from "../App";
-import { useForm } from "react-hook-form";
 import { Form as FormAntd, Col } from "antd";
 
-export const EmbeddedForm = ({ field, index }) => {
-  const { register } = useForm();
+export const EmbeddedForm = ({ field, index, register }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
 

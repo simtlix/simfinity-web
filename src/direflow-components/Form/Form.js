@@ -70,7 +70,14 @@ const Form = ({ displayEntity = null }) => {
         );
       });
       return <Col key={index}>{_html}</Col>;*/
-      return <EmbeddedForm key={index} field={field} index={index} />;
+      return (
+        <EmbeddedForm
+          key={index}
+          field={field}
+          index={index}
+          register={register}
+        />
+      );
     } else {
       if (field?.type?.name === "Int") {
         return (
@@ -84,7 +91,7 @@ const Form = ({ displayEntity = null }) => {
             />
           </FormAntd.Item>
         );
-      } /*else if (field?.type?.name === "Date") {
+      } else if (field?.type?.name === "Date") {
         console.log(field?.type?.name);
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
@@ -96,7 +103,7 @@ const Form = ({ displayEntity = null }) => {
             />
           </FormAntd.Item>
         );
-      } */ else {
+      } else {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
             <Input {...register(nameField, { required: true })} />
