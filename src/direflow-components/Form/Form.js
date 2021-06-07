@@ -11,12 +11,9 @@ const Form = ({ displayEntity = null }) => {
 
   const [filteredFieldsList, setFilteredFieldsList] = useState([]);
 
-  const entitiesContext = useContext(EntitiesContext);
-  console.log(displayEntity);
-  console.log(entitiesContext);
+  //const entitiesContext = useContext(EntitiesContext);
 
   const onSubmit = (data) => {
-    console.log(displayEntity);
     console.log(data);
     console.log(watch());
     requestAddNewEntity(displayEntity, data).then((response) => {
@@ -34,10 +31,7 @@ const Form = ({ displayEntity = null }) => {
     }
   }, [displayEntity]);
 
-  console.log(displayEntity);
-
   const renderFormFields = filteredFieldsList.map((field, index) => {
-    console.log(field);
     const nameField = field?.name != null ? field.name : "";
     if (
       field?.type?.kind === "OBJECT" &&
@@ -45,9 +39,6 @@ const Form = ({ displayEntity = null }) => {
     ) {
       return <SelectEntities key={index} field={field} register={register} />;
     } else if (field?.type?.kind === "ENUM") {
-      /*field.enumValues.map((field) => {
-        console.log(field.name);
-      });*/
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
           <select {...register(nameField)}>
@@ -65,16 +56,10 @@ const Form = ({ displayEntity = null }) => {
       field?.type?.kind === "OBJECT" &&
       field?.extensions?.relation?.embedded === true
     ) {
-      const entityEmbedded = entitiesContext.filter(
+      /*const entityEmbedded = entitiesContext.filter(
         (e) => e.name === field.name
       );
-      console.log(entityEmbedded[0]);
-      console.log(field);
-      //return <Form displayEntity={currentEntity} />;
-      //return <EmbeddedForm key={index} entityEmbedded={entityEmbedded} />;
       const _html = entityEmbedded[0]?.fields.map((field, index) => {
-        console.log(field);
-        console.log("ASD");
         return (
           <FormAntd.Item
             key={index}
@@ -84,13 +69,8 @@ const Form = ({ displayEntity = null }) => {
           </FormAntd.Item>
         );
       });
-      //return <div key={index}>{_html}</div>;
-      return (
-        /*<FormAntd.Item key={index} label={nameField.toUpperCase()}>
-          <Col>{_html}</Col>
-        </FormAntd.Item>*/
-        <Col key={index}>{_html}</Col>
-      );
+      return <Col key={index}>{_html}</Col>;*/
+      return <EmbeddedForm key={index} field={field} index={index} />;
     } else {
       if (field?.type?.name === "Int") {
         return (
@@ -104,7 +84,19 @@ const Form = ({ displayEntity = null }) => {
             />
           </FormAntd.Item>
         );
-      } else {
+      } /*else if (field?.type?.name === "Date") {
+        console.log(field?.type?.name);
+        return (
+          <FormAntd.Item key={index} label={nameField.toUpperCase()}>
+            <input
+              type="date"
+              {...register(nameField, {
+                valueAsDate: true,
+              })}
+            />
+          </FormAntd.Item>
+        );
+      } */ else {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
             <Input {...register(nameField, { required: true })} />

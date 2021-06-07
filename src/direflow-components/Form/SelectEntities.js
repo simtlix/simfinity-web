@@ -4,6 +4,8 @@ import { Form as FormAntd } from "antd";
 import { requestEntity } from "../Table/utils";
 
 export const SelectEntities = ({ field, register }) => {
+  console.log(field.extensions.relation.displayField);
+  const displayField = field?.extensions?.relation?.displayField;
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
   const [responseEntity, setResponseEntity] = useState([]);
