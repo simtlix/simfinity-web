@@ -19,6 +19,7 @@ export const requestEntities = async (url) => {
                     name
                     description
                     extensions {
+                      stateMachine
                       relation {
                         embedded
                         connectionField
