@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Form as FormAntd, Button, Input, Row, Col } from "antd";
+import { Form as FormAntd, Button, Input, Select, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
 import { EntitiesContext } from "../App";
 import { requestAddNewEntity } from "./utils";
 import { SelectEntities } from "./SelectEntities";
 import { EmbeddedForm } from "./EmbeddedForm";
+
+const { Option } = Select;
 
 const Form = ({ displayEntity = null }) => {
   const { register, handleSubmit, watch } = useForm();
@@ -42,15 +44,15 @@ const Form = ({ displayEntity = null }) => {
     } else if (field?.type?.kind === "ENUM") {
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-          <select {...register(nameField)}>
+          <Select {...register(nameField)}>
             {field?.enumValues.map((field) => {
               return (
-                <option key={field.name} value={field.name}>
+                <Option key={field.name} value={field.name}>
                   {field.name}
-                </option>
+                </Option>
               );
             })}
-          </select>
+          </Select>
         </FormAntd.Item>
       );
     } else if (
@@ -84,7 +86,7 @@ const Form = ({ displayEntity = null }) => {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
             {/*<Input type="number" {...register(nameField, { required: true })} />*/}
-            <input
+            <Input
               type="number"
               {...register(nameField, {
                 valueAsNumber: true,
@@ -96,7 +98,7 @@ const Form = ({ displayEntity = null }) => {
         console.log(field?.type?.name);
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <input
+            <Input
               type="date"
               {...register(nameField, {
                 valueAsDate: true,
