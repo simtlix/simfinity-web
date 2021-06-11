@@ -1,7 +1,9 @@
 import React, { useEffect, useState, useContext } from "react";
 import { EntitiesContext } from "../App";
-import { Form as FormAntd } from "antd";
+import { Form as FormAntd, Select } from "antd";
 import { requestEntity } from "../Table/utils";
+
+const { Option } = Select;
 
 export const SelectEntities = ({ field, register }) => {
   const displayField = field?.extensions?.relation?.displayField;
@@ -21,15 +23,15 @@ export const SelectEntities = ({ field, register }) => {
 
   const renderSelect = responseEntity?.map((field) => {
     return (
-      <option key={field.id} value={field.id}>
+      <Option key={field.id} value={field.id}>
         {field[displayField]}
-      </option>
+      </Option>
     );
   });
 
   return (
     <FormAntd.Item label={nameField.toUpperCase()}>
-      <select {...register(nameField)}>{renderSelect}</select>
+      <Select {...register(nameField)}>{renderSelect}</Select>
     </FormAntd.Item>
   );
 };
