@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Layout, Menu, Typography, Button } from "antd";
+import React, { useEffect, useState, useRef } from "react";
+import { Layout, Menu, Typography, Button, ConfigProvider } from "antd";
 import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
@@ -12,6 +12,7 @@ const { Header, Content, Footer, Sider } = Layout;
 export const EntitiesContext = React.createContext();
 
 const App = ({ url }) => {
+  const popupRef = useRef();
   const [collapsed, setCollapsed] = useState(false);
   const [allEntities, setAllEntities] = useState([]);
   const [entities, setEntities] = useState([]);
@@ -61,43 +62,46 @@ const App = ({ url }) => {
   };
   return (
     <EntitiesContext.Provider value={allEntities}>
-      <Styled styles={styles}>
-        <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
-          <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-            <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
-              {renderEntities}
-            </Menu>
-          </Sider>
-          <Layout className="site-layout">
-            <Header className="site-layout-background" style={{ padding: 0 }}>
-              {" "}
-            </Header>
-            <Content style={{ margin: "0 16px" }}>
-              <Title level={2} style={{ textAlign: "center" }}>
-                {resultTitle}
-              </Title>
+      <ConfigProvider getPopupContainer={() => popupRef.current}>
+        <Styled styles={styles}>
+          <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+              <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+                {renderEntities}
+              </Menu>
+            </Sider>
+            <Layout className="site-layout">
+              <Header className="site-layout-background" style={{ padding: 0 }}>
+                {" "}
+              </Header>
+              <Content style={{ margin: "0 16px" }}>
+                <Title level={2} style={{ textAlign: "center" }}>
+                  {resultTitle}
+                </Title>
 
-              <Button
-                style={{ float: "right" }}
-                type="primary"
-                size="large"
-                onClick={onShowFormBtn}
-              >
-                {showForm ? "Show Table" : "Add new entry"}
-              </Button>
+                <Button
+                  style={{ float: "right" }}
+                  type="primary"
+                  size="large"
+                  onClick={onShowFormBtn}
+                >
+                  {showForm ? "Show Table" : "Add new entry"}
+                </Button>
 
-              <div>
-                {showForm ? (
-                  <Form displayEntity={currentEntity} />
-                ) : (
-                  <Table displayEntity={currentEntity} />
-                )}
-              </div>
-            </Content>
-            <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+                <div>
+                  {showForm ? (
+                    <Form displayEntity={currentEntity} />
+                  ) : (
+                    <Table displayEntity={currentEntity} />
+                  )}
+                </div>
+              </Content>
+              <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+              <div ref={popupRef}></div>
+            </Layout>
           </Layout>
-        </Layout>
-      </Styled>
+        </Styled>
+      </ConfigProvider>
     </EntitiesContext.Provider>
   );
 };
