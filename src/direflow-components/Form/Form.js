@@ -5,6 +5,7 @@ import { EntitiesContext } from "../App";
 import { requestAddNewEntity } from "./utils";
 import { SelectEntities } from "./SelectEntities";
 import { EmbeddedForm } from "./EmbeddedForm";
+import { convertDate } from "../../utils/date_formatter";
 
 const { Option } = Select;
 
@@ -41,7 +42,10 @@ const Form = ({ displayEntity = null }) => {
       field?.type?.kind === "ENUM"*/
     ) {
       return <SelectEntities key={index} field={field} register={register} />;
-    } else if (field?.type?.kind === "ENUM") {
+    } else if (
+      field?.type?.kind === "ENUM" &&
+      !field?.extensions?.stateMachine
+    ) {
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
           <select {...register(nameField)}>
@@ -85,7 +89,6 @@ const Form = ({ displayEntity = null }) => {
       if (field?.type?.name === "Int") {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            {/*<Input type="number" {...register(nameField, { required: true })} />*/}
             <input
               type="number"
               {...register(nameField, {
@@ -95,13 +98,12 @@ const Form = ({ displayEntity = null }) => {
           </FormAntd.Item>
         );
       } else if (field?.type?.name === "Date") {
-        console.log(field?.type?.name);
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
             <input
               type="date"
               {...register(nameField, {
-                valueAsDate: true,
+                setValueAs: (v) => convertDate(v),
               })}
             />
           </FormAntd.Item>
@@ -109,7 +111,11 @@ const Form = ({ displayEntity = null }) => {
       } else {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <Input {...register(nameField, { required: true })} />
+            <Input
+              {...register(nameField, {
+                required: field?.type?.kind === "NON_NULL",
+              })}
+            />
           </FormAntd.Item>
         );
       }
