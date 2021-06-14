@@ -44,15 +44,15 @@ const Form = ({ displayEntity = null }) => {
     } else if (field?.type?.kind === "ENUM") {
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-          <Select {...register(nameField)}>
+          <select {...register(nameField)}>
             {field?.enumValues.map((field) => {
               return (
-                <Option key={field.name} value={field.name}>
+                <option key={field.name} value={field.name}>
                   {field.name}
-                </Option>
+                </option>
               );
             })}
-          </Select>
+          </select>
         </FormAntd.Item>
       );
     } else if (
@@ -86,7 +86,7 @@ const Form = ({ displayEntity = null }) => {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
             {/*<Input type="number" {...register(nameField, { required: true })} />*/}
-            <Input
+            <input
               type="number"
               {...register(nameField, {
                 valueAsNumber: true,
@@ -98,7 +98,7 @@ const Form = ({ displayEntity = null }) => {
         console.log(field?.type?.name);
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <Input
+            <input
               type="date"
               {...register(nameField, {
                 valueAsDate: true,

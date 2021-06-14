@@ -23,15 +23,15 @@ export const SelectEntities = ({ field, register }) => {
 
   const renderSelect = responseEntity?.map((field) => {
     return (
-      <Option key={field.id} value={field.id}>
+      <option key={field.id} value={field.id}>
         {field[displayField]}
-      </Option>
+      </option>
     );
   });
 
   return (
     <FormAntd.Item label={nameField.toUpperCase()}>
-      <Select {...register(nameField)}>{renderSelect}</Select>
+      <select {...register(nameField)}>{renderSelect}</select>
     </FormAntd.Item>
   );
 };
