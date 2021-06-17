@@ -35,7 +35,6 @@ const Form = ({ displayEntity = null }) => {
   }, [displayEntity]);
 
   const renderFormFields = filteredFieldsList.map((field, index) => {
-    console.log(field);
     const nameField = field?.name != null ? field.name : "";
     if (
       field?.type?.kind === "OBJECT" &&

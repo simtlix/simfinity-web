@@ -10,11 +10,9 @@ export const SelectEntities = ({ field, register }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
   const [responseEntity, setResponseEntity] = useState([]);
-  console.log(nameField);
 
   useEffect(() => {
     const selectEntity = entitiesContext.find((e) => e.name === field.name);
-    console.log(selectEntity);
 
     requestEntity(selectEntity).then((response) => {
       if (response) {
