@@ -10,9 +10,11 @@ export const SelectEntities = ({ field, register }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
   const [responseEntity, setResponseEntity] = useState([]);
+  console.log(nameField);
 
   useEffect(() => {
     const selectEntity = entitiesContext.find((e) => e.name === field.name);
+    console.log(selectEntity);
 
     requestEntity(selectEntity).then((response) => {
       if (response) {
@@ -29,9 +31,10 @@ export const SelectEntities = ({ field, register }) => {
     );
   });
 
+  // siempre se va a mandar el id como field en este tipo de conexion ?
   return (
     <FormAntd.Item label={nameField.toUpperCase()}>
-      <select {...register(nameField)}>{renderSelect}</select>
+      <select {...register(nameField + "." + "id")}>{renderSelect}</select>
     </FormAntd.Item>
   );
 };
