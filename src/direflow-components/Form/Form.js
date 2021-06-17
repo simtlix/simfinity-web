@@ -35,6 +35,7 @@ const Form = ({ displayEntity = null }) => {
   }, [displayEntity]);
 
   const renderFormFields = filteredFieldsList.map((field, index) => {
+    console.log(field);
     const nameField = field?.name != null ? field.name : "";
     if (
       field?.type?.kind === "OBJECT" &&
@@ -108,15 +109,18 @@ const Form = ({ displayEntity = null }) => {
           </FormAntd.Item>
         );
       } else {
-        return (
-          <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <Input
-              {...register(nameField, {
-                required: field?.type?.kind === "NON_NULL",
-              })}
-            />
-          </FormAntd.Item>
-        );
+        // tiene sentido solo validar aca y en los ENUM types en lugar de envolver todo ?
+        if (!field?.extensions?.stateMachine) {
+          return (
+            <FormAntd.Item key={index} label={nameField.toUpperCase()}>
+              <Input
+                {...register(nameField, {
+                  required: field?.type?.kind === "NON_NULL",
+                })}
+              />
+            </FormAntd.Item>
+          );
+        }
       }
     }
   });
