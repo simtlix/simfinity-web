@@ -4,26 +4,38 @@ import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 
-const Table = ({ displayEntity = null }) => {
+const Table = ({ displayEntity = null , url}) => {
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
 
   useEffect(() => {
     if (displayEntity) {
       const filteredColumns = displayEntity.fields.filter(
-        (entity) =>
-          entity.name !== "id" &&
-          entity.type.kind !== "LIST" &&
-          !entity?.extensions?.relation?.embedded
+        (entity) =>{
+          if(entity.name !== "id" &&
+              entity.type.kind !== "LIST" && 
+              entity.type.kind !== "OBJECT") {
+            return true;
+          } else if (entity.type.kind === "OBJECT" && 
+                      entity?.extensions?.relation?.displayField){
+            return true;
+          } else {
+            return false;
+          }
+        }
+          
+         
+
       );
       const pasedColumns = filteredColumns.map((entity) => ({
         title: capitalize(entity.name),
         dataIndex: entity.name,
-        key: entity.name,
+        key: entity.type.kind === "OBJECT" && 
+        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name
       }));
       setColumns(pasedColumns);
 
-      requestEntity(displayEntity).then((response) => {
+      requestEntity(displayEntity, url).then((response) => {
         if (response) {
           const parserResponse = response[displayEntity.queryAll].map(
             (element) => {

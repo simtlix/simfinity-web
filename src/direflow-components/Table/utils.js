@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const requestEntity = async (displayEntities) => {
+export const requestEntity = async (displayEntities, url) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
@@ -36,7 +36,7 @@ export const requestEntity = async (displayEntities) => {
     const config = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      url: "https://multiscreen-techgroup.rj.r.appspot.com/graphql",
+      url: url,
       data,
     };
 
