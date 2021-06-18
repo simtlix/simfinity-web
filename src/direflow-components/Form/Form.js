@@ -1,7 +1,6 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Form as FormAntd, Button, Input, Select, Row, Col } from "antd";
 import { useForm } from "react-hook-form";
-import { EntitiesContext } from "../App";
 import { requestAddNewEntity } from "./utils";
 import { SelectEntities } from "./SelectEntities";
 import { EmbeddedForm } from "./EmbeddedForm";
@@ -36,15 +35,17 @@ const Form = ({ displayEntity = null }) => {
 
   const renderFormFields = filteredFieldsList.map((field, index) => {
     const nameField = field?.name != null ? field.name : "";
-    if (
+    if (field?.extensions?.stateMachine) {
+      return null;
+    } else if (
       field?.type?.kind === "OBJECT" &&
       field?.extensions?.relation?.embedded == null /*||
       field?.type?.kind === "ENUM"*/
     ) {
       return <SelectEntities key={index} field={field} register={register} />;
     } else if (
-      field?.type?.kind === "ENUM" &&
-      !field?.extensions?.stateMachine
+      field?.type?.kind === "ENUM" /*&&
+      !field?.extensions?.stateMachine*/
     ) {
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
@@ -108,19 +109,21 @@ const Form = ({ displayEntity = null }) => {
             />
           </FormAntd.Item>
         );
+      } else if (
+        field?.type?.kind === "OBJECT" &&
+        field?.extensions?.relation?.connectionField != null
+      ) {
+        return <SelectEntities key={index} field={field} register={register} />;
       } else {
-        // tiene sentido solo validar aca y en los ENUM types en lugar de envolver todo ?
-        if (!field?.extensions?.stateMachine) {
-          return (
-            <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-              <Input
-                {...register(nameField, {
-                  required: field?.type?.kind === "NON_NULL",
-                })}
-              />
-            </FormAntd.Item>
-          );
-        }
+        return (
+          <FormAntd.Item key={index} label={nameField.toUpperCase()}>
+            <Input
+              {...register(nameField, {
+                required: field?.type?.kind === "NON_NULL",
+              })}
+            />
+          </FormAntd.Item>
+        );
       }
     }
   });
