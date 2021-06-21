@@ -8,7 +8,14 @@ const Table = ({ displayEntity = null , url}) => {
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
   const [pagination, setPagination] = useState({ current: 1,
-    pageSize: 10, position: ["bottomCenter"] });
+    pageSize: 10, 
+    position: ["bottomCenter"], 
+    pageSizeOptions: ["10","20", "25", "30"], 
+    showSizeChanger: true, 
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: total => `Total ${total} items`
+  });
   const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {

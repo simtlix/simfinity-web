@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const requestEntity = async (displayEntities, url) => {
+export const requestEntity = async (displayEntities, url, page, size) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
@@ -27,7 +27,7 @@ export const requestEntity = async (displayEntities, url) => {
   try {
     const data = JSON.stringify({
       query: `{
-        ${entityName}{
+        ${entityName}(pagination:{page:${page} size:${size} count:true}){
                 ${formatQueryFields}
               }
             }`,
@@ -41,8 +41,7 @@ export const requestEntity = async (displayEntities, url) => {
     };
 
     const response = await axios(config);
-    const responseData = response.data && response.data.data;
-    return responseData;
+    return response;
   } catch (error) {
     console.log(error);
   }
