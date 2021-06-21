@@ -7,6 +7,9 @@ import { capitalize } from "../../utils/utils_string";
 const Table = ({ displayEntity = null , url}) => {
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
+  const [pagination, setPagination] = useState({ current: 1,
+    pageSize: 10, position: ["bottomCenter"] });
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (displayEntity) {
@@ -35,9 +38,10 @@ const Table = ({ displayEntity = null , url}) => {
       }));
       setColumns(pasedColumns);
 
-      requestEntity(displayEntity, url).then((response) => {
-        if (response) {
-          const parserResponse = response[displayEntity.queryAll].map(
+      requestEntity(displayEntity, url, pagination.current, pagination.pageSize).then((response) => {
+        console.log(response)
+        if (response && response.data) {
+          const parserResponse = response.data.data[displayEntity.queryAll].map(
             (element) => {
               const myObj = {};
               for (const prop in element) {
@@ -53,16 +57,57 @@ const Table = ({ displayEntity = null , url}) => {
             }
           );
           setResultList(parserResponse);
+          setTotalCount(response.data.extensions.count);
         }
       });
     }
   }, [displayEntity]);
 
+  useEffect(()=>{
+      if (displayEntity) {
+      requestEntity(displayEntity, url, pagination.current, pagination.pageSize).then((response) => {
+        console.log(response)
+        if (response && response.data) {
+          const parserResponse = response.data.data[displayEntity.queryAll].map(
+            (element) => {
+              const myObj = {};
+              for (const prop in element) {
+                if (typeof element[prop] === "object") {
+                  let _valueObject = Object.values(element[prop]);
+                  myObj[prop] = _valueObject[0];
+                } else {
+                  myObj[prop] = element[prop];
+                }
+              }
+              myObj.key = element.id;
+              return myObj;
+            }
+          );
+          setResultList(parserResponse);
+          setTotalCount(response.data.extensions.count);
+        }
+      });
+    }
+  },[pagination])
+
+  const handleTableChange = (pagination, filters, sorter) => {
+    
+    setPagination(paginationPrevious => {
+      return { 
+      ...paginationPrevious,
+      current: pagination.current,
+      pageSize: pagination.pageSize, 
+      }
+    }
+);
+  };
+
   return (
     <TableAntd
       columns={columns}
       dataSource={resultList}
-      pagination={{ position: ["bottomCenter"] }}
+      onChange={handleTableChange}
+      pagination={{...pagination, total: totalCount}}
     />
   );
 };
