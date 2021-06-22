@@ -1,6 +1,29 @@
 import axios from "axios";
 
-export const requestEntity = async (displayEntities, url, page, size) => {
+const buildFilters = (filters) => {
+  if(!filters)
+    return ''
+
+  let filterStr = '';
+
+  Object.keys(filters).forEach(key => {
+    if (Object.prototype.hasOwnProperty.call(filters, key)){
+      const filter = filters[key];
+      if(filter.entity.type.kind !== "OBJECT"){
+        filterStr += ` ${filter.key}:{operator:${filter.operator} value:${formatValue(filter.value, filter.entity)} } `
+      } else {
+        filterStr += ` ${filter.key}:{terms:[{operator:${filter.operator} value:"${filter.value}" path:"${filter.field}"}]} `
+      }
+    }
+  })
+  return filterStr;
+}
+
+const formatValue = (value,entity) => ` ${isString(entity)?"\"":""}${value}${isString(entity)?"\"":""} `
+
+const isString = (entity) => (entity.type.name === "String" || (entity.type.kind === "NON_NULL" && entity.type.ofType.name === "String"))
+
+export const requestEntity = async (displayEntities, url, page, size, filters) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
@@ -27,7 +50,7 @@ export const requestEntity = async (displayEntities, url, page, size) => {
   try {
     const data = JSON.stringify({
       query: `{
-        ${entityName}(pagination:{page:${page} size:${size} count:true}){
+        ${entityName}(${buildFilters(filters)} pagination:{page:${page} size:${size} count:true}){
                 ${formatQueryFields}
               }
             }`,
