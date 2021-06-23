@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Table as TableAntd } from "antd";
+import { Table as TableAntd, Space} from "antd";
 import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
+import DeleteButton from './BeleteButton/DeleteButton'
 
-const Table = ({ displayEntity = null }) => {
+const Table = ({ displayEntity = null  }) => {
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
 
+
+
   useEffect(() => {
-    if (displayEntity) {
-      const filteredColumns = displayEntity.fields.filter(
-        (entity) =>
-          entity.name !== "id" &&
-          entity.type.kind !== "LIST" &&
-          !entity?.extensions?.relation?.embedded
-      );
-      const pasedColumns = filteredColumns.map((entity) => ({
-        title: capitalize(entity.name),
-        dataIndex: entity.name,
-        key: entity.name,
-      }));
-      setColumns(pasedColumns);
+
+    const refreshTable = () => {
 
       requestEntity(displayEntity).then((response) => {
         if (response) {
@@ -43,6 +35,35 @@ const Table = ({ displayEntity = null }) => {
           setResultList(parserResponse);
         }
       });
+  
+    };
+
+    if (displayEntity) {
+      const filteredColumns = displayEntity.fields.filter(
+        (entity) =>
+          entity.name !== "id" &&
+          entity.type.kind !== "LIST" &&
+          !entity?.extensions?.relation?.embedded
+      );
+      let pasedColumns = filteredColumns.map((entity) => ({
+        title: capitalize(entity.name),
+        dataIndex: entity.name,
+        key: entity.name,
+      }));
+
+      pasedColumns.push({
+        title: 'Action',
+        key: 'action',
+        render: (text, record) => (
+          <Space size="middle">
+            <DeleteButton record={record} displayEntity={displayEntity} handleRefresh={() => {refreshTable()}}/>
+          </Space>
+        )});
+        
+      setColumns(pasedColumns);
+
+      refreshTable();
+      
     }
   }, [displayEntity]);
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Layout, Menu, Typography } from "antd";
+import { Layout, Menu, Typography} from "antd";
 import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
@@ -11,6 +11,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const EntitiesContext = React.createContext();
 
 const App = ({ url }) => {
+
   const [collapsed, setCollapsed] = useState(false);
   const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
