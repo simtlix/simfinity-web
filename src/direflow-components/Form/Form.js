@@ -9,7 +9,7 @@ import { convertDate } from "../../utils/date_formatter";
 const { Option } = Select;
 
 const Form = ({ displayEntity = null }) => {
-  const { register, handleSubmit, watch } = useForm();
+  const { register, handleSubmit, watch, reset } = useForm();
 
   const [filteredFieldsList, setFilteredFieldsList] = useState([]);
 
@@ -30,6 +30,7 @@ const Form = ({ displayEntity = null }) => {
         (field) => field.name !== "id" && field.type.kind !== "LIST"
       );
       setFilteredFieldsList(filteredFields);
+      reset();
     }
   }, [displayEntity]);
 
