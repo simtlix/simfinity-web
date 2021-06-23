@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Table as TableAntd, Input, Button, Space, Select } from "antd";
+import { Table as TableAntd, Input, Button, Space, Select, InputNumber } from "antd";
 import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
@@ -80,9 +80,9 @@ const Table = ({ displayEntity = null , url, entities}) => {
               }
             }
           } else {
-            selectFilters[propName] = {
+            selectFilters[fieldName] = {
               value: selectedKeys,
-              key: propName,
+              key: fieldName,
               operator: "LIKE",
               entity:{
                 type:{
@@ -122,7 +122,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
                 if(entity.extensions?.relation?.embedded){
                    value = element[propName][fieldName];
                 } else {
-                  value = element[propName];
+                  value = element[fieldName];
                 }
 
                 if(parserResponse.indexOf(value)<0){
@@ -130,7 +130,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
                 }
               }
             );
-            
+
             setSelectValues(parserResponse);
           }
         }
@@ -186,6 +186,40 @@ const Table = ({ displayEntity = null , url, entities}) => {
     setSelectedOperator(value)
   }
 
+  const isBoolean = (field) => {
+    if(field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean")
+      return true;
+    else
+      return false;
+  }
+
+  const isNumber = (field) => {
+    if(field.type.name === "Int" || field.type?.ofType?.name === "Int" || field.type.name === "Float" || field.type?.ofType?.name === "Float")
+      return true;
+    else
+      return false;
+  }
+
+  const isString = (field) => {
+    if(field.type.name === "String" || field.type?.ofType?.name === "String")
+      return true;
+    else
+      return false;
+  }
+
+  const isDate = (field) => {
+    if(field.type.name === "Date" || field.type?.ofType?.name === "Date")
+      return true;
+    else
+      return false;
+  }
+
+  const isEnum = (field) => {
+    if(field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM")
+      return true;
+    else
+      return false;
+  }
 
   const getColumnSearchProps = (dataIndex, type) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
@@ -197,15 +231,26 @@ const Table = ({ displayEntity = null , url, entities}) => {
               </Select>
               
               {
+                
                 (type.type.kind !== "OBJECT")?
-                <Input
-                ref={searchInput}
-                placeholder={`Search ${dataIndex}`}
-                value={selectedKeys[0]}
-                onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
-                style={{ marginBottom: 8, display:'block'}}
-              />
+                  <>
+                    {(isEnum(type) || isString(type)) && <Input
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
+                    style={{ marginBottom: 8, display:'block'}}
+                    />}
+                    {isNumber(type) && <InputNumber
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={e => setSelectedKeys(e ? [e] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
+                    style={{ marginBottom: 8, display:'block'}}
+                    />}
+                  </>
               :
               <Select style={{width:200, marginBottom: 8, display:'block'}} 
               showSearch
