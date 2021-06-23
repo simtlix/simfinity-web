@@ -9,7 +9,16 @@ const buildFilters = (filters) => {
   Object.keys(filters).forEach(key => {
     if (Object.prototype.hasOwnProperty.call(filters, key)){
       const filter = filters[key];
-      if(filter.entity.type.kind !== "OBJECT"){
+      if(filter.terms){
+        let linkFilterStr = "";
+        Object.keys(filter.terms).forEach(item =>{
+          if (Object.prototype.hasOwnProperty.call(filter.terms, item)){
+            const linkFilter = filter.terms[item];
+            linkFilterStr += ` {path:"${linkFilter.key + (linkFilter.field?`.${linkFilter.field}`:"")}" operator:${linkFilter.operator} value:${linkFilter.entity.type.kind !== "OBJECT"?formatValue(linkFilter.value, linkFilter.entity):`"${linkFilter.value}"`} }, `
+          }
+        })
+        filterStr += ` ${filter.key}:{terms:[${linkFilterStr}]}, `
+      } else if(filter.entity.type.kind !== "OBJECT"){
         filterStr += ` ${filter.key}:{operator:${filter.operator} value:${formatValue(filter.value, filter.entity)} } `
       } else {
         filterStr += ` ${filter.key}:{terms:[{operator:${filter.operator} value:"${filter.value}" path:"${filter.field}"}]} `
@@ -19,9 +28,9 @@ const buildFilters = (filters) => {
   return filterStr;
 }
 
-const formatValue = (value,entity) => ` ${isString(entity)?"\"":""}${value}${isString(entity)?"\"":""} `
+const formatValue = (value,entity) => ` ${isStringOrEnum(entity)?"\"":""}${value}${isStringOrEnum(entity)?"\"":""} `
 
-const isString = (entity) => (entity.type.name === "String" || (entity.type.kind === "NON_NULL" && entity.type.ofType.name === "String"))
+const isStringOrEnum = (entity) => (entity.type.kind === "ENUM" || entity.type.name === "String" || (entity.type.kind === "NON_NULL" && entity.type.ofType.name === "String") || (entity.type.kind === "NON_NULL" && entity.type.ofType.kind === "ENUM"))
 
 export const requestEntity = async (displayEntities, url, page, size, filters) => {
   const entityName = displayEntities.queryAll;

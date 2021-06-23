@@ -67,7 +67,7 @@ const App = ({ url }) => {
                 <Title level={2} style={{ textAlign: "center" }}>
                   {resultTitle}
                 </Title>
-                <Table displayEntity={currentEntity} url={url} key={currentEntity?.name}/>
+                <Table displayEntity={currentEntity} url={url} key={currentEntity?.name} entities={entities}/>
               </Content>
               <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
               <div ref={popupRef}></div>

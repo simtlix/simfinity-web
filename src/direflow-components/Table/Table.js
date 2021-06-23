@@ -5,7 +5,9 @@ import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
 const { Option } = Select;
-const Table = ({ displayEntity = null , url}) => {
+
+
+const Table = ({ displayEntity = null , url, entities}) => {
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
   const [pagination, setPagination] = useState({ current: 1,
@@ -26,6 +28,15 @@ const Table = ({ displayEntity = null , url}) => {
     _setSelectedOperator(operator)
   }
 
+  const [selectValuesFilter, setSelectValuesFilter] = useState(undefined)
+  const [selectValues, _setSelectValues] = useState()
+
+  const selectValuesRef = useRef(selectValues)
+  const setSelectValues = values => {
+    selectValuesRef.current = values
+    _setSelectValues(values)
+  }
+
   const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
     confirm();
 
@@ -43,8 +54,100 @@ const Table = ({ displayEntity = null , url}) => {
     console.log("handleSearch")
   };
 
+
+  useEffect(() => {
+    if (displayEntity && selectValuesFilter) {
+        const {selectedKeys, confirm, dataIndex, entity} = selectValuesFilter;
+
+        const fetch = async () => {
+          
+          let selectFilters = {}
+          const propName = dataIndex.split(".")[0];
+          const fieldName = dataIndex.split(".")[1];
+          let current;
+
+          if(entity.extensions?.relation?.embedded){            
+            selectFilters = {...filters}
+            selectFilters[propName] = {
+              value: selectedKeys,
+              key: propName,
+              field: fieldName,
+              operator: "LIKE",
+              entity:{
+                type:{
+                  kind:"OBJECT"
+                }
+              }
+            }
+          } else {
+            selectFilters[propName] = {
+              value: selectedKeys,
+              key: propName,
+              operator: "LIKE",
+              entity:{
+                type:{
+                  name:"String",
+                  kind:"SCALAR"
+                }
+              }
+            }
+            
+            entities.forEach(async item => {
+              if(item.name === entity.type.name){
+                current = item;
+              }
+            });
+            let relationField;
+            current.fields.forEach(field => {
+              if(field?.extensions?.relation?.connectionField === entity?.extensions?.relation?.connectionField)
+              {
+                relationField = field;
+              }
+            })
+
+            selectFilters[relationField.name] = {
+              terms:filters,
+              key: relationField.name
+            }
+          }
+
+          let response = await requestEntity(entity.extensions?.relation?.embedded?displayEntity:current, url, 1, 10, selectFilters)
+          console.log(response)
+          if (response && response.data) {
+            const parserResponse = [];
+            
+            response.data.data[entity.extensions?.relation?.embedded?displayEntity.queryAll:current.queryAll].forEach(
+              (element) => {
+                let value;
+                if(entity.extensions?.relation?.embedded){
+                   value = element[propName][fieldName];
+                } else {
+                  value = element[propName];
+                }
+
+                if(parserResponse.indexOf(value)<0){
+                  parserResponse.push(value);
+                }
+              }
+            );
+            
+            setSelectValues(parserResponse);
+          }
+        }
+        fetch();
+        
+      }
+    }
+  , [selectValuesFilter])
+
+  const handleSelectSearch = (selectedKeys, confirm, dataIndex, entity) => {
+    
+    setSelectValuesFilter({selectedKeys, confirm, dataIndex, entity});
+  }
+
   const handleReset = (clearFilters, entity) => {
     clearFilters();
+    selectValuesRef.current = undefined;
     setFilters(previous => {
       const newState = {...previous};
       delete newState[entity.name];
@@ -53,6 +156,10 @@ const Table = ({ displayEntity = null , url}) => {
     )
     console.log("handleReset")
   };
+
+  const getObjectFilterOptions = (selectValuesParam) => {
+    return selectValuesParam.map(item => <Option key={item} value={item}>{item}</Option>)
+  }
 
   const getOptions = (entity) => {
     if(entity.type.kind !== "OBJECT"){
@@ -79,6 +186,7 @@ const Table = ({ displayEntity = null , url}) => {
     setSelectedOperator(value)
   }
 
+
   const getColumnSearchProps = (dataIndex, type) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
@@ -88,7 +196,9 @@ const Table = ({ displayEntity = null , url}) => {
                 {getOptions(type)}
               </Select>
               
-              <Input
+              {
+                (type.type.kind !== "OBJECT")?
+                <Input
                 ref={searchInput}
                 placeholder={`Search ${dataIndex}`}
                 value={selectedKeys[0]}
@@ -96,6 +206,21 @@ const Table = ({ displayEntity = null , url}) => {
                 onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
                 style={{ marginBottom: 8, display:'block'}}
               />
+              :
+              <Select style={{width:200, marginBottom: 8, display:'block'}} 
+              showSearch
+              value={selectedKeys}
+              placeholder={`Search ${dataIndex}`}
+              defaultActiveFirstOption={false}
+              showArrow={false}
+              filterOption={false}
+              onSearch={value => {setSelectedKeys(value); handleSelectSearch(value, confirm, dataIndex, type)}}
+              onChange={value => {setSelectedKeys(value); handleSearch([value], confirm, dataIndex, type); selectValuesRef.current = undefined}}
+              notFoundContent={null}>
+                {selectValuesRef.current && getObjectFilterOptions(selectValuesRef.current)}
+              </Select>
+              }
+             
             </Space>
           </div>
         <Space>
@@ -124,7 +249,9 @@ const Table = ({ displayEntity = null , url}) => {
     filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
     onFilterDropdownVisibleChange: visible => {
       if (visible) {
-        setTimeout(() => searchInput.current.select(), 100);
+        setTimeout(() => searchInput?.current?.select(), 100);
+      } else {
+        selectValuesRef.current = undefined;
       }
     },
     
