@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Table as TableAntd, Input, Button, Space, Select, InputNumber } from "antd";
+import { Table as TableAntd, Input, Button, Space, Select, InputNumber, Switch, DatePicker } from "antd";
 import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
@@ -208,7 +208,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
   }
 
   const isDate = (field) => {
-    if(field.type.name === "Date" || field.type?.ofType?.name === "Date")
+    if(field.type.name === "Date" || field.type?.ofType?.name === "Date" || field.type.name === "DateTime" || field.type?.ofType?.name === "DateTime")
       return true;
     else
       return false;
@@ -226,7 +226,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
       <div style={{ padding: 8 }}>
           <div>
             <Space style={{display:'flex', flexDirection:'row'}}>
-              <Select defaultValue="EQ" style={{ marginBottom: 8, display:'block'}} onChange={handleSelectOnChange}>
+              <Select defaultValue="EQ" style={{ marginBottom: 8, display:'block', flex:1 }} onChange={handleSelectOnChange}>
                 {getOptions(type)}
               </Select>
               
@@ -240,7 +240,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
-                    style={{ marginBottom: 8, display:'block'}}
+                    style={{ width:200, marginBottom: 8, display:'block', flex:2}}
                     />}
                     {isNumber(type) && <InputNumber
                     ref={searchInput}
@@ -248,11 +248,18 @@ const Table = ({ displayEntity = null , url, entities}) => {
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e ? [e] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
-                    style={{ marginBottom: 8, display:'block'}}
+                    style={{ width:200, marginBottom: 8, display:'block', flex:2}}
                     />}
+                    {isBoolean(type) && <Switch checked={selectedKeys[0]} 
+                    onChange={e => {setSelectedKeys(e ? [e] : [])}} 
+                    style={ {marginBottom: 8, display:'block', flex:2} }/>}
+                    {isDate(type) && <DatePicker value={selectedKeys[0]} 
+                    onChange={e => {setSelectedKeys(e ? [e] : [])}} 
+                    style={ {marginBottom: 8, display:'block', flex:2} }/>
+                    }
                   </>
               :
-              <Select style={{width:200, marginBottom: 8, display:'block'}} 
+              <Select style={{width:200, marginBottom: 8, display:'block', flex:2}} 
               showSearch
               value={selectedKeys}
               placeholder={`Search ${dataIndex}`}
@@ -330,7 +337,14 @@ const Table = ({ displayEntity = null , url, entities}) => {
         entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name, entity),
         dataIndex: entity.name,
         key: entity.type.kind === "OBJECT" && 
-        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name
+        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name,
+        render: (text) => {
+          if(isDate(entity) && text){
+            return new Date(text).toLocaleDateString();
+          } else {
+            return text;
+          }
+        }  
       }));
       setColumns(pasedColumns);
 
