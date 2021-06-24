@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Table as TableAntd, Input, Button, Space, Select, InputNumber, Switch, DatePicker } from "antd";
 import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
@@ -21,13 +21,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
   const [totalCount, setTotalCount] = useState(0);
   const [filters, setFilters] = useState({});
   const searchInput = useRef(null);
-  const [selectedOperator, _setSelectedOperator] = useState("EQ")
-  const selectedOperatorRef = useRef(selectedOperator)
-  const setSelectedOperator = operator => {
-    selectedOperatorRef.current = operator
-    _setSelectedOperator(operator)
-  }
-
+  const [selectedOperator, setSelectedOperator] = useState("EQ");
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined)
   const [selectValues, _setSelectValues] = useState()
 
@@ -37,7 +31,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
     _setSelectValues(values)
   }
 
-  const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
+  const handleSearch = useCallback((selectedKeys, confirm, dataIndex, entity) => {
     confirm();
 
     setFilters(previous => {
@@ -46,18 +40,18 @@ const Table = ({ displayEntity = null , url, entities}) => {
         key:dataIndex.indexOf(".")>0?dataIndex.split(".")[0]:dataIndex, 
         field:dataIndex.indexOf(".")>0?dataIndex.split(".")[1]:undefined,
         entity,
-        operator: selectedOperatorRef.current
+        operator: selectedOperator
       }
       return newState;
       }
     )
     console.log("handleSearch")
-  };
+  }, [selectedOperator]);
 
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
-        const {selectedKeys, confirm, dataIndex, entity} = selectValuesFilter;
+        const {selectedKeys, dataIndex, entity} = selectValuesFilter;
 
         const fetch = async () => {
           
@@ -138,10 +132,9 @@ const Table = ({ displayEntity = null , url, entities}) => {
         
       }
     }
-  , [selectValuesFilter])
+  , [selectValuesFilter, displayEntity, entities, filters, url])
 
   const handleSelectSearch = (selectedKeys, confirm, dataIndex, entity) => {
-    
     setSelectValuesFilter({selectedKeys, confirm, dataIndex, entity});
   }
 
@@ -180,11 +173,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
         </>
       )
     }
-  }
-
-  const handleSelectOnChange = (value) =>{
-    setSelectedOperator(value)
-  }
+  };
 
   const isBoolean = (field) => {
     if(field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean")
@@ -221,17 +210,16 @@ const Table = ({ displayEntity = null , url, entities}) => {
       return false;
   }
 
-  const getColumnSearchProps = (dataIndex, type) => ({
+  const getColumnSearchProps = useCallback((dataIndex, type) => ({
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
           <div>
             <Space style={{display:'flex', flexDirection:'row'}}>
-              <Select defaultValue="EQ" style={{ marginBottom: 8, display:'block', flex:1 }} onChange={handleSelectOnChange}>
+              <Select defaultValue="EQ" style={{ marginBottom: 8, display:'block', flex:1 }} onChange={setSelectedOperator}>
                 {getOptions(type)}
               </Select>
               
               {
-                
                 (type.type.kind !== "OBJECT")?
                   <>
                     {(isEnum(type) || isString(type)) && <Input
@@ -307,10 +295,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
       }
     },
     
-  });
-
-  
-
+  }), [handleSearch]);
 
   useEffect(() => {
     if (displayEntity) {
@@ -327,10 +312,8 @@ const Table = ({ displayEntity = null , url, entities}) => {
             return false;
           }
         }
-          
-         
-
       );
+
       const pasedColumns = filteredColumns.map((entity) => ({
         title: capitalize(entity.name),
         ...getColumnSearchProps(entity.type.kind === "OBJECT" && 
@@ -371,7 +354,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
         }
       });
     }
-  }, [displayEntity]);
+  }, [displayEntity, getColumnSearchProps, pagination, url]);
 
   useEffect(()=>{
       if (displayEntity) {
@@ -398,7 +381,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
         }
       });
     }
-  },[pagination, filters])
+  },[pagination, filters, displayEntity, url])
 
   const handleTableChange = (pagination, filters, sorter) => {
     
