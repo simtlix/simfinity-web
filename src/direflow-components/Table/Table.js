@@ -22,32 +22,8 @@ const Table = ({ displayEntity = null , url, entities}) => {
   const [filters, setFilters] = useState({});
   const searchInput = useRef(null);
   const [selectedOperator, setSelectedOperator] = useState("EQ");
-  const [selectValuesFilter, setSelectValuesFilter] = useState(undefined)
-  const [selectValues, _setSelectValues] = useState()
-
-  const selectValuesRef = useRef(selectValues)
-  const setSelectValues = values => {
-    selectValuesRef.current = values
-    _setSelectValues(values)
-  }
-
-  const handleSearch = useCallback((selectedKeys, confirm, dataIndex, entity) => {
-    confirm();
-
-    setFilters(previous => {
-      const newState = {...previous}
-      newState[entity.name] = { value: selectedKeys[0], 
-        key:dataIndex.indexOf(".")>0?dataIndex.split(".")[0]:dataIndex, 
-        field:dataIndex.indexOf(".")>0?dataIndex.split(".")[1]:undefined,
-        entity,
-        operator: selectedOperator
-      }
-      return newState;
-      }
-    )
-    console.log("handleSearch")
-  }, [selectedOperator]);
-
+  const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
+  const [selectValues, setSelectValues] = useState();
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
@@ -132,15 +108,11 @@ const Table = ({ displayEntity = null , url, entities}) => {
         
       }
     }
-  , [selectValuesFilter, displayEntity, entities, filters, url])
-
-  const handleSelectSearch = (selectedKeys, confirm, dataIndex, entity) => {
-    setSelectValuesFilter({selectedKeys, confirm, dataIndex, entity});
-  }
+  , [selectValuesFilter, displayEntity, entities, url])
 
   const handleReset = (clearFilters, entity) => {
     clearFilters();
-    selectValuesRef.current = undefined;
+    setSelectValues(undefined);
     setFilters(previous => {
       const newState = {...previous};
       delete newState[entity.name];
@@ -210,7 +182,27 @@ const Table = ({ displayEntity = null , url, entities}) => {
       return false;
   }
 
-  const getColumnSearchProps = useCallback((dataIndex, type) => ({
+  const getColumnSearchProps = useCallback((dataIndex, type) => {
+    const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
+      confirm();
+  
+      setFilters(previous => {
+        const newState = {...previous}
+        newState[entity.name] = { value: selectedKeys[0], 
+          key:dataIndex.indexOf(".")>0?dataIndex.split(".")[0]:dataIndex, 
+          field:dataIndex.indexOf(".")>0?dataIndex.split(".")[1]:undefined,
+          entity,
+          operator: selectedOperator
+        }
+        return newState;
+        }
+      )
+      console.log("handleSearch")
+    }
+
+    return {
+
+    
     filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
       <div style={{ padding: 8 }}>
           <div>
@@ -254,10 +246,10 @@ const Table = ({ displayEntity = null , url, entities}) => {
               defaultActiveFirstOption={false}
               showArrow={false}
               filterOption={false}
-              onSearch={value => {setSelectedKeys(value); handleSelectSearch(value, confirm, dataIndex, type)}}
-              onChange={value => {setSelectedKeys(value); handleSearch([value], confirm, dataIndex, type); selectValuesRef.current = undefined}}
+              onSearch={value => {setSelectedKeys(value);  setSelectedOperator("EQ"); setSelectValuesFilter({'selectedKeys':value, confirm, dataIndex, entity:type})}}
+              onChange={value => {setSelectedKeys(value); setSelectedOperator("EQ"); handleSearch([value], confirm, dataIndex, type);/*selectValuesRef.current = undefined*/}}
               notFoundContent={null}>
-                {selectValuesRef.current && getObjectFilterOptions(selectValuesRef.current)}
+                {selectValues && getObjectFilterOptions(selectValues)}
               </Select>
               }
              
@@ -291,73 +283,60 @@ const Table = ({ displayEntity = null , url, entities}) => {
       if (visible) {
         setTimeout(() => searchInput?.current?.select(), 100);
       } else {
-        selectValuesRef.current = undefined;
+        //selectValuesRef.current = undefined;
+        setSelectValues(undefined);
       }
     },
     
-  }), [handleSearch]);
+  }}, [ selectValues, selectedOperator]);
+
+
+  const createColumns = (displayEntity, getColumnSearchProps, isDate, setColumns) => {
+    const filteredColumns = displayEntity.fields.filter(
+      (entity) => {
+        if (entity.name !== "id" &&
+          entity.type.kind !== "LIST" &&
+          entity.type.kind !== "OBJECT") {
+          return true;
+        } else if (entity.type.kind === "OBJECT" &&
+          entity?.extensions?.relation?.displayField) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    );
+  
+    const pasedColumns = filteredColumns.map((entity) => ({
+      title: capitalize(entity.name),
+      ...getColumnSearchProps(entity.type.kind === "OBJECT" &&
+        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}` : entity.name, entity),
+      dataIndex: entity.name,
+      key: entity.type.kind === "OBJECT" &&
+        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}` : entity.name,
+      render: (text) => {
+        if (isDate(entity) && text) {
+          return new Date(text).toLocaleDateString();
+        } else {
+          return text;
+        }
+      }
+    }));
+    setColumns(pasedColumns);
+  }
+
+
+  useEffect(() => {
+      if (displayEntity) {
+        createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
+      
+    }
+  },[getColumnSearchProps]);
 
   useEffect(() => {
     if (displayEntity) {
-      const filteredColumns = displayEntity.fields.filter(
-        (entity) =>{
-          if(entity.name !== "id" &&
-              entity.type.kind !== "LIST" && 
-              entity.type.kind !== "OBJECT") {
-            return true;
-          } else if (entity.type.kind === "OBJECT" && 
-                      entity?.extensions?.relation?.displayField){
-            return true;
-          } else {
-            return false;
-          }
-        }
-      );
+      createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
 
-      const pasedColumns = filteredColumns.map((entity) => ({
-        title: capitalize(entity.name),
-        ...getColumnSearchProps(entity.type.kind === "OBJECT" && 
-        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name, entity),
-        dataIndex: entity.name,
-        key: entity.type.kind === "OBJECT" && 
-        entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}`: entity.name,
-        render: (text) => {
-          if(isDate(entity) && text){
-            return new Date(text).toLocaleDateString();
-          } else {
-            return text;
-          }
-        }  
-      }));
-      setColumns(pasedColumns);
-
-      requestEntity(displayEntity, url, pagination.current, pagination.pageSize).then((response) => {
-        console.log(response)
-        if (response && response.data) {
-          const parserResponse = response.data.data[displayEntity.queryAll].map(
-            (element) => {
-              const myObj = {};
-              for (const prop in element) {
-                if (typeof element[prop] === "object") {
-                  let _valueObject = Object.values(element[prop]);
-                  myObj[prop] = _valueObject[0];
-                } else {
-                  myObj[prop] = element[prop];
-                }
-              }
-              myObj.key = element.id;
-              return myObj;
-            }
-          );
-          setResultList(parserResponse);
-          setTotalCount(response.data.extensions.count);
-        }
-      });
-    }
-  }, [displayEntity, getColumnSearchProps, pagination, url]);
-
-  useEffect(()=>{
-      if (displayEntity) {
       requestEntity(displayEntity, url, pagination.current, pagination.pageSize, filters).then((response) => {
         console.log(response)
         if (response && response.data) {
@@ -381,16 +360,24 @@ const Table = ({ displayEntity = null , url, entities}) => {
         }
       });
     }
-  },[pagination, filters, displayEntity, url])
+  }, [displayEntity, pagination, filters, url]);
+
+  
 
   const handleTableChange = (pagination, filters, sorter) => {
     
     setPagination(paginationPrevious => {
-      return { 
-      ...paginationPrevious,
-      current: pagination.current,
-      pageSize: pagination.pageSize, 
+      if(pagination.current !== paginationPrevious.current && pagination.pageSize !== paginationPrevious.pageSize){
+        return { 
+          ...paginationPrevious,
+          current: pagination.current,
+          pageSize: pagination.pageSize, 
+          }
+      } else {
+        return paginationPrevious;
       }
+
+      
     }
 );
   };
@@ -414,4 +401,9 @@ Table.propTypes = {
   }),
 };
 
+
+
 export default Table;
+
+
+
