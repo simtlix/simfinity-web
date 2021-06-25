@@ -14,6 +14,7 @@ const App = ({ url }) => {
   const popupRef = useRef();
   const [collapsed, setCollapsed] = useState(false);
   const [entities, setEntities] = useState([]);
+  const [allEntities, setAllEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
   const [selectedKey, setSelectedKey] = useState("0");
@@ -25,6 +26,7 @@ const App = ({ url }) => {
           (entity) => entity?.queryAll
         );
         setEntities(filterEmbeddedEntity);
+        setAllEntities(entities);
       }
     });
   }, [url]);
@@ -67,7 +69,7 @@ const App = ({ url }) => {
                 <Title level={2} style={{ textAlign: "center" }}>
                   {resultTitle}
                 </Title>
-                <Table displayEntity={currentEntity} url={url} key={currentEntity?.name} entities={entities}/>
+                <Table displayEntity={currentEntity} url={url} key={currentEntity?.name} entities={allEntities}/>
               </Content>
               <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
               <div ref={popupRef}></div>

@@ -24,6 +24,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
   const [selectedOperator, setSelectedOperator] = useState("EQ");
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
   const [selectValues, setSelectValues] = useState();
+  const [sort, setSort] = useState();
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
@@ -36,16 +37,35 @@ const Table = ({ displayEntity = null , url, entities}) => {
           const fieldName = dataIndex.split(".")[1];
           let current;
 
+          entities.forEach(async item => {
+            if(item.name === entity.type.name){
+              current = item;
+            }
+          });
+
+          let currentField;
+          current.fields.forEach(field => {
+            if(field.name === fieldName)
+            {
+              currentField = field;
+            }
+          });
+
           if(entity.extensions?.relation?.embedded){            
             selectFilters = {...filters}
             selectFilters[propName] = {
               value: selectedKeys,
               key: propName,
               field: fieldName,
-              operator: "LIKE",
+              operator: isString(currentField)?"LIKE":"EQ",
               entity:{
                 type:{
                   kind:"OBJECT"
+                },
+                extensions:{
+                  relation:{
+                    displayFieldScalarType: isString(currentField)?"String":isNumber(currentField)?"Int":isBoolean(currentField)?"Boolean":"DateTime",
+                  }
                 }
               }
             }
@@ -53,32 +73,30 @@ const Table = ({ displayEntity = null , url, entities}) => {
             selectFilters[fieldName] = {
               value: selectedKeys,
               key: fieldName,
-              operator: "LIKE",
+              operator: isString(currentField)?"LIKE":"EQ",
               entity:{
                 type:{
-                  name:"String",
+                  name:isString(currentField)?"String":isNumber(currentField)?"Int":isBoolean(currentField)?"Boolean":"DateTime",
                   kind:"SCALAR"
                 }
               }
             }
             
-            entities.forEach(async item => {
-              if(item.name === entity.type.name){
-                current = item;
-              }
-            });
-            let relationField;
-            current.fields.forEach(field => {
-              if(field?.extensions?.relation?.connectionField === entity?.extensions?.relation?.connectionField)
-              {
-                relationField = field;
-              }
-            })
+            if(Object.keys(filters).length > 0){
+              let relationField;
+              current.fields.forEach(field => {
+                if(field?.extensions?.relation?.connectionField === entity?.extensions?.relation?.connectionField)
+                {
+                  relationField = field;
+                }
+              })
 
-            selectFilters[relationField.name] = {
-              terms:filters,
-              key: relationField.name
+              selectFilters[relationField.name] = {
+                terms:filters,
+                key: relationField.name
+              }
             }
+            
           }
 
           let response = await requestEntity(entity.extensions?.relation?.embedded?displayEntity:current, url, 1, 10, selectFilters)
@@ -185,18 +203,62 @@ const Table = ({ displayEntity = null , url, entities}) => {
   const getColumnSearchProps = useCallback((dataIndex, type) => {
     const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
       confirm();
-  
-      setFilters(previous => {
-        const newState = {...previous}
-        newState[entity.name] = { value: selectedKeys[0], 
-          key:dataIndex.indexOf(".")>0?dataIndex.split(".")[0]:dataIndex, 
-          field:dataIndex.indexOf(".")>0?dataIndex.split(".")[1]:undefined,
-          entity,
-          operator: selectedOperator
-        }
-        return newState;
-        }
-      )
+      if(entity.type.kind !== "OBJECT"){
+        setFilters(previous => {
+          const newState = {...previous}
+          newState[entity.name] = { value: selectedKeys[0], 
+            key:dataIndex.indexOf(".")>0?dataIndex.split(".")[0]:dataIndex, 
+            field:dataIndex.indexOf(".")>0?dataIndex.split(".")[1]:undefined,
+            entity,
+            operator: selectedOperator
+          }
+          return newState;
+          }
+        )
+      } else {
+        let current;
+        const propName = dataIndex.split(".")[0];
+        const fieldName = dataIndex.split(".")[1];
+
+        entities.forEach(async item => {
+          if(item.name === entity.type.name){
+            current = item;
+          }
+        });
+
+        let currentField;
+        current.fields.forEach(field => {
+          if(field.name === fieldName)
+          {
+            currentField = field;
+          }
+        });
+        const filter = {
+          value: selectedKeys,
+          key:propName, 
+          field:fieldName,
+          operator: selectedOperator,
+          entity:{
+            type:{
+              kind:"OBJECT"
+            },
+            extensions:{
+              relation:{
+                displayFieldScalarType: isString(currentField)?"String":isNumber(currentField)?"Int":isBoolean(currentField)?"Boolean":"DateTime",
+              }
+            }
+          }
+        };
+
+        setFilters(previous => {
+          const newState = {...previous}
+          newState[entity.name] = filter;
+          return newState;
+          }
+        )
+        
+      }
+      
       console.log("handleSearch")
     }
 
@@ -312,6 +374,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
       ...getColumnSearchProps(entity.type.kind === "OBJECT" &&
         entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}` : entity.name, entity),
       dataIndex: entity.name,
+      sorter: true,
       key: entity.type.kind === "OBJECT" &&
         entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}` : entity.name,
       render: (text) => {
@@ -337,7 +400,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
     if (displayEntity) {
       createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
 
-      requestEntity(displayEntity, url, pagination.current, pagination.pageSize, filters).then((response) => {
+      requestEntity(displayEntity, url, pagination.current, pagination.pageSize, filters, sort).then((response) => {
         console.log(response)
         if (response && response.data) {
           const parserResponse = response.data.data[displayEntity.queryAll].map(
@@ -360,26 +423,38 @@ const Table = ({ displayEntity = null , url, entities}) => {
         }
       });
     }
-  }, [displayEntity, pagination, filters, url]);
+  }, [displayEntity, pagination, filters, url, sort]);
 
   
 
   const handleTableChange = (pagination, filters, sorter) => {
     
     setPagination(paginationPrevious => {
-      if(pagination.current !== paginationPrevious.current && pagination.pageSize !== paginationPrevious.pageSize){
-        return { 
-          ...paginationPrevious,
-          current: pagination.current,
-          pageSize: pagination.pageSize, 
-          }
-      } else {
-        return paginationPrevious;
+        if(pagination.current !== paginationPrevious.current || pagination.pageSize !== paginationPrevious.pageSize){
+          return { 
+            ...paginationPrevious,
+            current: pagination.current,
+            pageSize: pagination.pageSize, 
+            }
+        } else {
+          return paginationPrevious;
+        }
       }
-
-      
+    );
+    
+    if(sorter){
+      setSort(sortPrevious =>{
+          const order = sorter.order === "descend"?"DESC":(sorter.order === "ascend"?"ASC":null)
+          if(sortPrevious?.field !== sorter.columnKey ||  sortPrevious?.order !== order) {
+           return order? {field: sorter.columnKey, order:order}:null; 
+          } else {
+            return sortPrevious;
+          }
+        }
+      )
     }
-);
+    
+
   };
 
   return (
