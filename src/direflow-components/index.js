@@ -1,9 +1,9 @@
 import { DireflowComponent } from "direflow-component";
-import App from "./App";
+import Wrapper from "./Wrapper";
 
 
 export default DireflowComponent.create({
-  component: App,
+  component: Wrapper,
   configuration: {
     tagname: "simfinity-web",
   },

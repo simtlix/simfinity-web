@@ -4,10 +4,15 @@ import PropTypes from "prop-types";
 import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
+import {FormattedMessage, useIntl} from 'react-intl';
+
 const { Option } = Select;
 
 
+
 const Table = ({ displayEntity = null , url, entities}) => {
+  
+  const intl = useIntl();
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
   const [pagination, setPagination] = useState({ current: 1,
@@ -16,7 +21,9 @@ const Table = ({ displayEntity = null , url, entities}) => {
     pageSizeOptions: ["10","20", "25", "30"], 
     showSizeChanger: true,
     showQuickJumper: true,
-    showTotal: total => `Total ${total} items`
+    showTotal: total => { return intl.formatMessage({id:"table.total", defaultMessage:"Total {total} items" } ,{total})
+      
+    }
   });
   const [totalCount, setTotalCount] = useState(0);
   const [filters, setFilters] = useState({});
@@ -25,6 +32,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
   const [selectValues, setSelectValues] = useState();
   const [sort, setSort] = useState();
+  
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
@@ -100,7 +108,6 @@ const Table = ({ displayEntity = null , url, entities}) => {
           }
 
           let response = await requestEntity(entity.extensions?.relation?.embedded?displayEntity:current, url, 1, 10, selectFilters)
-          console.log(response)
           if (response && response.data) {
             const parserResponse = [];
             
@@ -258,9 +265,17 @@ const Table = ({ displayEntity = null , url, entities}) => {
         )
         
       }
-      
-      console.log("handleSearch")
     }
+
+    const placeholder = intl.formatMessage({
+      id: `table.search`,
+      defaultMessage: `Search ${intl.formatMessage({
+        id: `entity.${displayEntity.name}.fields.${type.name}`,
+        defaultMessage: `${type.name}`
+      })}`
+    },
+      { field: intl.formatMessage({ id: `entity.${displayEntity.name}.fields.${type.name}`, defaultMessage: `${type.name}` }) }
+    );
 
     return {
 
@@ -278,7 +293,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
                   <>
                     {(isEnum(type) || isString(type)) && <Input
                     ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={placeholder}                    
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
@@ -286,7 +301,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
                     />}
                     {isNumber(type) && <InputNumber
                     ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
+                    placeholder={placeholder}
                     value={selectedKeys[0]}
                     onChange={e => setSelectedKeys(e ? [e] : [])}
                     onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
@@ -304,7 +319,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
               <Select style={{width:200, marginBottom: 8, display:'block', flex:2}} 
               showSearch
               value={selectedKeys}
-              placeholder={`Search ${dataIndex}`}
+              placeholder={placeholder}              
               defaultActiveFirstOption={false}
               showArrow={false}
               filterOption={false}
@@ -325,17 +340,17 @@ const Table = ({ displayEntity = null , url, entities}) => {
             size="small"
             style={{ width: 90 }}
           >
-            Search
+            <FormattedMessage id="table.filter.search" defaultMessage="Search"></FormattedMessage>
           </Button>
           <Button onClick={() => handleReset(clearFilters, type)} size="small" style={{ width: 90 }}>
-            Reset
+            <FormattedMessage id="table.filter.reset" defaultMessage="Reset"></FormattedMessage>
           </Button>
           <Button
             type="link"
             size="small"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex, type)}
           >
-            Filter
+            <FormattedMessage id="table.filter.filter" defaultMessage="Filter"></FormattedMessage>
           </Button>
         </Space>
       </div>
@@ -345,7 +360,6 @@ const Table = ({ displayEntity = null , url, entities}) => {
       if (visible) {
         setTimeout(() => searchInput?.current?.select(), 100);
       } else {
-        //selectValuesRef.current = undefined;
         setSelectValues(undefined);
       }
     },
@@ -370,7 +384,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
     );
   
     const pasedColumns = filteredColumns.map((entity) => ({
-      title: capitalize(entity.name),
+      title: intl.formatMessage({ id:`entity.${displayEntity.name}.fields.${entity.name}`, defaultMessage:capitalize(entity.name)}),
       ...getColumnSearchProps(entity.type.kind === "OBJECT" &&
         entity?.extensions?.relation?.displayField ? `${entity.name}.${entity.extensions.relation.displayField}` : entity.name, entity),
       dataIndex: entity.name,
