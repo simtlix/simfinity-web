@@ -1,21 +1,17 @@
 import React, { useContext } from "react";
-import { EntitiesContext } from "../App";
+import { EntitiesContext } from "../entities-context";
 import { Form as FormAntd, Col } from "antd";
+import {getFormItems} from "./utils"
 
-export const EmbeddedForm = ({ field, index, register }) => {
+export const EmbeddedForm = ({ field, index }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
 
   const entityEmbedded = entitiesContext.filter((e) => e.name === field.name);
-  const _html = entityEmbedded[0]?.fields.map((field, index) => {
-    return (
-      <FormAntd.Item
-        key={index}
-        label={(nameField + " " + field.name).toUpperCase()}
-      >
-        <input {...register(nameField + "." + field.name)} />
-      </FormAntd.Item>
-    );
-  });
-  return <Col key={index}>{_html}</Col>;
+  const filteredFields = entityEmbedded[0].fields.filter(
+    (field) => field.name !== "id" && field.type.kind !== "LIST"
+  );
+  const renderFormFields = getFormItems(filteredFields, nameField);
+  
+  return <Col >{renderFormFields}</Col>;
 };
