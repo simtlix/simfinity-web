@@ -5,6 +5,9 @@ import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
 import styles from "./App.css";
+import {FormattedMessage, useIntl} from 'react-intl';
+
+
 
 const { Title, Paragraph } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -14,9 +17,12 @@ const App = ({ url }) => {
   const popupRef = useRef();
   const [collapsed, setCollapsed] = useState(false);
   const [entities, setEntities] = useState([]);
+  const [allEntities, setAllEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
   const [resultTitle, setResultTitle] = useState("");
   const [selectedKey, setSelectedKey] = useState("0");
+  const intl = useIntl();
+
 
   useEffect(() => {
     requestEntities(url).then((entities) => {
@@ -25,13 +31,14 @@ const App = ({ url }) => {
           (entity) => entity?.queryAll
         );
         setEntities(filterEmbeddedEntity);
+        setAllEntities(entities);
       }
     });
   }, [url]);
 
   const handleClick = (entity, ind) => {
     setCurrentEntity(entity);
-    setResultTitle(`Resultados de ${entity.name}`);
+    setResultTitle(intl.formatMessage({ id:`entity.${entity.name}.plural`, defaultMessage:`Resultados de ${entity.name}`}));
     setSelectedKey(ind.toString());
   };
   const renderEntities = entities.map((entity, index) => (
@@ -43,7 +50,8 @@ const App = ({ url }) => {
           fontWeight: "bold",
         }}
       >
-        {entity.name}
+        <FormattedMessage id={`entity.${entity.name}.plural`} defaultMessage={entity.name}></FormattedMessage>
+        
       </Paragraph>
     </Menu.Item>
   ));
@@ -53,27 +61,27 @@ const App = ({ url }) => {
   };
   return (
     <EntitiesContext.Provider value={entities}>
-      <ConfigProvider getPopupContainer={() => popupRef.current }>
-        <Styled styles={styles}>
-          <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
-            <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-              <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
-                {renderEntities}
-              </Menu>
-            </Sider>
-            <Layout className="site-layout">
-              <Header className="site-layout-background" style={{ padding: 0 }} />
-              <Content style={{ margin: "0 16px" }}>
-                <Title level={2} style={{ textAlign: "center" }}>
-                  {resultTitle}
-                </Title>
-                <Table displayEntity={currentEntity} url={url}/>
-              </Content>
-              <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
-              <div ref={popupRef}></div>
+      <ConfigProvider getPopupContainer={() => popupRef.current } locale="en">
+          <Styled styles={styles}>
+            <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+              <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+                  {renderEntities}
+                </Menu>
+              </Sider>
+              <Layout className="site-layout">
+                <Header className="site-layout-background" style={{ padding: 0 }} />
+                <Content style={{ margin: "0 16px" }}>
+                  <Title level={2} style={{ textAlign: "center" }}>
+                    {resultTitle}
+                  </Title>
+                  <Table displayEntity={currentEntity} url={url} key={currentEntity?.name} entities={allEntities}/>
+                </Content>
+                <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+                <div ref={popupRef}></div>
+              </Layout>
             </Layout>
-          </Layout>
-        </Styled>
+          </Styled>
       </ConfigProvider>
     </EntitiesContext.Provider>
   );
