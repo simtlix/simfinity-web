@@ -30,6 +30,8 @@ const App = ({ url }) => {
   useEffect(() => {
     requestEntities(url).then((entities) => {
       if (entities) {
+        //console.log(entities);
+        setAllEntities(entities);
         const filterEmbeddedEntity = entities.filter(
           (entity) => entity?.queryAll
         );
