@@ -99,9 +99,9 @@ const App = ({ url }) => {
 
                   <div>
                     {showForm ? (
-                      currentEntity && <Form displayEntity={currentEntity} url={url}/>
+                      currentEntity && <Form displayEntity={currentEntity} key={currentEntity.name} url={url}/>
                     ) : (
-                      currentEntity && <Table displayEntity={currentEntity} url={url} entities={allEntities}/>
+                      currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}/>
                     )}
                   </div>
                 </Content>

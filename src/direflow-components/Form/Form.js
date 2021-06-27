@@ -1,5 +1,5 @@
 import React, {useContext } from "react";
-import { Form as FormAntd, Button, Input, Select, Row, Col, DatePicker, InputNumber} from "antd";
+import { Form as FormAntd, Button, Row, Col} from "antd";
 import { requestAddNewEntity, getFormItems } from "./utils";
 import { ConfigContext } from "../config-context";
 
@@ -11,22 +11,14 @@ const layout = {
     span: 16,
   },
 };
-const tailLayout = {
-  wrapperCol: {
-    offset: 8,
-    span: 16,
-  },
-};
 
-const { Option } = Select;
+
 
 const Form = ({ displayEntity = null }) => {
 
   const [form] = FormAntd.useForm();
   const configContext = useContext(ConfigContext);
   const url = configContext.url;
-
-
  
   if(!displayEntity){
     return;
@@ -44,14 +36,14 @@ const Form = ({ displayEntity = null }) => {
   }
   
 
-  const renderFormFields = getFormItems(filteredFields);
+  const renderFormFields = getFormItems(filteredFields,undefined,form);
 
   return (
     
 
     <Row>
       <Col>
-        <FormAntd {...layout} form={form} name="control-hooks" onFinish={onSubmit}>
+        <FormAntd {...layout} form={form} /*initialValues={{number:1, year:2020, serie:{id:"60d26e1867bf88326fd0ad31"}}}*/ name="control-hooks" onFinish={onSubmit}>
          {renderFormFields}
           {displayEntity != null ? (
             <FormAntd.Item>

@@ -3,7 +3,7 @@ import { EntitiesContext } from "../entities-context";
 import { Form as FormAntd, Col } from "antd";
 import {getFormItems} from "./utils"
 
-export const EmbeddedForm = ({ field, index }) => {
+export const EmbeddedForm = ({ field, index, form }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
 
@@ -11,7 +11,7 @@ export const EmbeddedForm = ({ field, index }) => {
   const filteredFields = entityEmbedded[0].fields.filter(
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   );
-  const renderFormFields = getFormItems(filteredFields, nameField);
+  const renderFormFields = getFormItems(filteredFields, nameField, form);
   
   return <Col >{renderFormFields}</Col>;
 };
