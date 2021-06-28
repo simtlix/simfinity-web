@@ -1,11 +1,12 @@
 import React, { useEffect, useState, useContext } from "react";
+import { Controller } from "react-hook-form";
 import { EntitiesContext } from "../App";
 import { Form as FormAntd, Select } from "antd";
 import { requestEntity } from "../Table/utils";
 
 const { Option } = Select;
 
-export const SelectEntities = ({ field, register }) => {
+export const SelectEntities = ({ field, control }) => {
   const displayField = field?.extensions?.relation?.displayField;
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
@@ -19,20 +20,24 @@ export const SelectEntities = ({ field, register }) => {
         setResponseEntity(response[selectEntity.queryAll]);
       }
     });
-  }, [entitiesContext]);
+  }, [field]);
 
-  const renderSelect = responseEntity?.map((field) => {
+  const renderOptions = responseEntity?.map((field) => {
     return (
-      <option key={field.id} value={field.id}>
+      <Option key={field.id} value={field.id}>
         {field[displayField]}
-      </option>
+      </Option>
     );
   });
 
   // siempre se va a mandar el id como field en este tipo de conexion ?
   return (
     <FormAntd.Item label={nameField.toUpperCase()}>
-      <select {...register(nameField + "." + "id")}>{renderSelect}</select>
+      <Controller
+        control={control}
+        name={nameField + "." + "id"}
+        render={({ field }) => <Select {...field}>{renderOptions}</Select>}
+      />
     </FormAntd.Item>
   );
 };

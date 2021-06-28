@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Form as FormAntd, Button, Input, Select, Row, Col } from "antd";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { requestAddNewEntity } from "./utils";
 import { SelectEntities } from "./SelectEntities";
 import { EmbeddedForm } from "./EmbeddedForm";
@@ -9,11 +9,9 @@ import { convertDate } from "../../utils/date_formatter";
 const { Option } = Select;
 
 const Form = ({ displayEntity = null }) => {
-  const { register, handleSubmit, watch, reset } = useForm();
+  const { handleSubmit, watch, reset, control } = useForm();
 
   const [filteredFieldsList, setFilteredFieldsList] = useState([]);
-
-  //const entitiesContext = useContext(EntitiesContext);
 
   const onSubmit = (data) => {
     console.log(data);
@@ -40,24 +38,31 @@ const Form = ({ displayEntity = null }) => {
       return null;
     } else if (
       field?.type?.kind === "OBJECT" &&
-      field?.extensions?.relation?.embedded == null
+      (field?.extensions?.relation?.embedded == null ||
+        field?.extensions?.relation?.connectionField != null)
     ) {
-      return <SelectEntities key={index} field={field} register={register} />;
+      return <SelectEntities key={index} field={field} control={control} />;
     } else if (
       field?.type?.kind === "ENUM" /*&&
       !field?.extensions?.stateMachine*/
     ) {
       return (
         <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-          <select {...register(nameField)}>
-            {field?.enumValues.map((field) => {
-              return (
-                <option key={field.name} value={field.name}>
-                  {field.name}
-                </option>
-              );
-            })}
-          </select>
+          <Controller
+            control={control}
+            name={nameField}
+            render={({ fieldController }) => (
+              <Select {...fieldController} defaultValue="">
+                {field?.enumValues.map((field) => {
+                  return (
+                    <Option key={field.name} value={field.name}>
+                      {field.name}
+                    </Option>
+                  );
+                })}
+              </Select>
+            )}
+          />
         </FormAntd.Item>
       );
     } else if (
@@ -83,44 +88,56 @@ const Form = ({ displayEntity = null }) => {
           key={index}
           field={field}
           index={index}
-          register={register}
+          control={control}
         />
       );
     } else {
       if (field?.type?.name === "Int") {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <input
-              type="number"
-              {...register(nameField, {
-                valueAsNumber: true,
-              })}
+            <Controller
+              name={nameField}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="number"
+                  onChange={(e) => field.onChange(parseInt(e.target.value))}
+                />
+              )}
             />
           </FormAntd.Item>
         );
       } else if (field?.type?.name === "Date") {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <input
-              type="date"
-              {...register(nameField, {
-                setValueAs: (v) => convertDate(v),
-              })}
+            <Controller
+              name={nameField}
+              control={control}
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  type="date"
+                  onChange={(e) => field.onChange(convertDate(e.target.value))}
+                />
+              )}
             />
           </FormAntd.Item>
         );
-      } else if (
+      } /*else if (
         field?.type?.kind === "OBJECT" &&
         field?.extensions?.relation?.connectionField != null
       ) {
-        return <SelectEntities key={index} field={field} register={register} />;
-      } else {
+        return <SelectEntities key={index} field={field} control={control} />;
+      }*/ else {
         return (
           <FormAntd.Item key={index} label={nameField.toUpperCase()}>
-            <Input
-              {...register(nameField, {
-                required: field?.type?.kind === "NON_NULL",
-              })}
+            <Controller
+              name={nameField}
+              control={control}
+              defaultValue=""
+              rules={{ required: field?.type?.kind === "NON_NULL" }}
+              render={({ field }) => <Input {...field} />}
             />
           </FormAntd.Item>
         );
