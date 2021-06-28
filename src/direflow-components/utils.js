@@ -5,6 +5,7 @@ const excludedTypes = [
   '__Type' , '__Field', '__InputValue', '__EnumValue', '__Directive'];
 const objectKind = 'OBJECT';
 const listKind = 'LIST';
+const enumKind = 'ENUM';
 
 export const requestEntities = async (url) => {
   try {
@@ -18,6 +19,7 @@ export const requestEntities = async (url) => {
                     name
                     description
                     extensions {
+                      stateMachine
                       relation {
                         embedded
                         connectionField
@@ -32,6 +34,10 @@ export const requestEntities = async (url) => {
                         name
                       }
                     }
+                  }
+                  enumValues { 
+                    name 
+                    description
                   }
                 }
               }
@@ -54,6 +60,7 @@ export const requestEntities = async (url) => {
     if (types) {
       let filteredTypes = types.filter(type => type.kind === objectKind && excludedTypes.indexOf(type.name) === -1);
 
+      //Add queryAll field
       for (const queryType of rootQueryTypes) {
         const typeName = queryType.type.ofType.name;
         const queryAllName = queryType.name;
@@ -66,6 +73,7 @@ export const requestEntities = async (url) => {
         })
       }
 
+      //Add mutations field
       for (const mutation of mutations) {
         const typeName = mutation.type.name;
 
@@ -75,6 +83,17 @@ export const requestEntities = async (url) => {
           }
           return type;
         })
+      }
+
+      //Add enum values
+      for (const type of filteredTypes) {
+        for (const field of type.fields) {
+          if (field.type.kind === enumKind) {
+            const enumType = types.find(t => t.kind === enumKind && t.name === field.type.name);
+            field.enumValues = enumType.enumValues;
+          }
+        }
+        delete type.enumValues;
       }
 
       return filteredTypes;
