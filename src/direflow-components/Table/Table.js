@@ -38,6 +38,7 @@ const Table = ({ displayEntity = null , url, entities}) => {
 
 
   useEffect(() => {
+
     if (displayEntity && selectValuesFilter) {
         const {selectedKeys, dataIndex, entity} = selectValuesFilter;
 
@@ -414,6 +415,31 @@ const Table = ({ displayEntity = null , url, entities}) => {
   },[getColumnSearchProps]);
 
   useEffect(() => {
+    const refreshTable = () => {
+
+      requestEntity(displayEntity).then((response) => {
+        if (response) {
+          const parserResponse = response[displayEntity.queryAll].map(
+            (element) => {
+              const myObj = {};
+              for (const prop in element) {
+                if (typeof element[prop] === "object") {
+                  let _valueObject = Object.values(element[prop]);
+                  myObj[prop] = _valueObject[0];
+                } else {
+                  myObj[prop] = element[prop];
+                }
+              }
+              myObj.key = element.id;
+              return myObj;
+            }
+          );
+          setResultList(parserResponse);
+        }
+      });
+  
+    };
+
     if (displayEntity) {
       createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
 
