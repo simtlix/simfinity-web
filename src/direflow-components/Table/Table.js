@@ -5,7 +5,7 @@ import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
 import {FormattedMessage, useIntl} from 'react-intl';
-import DeleteButton from './BeleteButton/DeleteButton';
+import DeleteButton from './DeleteButton/DeleteButton';
 
 const { Option } = Select;
 
