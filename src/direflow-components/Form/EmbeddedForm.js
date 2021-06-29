@@ -1,7 +1,8 @@
 import React, { useContext } from "react";
 import { EntitiesContext } from "../entities-context";
-import { Form as FormAntd, Col } from "antd";
+import { Col, Row, Divider, Card } from "antd";
 import {getFormItems} from "./utils"
+import 'antd/dist/antd.css';
 
 export const EmbeddedForm = ({ field, index, form }) => {
   const nameField = field?.name != null ? field.name : "";
@@ -13,5 +14,12 @@ export const EmbeddedForm = ({ field, index, form }) => {
   );
   const renderFormFields = getFormItems(filteredFields, nameField, form);
   
-  return <Col >{renderFormFields}</Col>;
+  return (<Row>
+               <Col >
+                <Card size="small" title={field.name} >
+                  {renderFormFields}
+                </Card>
+               </Col>
+          </Row>
+          );
 };

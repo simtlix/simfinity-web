@@ -2,6 +2,7 @@ import React, {useContext } from "react";
 import { Form as FormAntd, Button, Row, Col} from "antd";
 import { requestAddNewEntity, getFormItems } from "./utils";
 import { ConfigContext } from "../config-context";
+import 'antd/dist/antd.css';
 
 const layout = {
   labelCol: {

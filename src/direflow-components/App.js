@@ -9,7 +9,7 @@ import styles from "./App.css";
 import {FormattedMessage, useIntl} from 'react-intl';
 import { EntitiesContext } from "./entities-context";
 import { ConfigContext } from "./config-context";
-
+import 'antd/dist/antd.css';
 
 
 const { Title, Paragraph } = Typography;

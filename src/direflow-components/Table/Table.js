@@ -5,6 +5,7 @@ import { requestEntity } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
 import {FormattedMessage, useIntl} from 'react-intl';
+import 'antd/dist/antd.css';
 
 const { Option } = Select;
 

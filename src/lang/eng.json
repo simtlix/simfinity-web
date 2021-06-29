@@ -3,6 +3,12 @@
     "entity.season.plural" : "Seasons",
     "entity.season.fields.serie": "Serie",
     "entity.season.fields.number": "Number",
+    
+    "entity.serie.simple" : "Serie",
+    "entity.serie.plural" : "Series",
+    "entity.serie.fields.name": "Name",
+    
+    
     "table.search":"Search {field}",
     "table.filter.search": "Sarch",
     "table.filter.reset": "Reset",
