@@ -10,6 +10,7 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import { EntitiesContext } from "./entities-context";
 import { ConfigContext } from "./config-context";
 import 'antd/dist/antd.css';
+import FormContainer from "./Form/FormContainer";
 
 
 const { Title, Paragraph } = Typography;
@@ -99,7 +100,7 @@ const App = ({ url }) => {
 
                   <div>
                     {showForm ? (
-                      currentEntity && <Form displayEntity={currentEntity} key={currentEntity.name} url={url}/>
+                      currentEntity && <FormContainer displayEntity={currentEntity} key={currentEntity.name} url={url} onSuccess={()=>setShowForm(false)}/>
                     ) : (
                       currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}/>
                     )}

@@ -15,7 +15,7 @@ const layout = {
 
 
 
-const Form = ({ displayEntity = null }) => {
+const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, initialValues }) => {
 
   const [form] = FormAntd.useForm();
   const configContext = useContext(ConfigContext);
@@ -29,22 +29,17 @@ const Form = ({ displayEntity = null }) => {
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   )
 
-  const onSubmit = (data) => {
-    console.log(data);
-    requestAddNewEntity(displayEntity, data, url).then((response) => {
-      console.log(response);
-    });
-  }
   
 
-  const renderFormFields = getFormItems(filteredFields,undefined,form);
+  const renderFormFields = getFormItems(filteredFields,undefined,form, openForResultHandler);
 
   return (
     
 
-    <Row>
-      <Col>
-        <FormAntd {...layout} form={form} /*initialValues={{number:1, year:2020, serie:{id:"60d26e1867bf88326fd0ad31"}}}*/ name="control-hooks" onFinish={onSubmit}>
+
+    <Row style={{display: visible?"":"none"}}>
+      <Col span={24}>
+        <FormAntd {...layout} form={form} initialValues={initialValues} name={name} >
          {renderFormFields}
           {displayEntity != null ? (
             <FormAntd.Item>

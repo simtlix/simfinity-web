@@ -1,12 +1,14 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, { useEffect, useState, useContext, useCallback, useRef } from "react";
 import { EntitiesContext } from "../entities-context";
-import { Form as FormAntd, Select } from "antd";
+import { Form as FormAntd, Select, Button, Tooltip, Space } from "antd";
 import { requestEntity } from "../Table/utils";
 import { ConfigContext } from "../config-context";
 import { isString, isNumber, isBoolean } from "./utils";
+import { PlusOutlined } from '@ant-design/icons';
+
 
 const { Option } = Select;
-export const SelectEntities = ({ field, name, form }) => {
+export const SelectEntities = ({ field, name, form, openForResult }) => {
   const displayField = field?.extensions?.relation?.displayField;
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
@@ -14,9 +16,19 @@ export const SelectEntities = ({ field, name, form }) => {
   const url = configContext.url;
   const [responseEntity, setResponseEntity] = useState([]);
   const [selectValues, setSelectValues] = useState(undefined);
+  const currentEntity = useRef();
   const fixedName = [name,"id"];
-  const initialValue = form.getFieldValue(fixedName);
+  const [initialValue, setInitialVaule] = useState(form.getFieldValue(fixedName));
 
+  let current;
+
+  entitiesContext.forEach(async item => {
+    if(item.name === field.type.name){
+      current = item;
+    }
+  });
+
+  currentEntity.current = current;
 
   useEffect(() => {
     if(initialValue){
@@ -26,13 +38,13 @@ export const SelectEntities = ({ field, name, form }) => {
       
         let current;
 
-        const descriptionField = field.extensions?.relation?.displayField;
-
         entitiesContext.forEach(async item => {
           if(item.name === field.type.name){
             current = item;
           }
         });
+
+        currentEntity.current = current;
 
         selectFilters["id"] = {
           value: initialValue,
@@ -74,6 +86,8 @@ export const SelectEntities = ({ field, name, form }) => {
               current = item;
             }
           });
+
+          currentEntity.current = current;
 
           let currentField;
           current.fields.forEach(item => {
@@ -123,20 +137,33 @@ export const SelectEntities = ({ field, name, form }) => {
   
 
   const element = useCallback(()=>{
+
+    const onPlusButtonClick = () => {
+      openForResult(form, fixedName, currentEntity.current, setInitialVaule);
+    }
+
     return (
-      <FormAntd.Item name={fixedName} label={nameField.toUpperCase()}  >
-  
-        <Select showSearch          
+      <FormAntd.Item name={fixedName} label={nameField.toUpperCase()}  initialValue={initialValue}>
+        <Space>
+          <Select showSearch          
                 defaultActiveFirstOption={false}
                 showArrow={false}
                 filterOption={false}
                 onSearch={value => setSelectValues(value)}
-                notFoundContent={null}>
-                  {renderSelect()}
-                </Select>
+                notFoundContent={null}
+                value={initialValue}
+                style={{ display: 'inline-block', width:"200px"}}
+                >
+            {renderSelect()}
+          </Select>
+          <Tooltip title="Create">
+            <Button type="primary" shape="circle" onClick={onPlusButtonClick} style={{ display: 'inline-block' }}
+              icon={<PlusOutlined />} />
+          </Tooltip>
+        </Space>
       </FormAntd.Item>
     );
-  },[responseEntity]);
+  },[responseEntity, initialValue]);
 
   return element();
 };

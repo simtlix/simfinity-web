@@ -4,7 +4,7 @@ import { Col, Row, Divider, Card } from "antd";
 import {getFormItems} from "./utils"
 import 'antd/dist/antd.css';
 
-export const EmbeddedForm = ({ field, index, form }) => {
+export const EmbeddedForm = ({ field, index, form, openForResult }) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
 
@@ -12,7 +12,7 @@ export const EmbeddedForm = ({ field, index, form }) => {
   const filteredFields = entityEmbedded[0].fields.filter(
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   );
-  const renderFormFields = getFormItems(filteredFields, nameField, form);
+  const renderFormFields = getFormItems(filteredFields, nameField, form, openForResult);
   
   return (<Row>
                <Col >

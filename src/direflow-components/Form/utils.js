@@ -74,9 +74,9 @@ export const isEnum = (field) => {
     return false;
 }
 
-export const getFormItems = (fields, parentFieldName, form) =>{
+export const getFormItems = (fields, parentFieldName, form, openForResult) =>{
   const renderFormFields = fields.map((field) => {
-    const fieldName = parentFieldName? [parentFieldName, field.name] : [field.name];
+    const fieldName = parentFieldName? [parentFieldName, field.name] : field.name;
     const nameField = field?.name != null ? field.name : "";
     if (field?.extensions?.stateMachine) {
       return null;
@@ -84,7 +84,7 @@ export const getFormItems = (fields, parentFieldName, form) =>{
       field?.type?.kind === "OBJECT" &&
       field?.extensions?.relation?.embedded == null 
     ) {
-      return <SelectEntities key={fieldName} name={fieldName} field={field} form={form} />;
+      return <SelectEntities key={fieldName} name={fieldName} field={field} form={form} openForResult={openForResult}/>;
     } else if (
       isEnum(field)
     ) {
@@ -111,6 +111,7 @@ export const getFormItems = (fields, parentFieldName, form) =>{
           key={fieldName}
           field={field}
           form={form}
+          openForResult={openForResult}
         />
       );
     } else {
