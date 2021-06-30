@@ -5,6 +5,7 @@ import { requestEntity } from "../Table/utils";
 import { ConfigContext } from "../config-context";
 import { isString, isNumber, isBoolean } from "./utils";
 import { PlusOutlined } from '@ant-design/icons';
+import { useIntl } from "react-intl";
 
 
 const { Option } = Select;
@@ -18,7 +19,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const currentEntity = useRef();
   const fixedName = [name,"id"];
   const [initialValue, setInitialVaule] = useState(form.getFieldValue(fixedName));
-
+  const intl = useIntl()
   let current;
 
   entitiesContext.forEach(async item => {
@@ -155,7 +156,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
                 >
             {renderSelect()}
           </Select>
-          <Tooltip title="Create">
+          <Tooltip title={intl.formatMessage({id:"selectentity.tooltip", defaultMessage:"Create"})}>
             <Button type="primary" shape="circle" onClick={onPlusButtonClick} style={{ display: 'inline-block' }}
               icon={<PlusOutlined />} />
           </Tooltip>

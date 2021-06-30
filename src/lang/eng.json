@@ -8,6 +8,7 @@
     "entity.serie.plural" : "Series",
     "entity.serie.fields.name": "Name",
     
+    "selectentity.tooltip":"Create..",
     
     "table.search":"Search {field}",
     "table.filter.search": "Sarch",
