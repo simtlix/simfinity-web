@@ -1,7 +1,6 @@
-import React, {useContext } from "react";
+import React from "react";
 import { Form as FormAntd, Button, Row, Col} from "antd";
-import { requestAddNewEntity, getFormItems } from "./utils";
-import { ConfigContext } from "../config-context";
+import { FormItems } from "./FormItems";
 import 'antd/dist/antd.css';
 
 const layout = {
@@ -18,8 +17,6 @@ const layout = {
 const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, initialValues }) => {
 
   const [form] = FormAntd.useForm();
-  const configContext = useContext(ConfigContext);
-  const url = configContext.url;
  
   if(!displayEntity){
     return;
@@ -29,18 +26,12 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   )
 
-  
-
-  const renderFormFields = getFormItems(filteredFields,undefined,form, openForResultHandler);
 
   return (
-    
-
-
     <Row style={{display: visible?"":"none"}}>
       <Col span={24}>
         <FormAntd {...layout} form={form} initialValues={initialValues} name={name} >
-         {renderFormFields}
+         <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={displayEntity}></FormItems>
           {displayEntity != null ? (
             <FormAntd.Item>
               <Button type="primary" htmlType="submit">

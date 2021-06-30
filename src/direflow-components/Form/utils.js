@@ -1,9 +1,7 @@
 import axios from "axios";
-import React from "react";
-import { Form as FormAntd, Button, Input, Select, Row, Col, DatePicker, InputNumber} from "antd";
-import { SelectEntities } from "./SelectEntities";
-import { EmbeddedForm } from "./EmbeddedForm";
-const { Option } = Select;
+
+
+
 
 export const requestAddNewEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.add;
@@ -74,77 +72,4 @@ export const isEnum = (field) => {
     return false;
 }
 
-export const getFormItems = (fields, parentFieldName, form, openForResult) =>{
-  const renderFormFields = fields.map((field) => {
-    const fieldName = parentFieldName? [parentFieldName, field.name] : field.name;
-    const nameField = field?.name != null ? field.name : "";
-    if (field?.extensions?.stateMachine) {
-      return null;
-    } else if (
-      field?.type?.kind === "OBJECT" &&
-      field?.extensions?.relation?.embedded == null 
-    ) {
-      return <SelectEntities key={fieldName} name={fieldName} field={field} form={form} openForResult={openForResult}/>;
-    } else if (
-      isEnum(field)
-    ) {
-      return (
-        <FormAntd.Item key={fieldName} name={fieldName} label={nameField.toUpperCase()}>
-          <Select allowClear>
-            {field?.enumValues.map((item) => {
-              return (
-                <Option key={item.name} value={item.name}>
-                  {item.name}
-                </Option>
-              );
-            })}
-          </Select>
-        </FormAntd.Item>
-      );
-    } else if (
-      field?.type?.kind === "OBJECT" &&
-      field?.extensions?.relation?.embedded === true
-    ) {
-     
-      return (
-        <EmbeddedForm
-          key={fieldName}
-          field={field}
-          form={form}
-          openForResult={openForResult}
-        />
-      );
-    } else {
-      if (isNumber(field)) {
-        return (
-          <FormAntd.Item key={fieldName} name={fieldName} label={nameField.toUpperCase()}>
-            <InputNumber
-            />
-          </FormAntd.Item>
-        );
-      } else if (isDate(field)) {
-        return (
-          <FormAntd.Item key={fieldName} name={fieldName} label={nameField.toUpperCase()}>
-            <DatePicker/>
-          </FormAntd.Item>
-        );
-      } else {
-        return (
-          <FormAntd.Item key={fieldName} name={fieldName} 
-            label={nameField.toUpperCase()}
-            rules={[
-              {
-                required: field?.type?.kind === "NON_NULL",
-              },
-            ]}
-            >
-            <Input
-            />
-          </FormAntd.Item>
-        );
-      }
-    }
-  });
 
-  return renderFormFields;
-}

@@ -4,7 +4,6 @@ import { Styled } from "direflow-component";
 import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
-import Form from "./Form/Form";
 import styles from "./App.css";
 import {FormattedMessage, useIntl} from 'react-intl';
 import { EntitiesContext } from "./entities-context";

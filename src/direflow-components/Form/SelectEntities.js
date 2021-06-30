@@ -8,9 +8,8 @@ import { PlusOutlined } from '@ant-design/icons';
 
 
 const { Option } = Select;
-export const SelectEntities = ({ field, name, form, openForResult }) => {
+export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const displayField = field?.extensions?.relation?.displayField;
-  const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
   const configContext = useContext(ConfigContext);
   const url = configContext.url;
@@ -143,7 +142,7 @@ export const SelectEntities = ({ field, name, form, openForResult }) => {
     }
 
     return (
-      <FormAntd.Item name={fixedName} label={nameField.toUpperCase()}  initialValue={initialValue}>
+      <FormAntd.Item name={fixedName} label={label}  initialValue={initialValue}>
         <Space>
           <Select showSearch          
                 defaultActiveFirstOption={false}
