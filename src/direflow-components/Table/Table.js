@@ -1,7 +1,12 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { Table as TableAntd, Input, Button, Space, Select, InputNumber, Switch, DatePicker } from "antd";
 import PropTypes from "prop-types";
-import { requestEntity } from "./utils";
+import { requestEntity, 
+         isBoolean,
+         isNumber,
+         isString,
+         isDate,
+         isEnum } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
 import {FormattedMessage, useIntl} from 'react-intl';
@@ -171,41 +176,6 @@ const Table = ({ displayEntity = null , url, entities}) => {
       )
     }
   };
-
-  const isBoolean = (field) => {
-    if(field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean")
-      return true;
-    else
-      return false;
-  }
-
-  const isNumber = (field) => {
-    if(field.type.name === "Int" || field.type?.ofType?.name === "Int" || field.type.name === "Float" || field.type?.ofType?.name === "Float")
-      return true;
-    else
-      return false;
-  }
-
-  const isString = (field) => {
-    if(field.type.name === "String" || field.type?.ofType?.name === "String")
-      return true;
-    else
-      return false;
-  }
-
-  const isDate = (field) => {
-    if(field.type.name === "Date" || field.type?.ofType?.name === "Date" || field.type.name === "DateTime" || field.type?.ofType?.name === "DateTime")
-      return true;
-    else
-      return false;
-  }
-
-  const isEnum = (field) => {
-    if(field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM")
-      return true;
-    else
-      return false;
-  }
 
   const getColumnSearchProps = useCallback((dataIndex, type) => {
     const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
@@ -490,9 +460,4 @@ Table.propTypes = {
   }),
 };
 
-
-
 export default Table;
-
-
-
