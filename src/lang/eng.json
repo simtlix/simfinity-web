@@ -1,0 +1,19 @@
+{
+    "entity.season.simple" : "Season",
+    "entity.season.plural" : "Seasons",
+    "entity.season.fields.serie": "Serie",
+    "entity.season.fields.number": "Number",
+    
+    "entity.serie.simple" : "Serie",
+    "entity.serie.plural" : "Series",
+    "entity.serie.fields.name": "Name",
+    
+    "selectentity.tooltip":"Create..",
+    
+    "table.search":"Search {field}",
+    "table.filter.search": "Sarch",
+    "table.filter.reset": "Reset",
+    "table.filter.filter": "Filter",
+    "table.total": "Total {total} items"
+
+}

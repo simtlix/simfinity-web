@@ -10,6 +10,7 @@ import { requestEntity,
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined } from '@ant-design/icons';
 import {FormattedMessage, useIntl} from 'react-intl';
+import 'antd/dist/antd.css';
 
 const { Option } = Select;
 
@@ -391,11 +392,15 @@ const Table = ({ displayEntity = null , url, entities}) => {
             (element) => {
               const myObj = {};
               for (const prop in element) {
-                if (typeof element[prop] === "object") {
-                  let _valueObject = Object.values(element[prop]);
-                  myObj[prop] = _valueObject[0];
+                if (element[prop] === null) {
+                  myObj[prop] = null;
                 } else {
-                  myObj[prop] = element[prop];
+                  if (typeof element[prop] === "object") {
+                    let _valueObject = Object.values(element[prop]);
+                    myObj[prop] = _valueObject[0];
+                  } else {
+                    myObj[prop] = element[prop];
+                  }
                 }
               }
               myObj.key = element.id;
