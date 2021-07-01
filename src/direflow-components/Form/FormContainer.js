@@ -39,7 +39,19 @@ const FormContainer = ({ displayEntity = null, onSuccess }) => {
         requestAddNewEntity(item.entity, data, url).then((response) => {
             if(name !== "root"){
                 item.setValue(response[item.entity.mutations.add].id);
-                
+                let value = item.caller.getFieldsValue();
+                let first = value;
+                item.callerField.forEach((namePart, index) =>{
+                    if(index<item.callerField.length-1){
+                        value = value[namePart]
+                    }
+                    
+                })
+
+                value.id = response[item.entity.mutations.add].id;
+
+                item.caller.setFieldsValue(first);
+
 
                 setOpenForResultForms(old => {
                     let newState = {...old}
@@ -50,10 +62,11 @@ const FormContainer = ({ displayEntity = null, onSuccess }) => {
                 setEntitiesStack(old => {
                     let newState = [...old]
                     newState.pop();
+                    newState[newState.length-1].initialValue = first;
                     return newState;
                 });
             } else {
-                onSuccess && onSuccess(response[item.entity.mutations.add].id)
+                onSuccess && onSuccess()
             }
             
         });
@@ -68,7 +81,7 @@ const FormContainer = ({ displayEntity = null, onSuccess }) => {
             {
 
                 entitiesStack.map((item,index)=>{
-                    return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} ></Form>
+                    return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} initialValues={item.initialValue}></Form>
                 })
             }
         </FormAntd.Provider>
