@@ -15,7 +15,7 @@ export const EmbeddedForm = ({ field, index, form, openForResult, entity }) => {
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   );  
   return (<Row>
-               <Col >
+               <Col span={24}>
                 <Card size="small" title={intl.formatMessage({id:`entity.${entity.name}.fields.${field.name}`, defaultMessage:field.name})} >
                   <FormItems 
                     fields={filteredFields}
