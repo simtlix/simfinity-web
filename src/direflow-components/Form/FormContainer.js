@@ -2,13 +2,14 @@ import React, {useCallback, useState, useContext } from "react";
 import { Form as FormAntd} from "antd";
 import Form from "./Form";
 import { requestAddNewEntity } from "./utils";
+import { requestEditEntity } from "../Table/EditButton/utils";
 import { ConfigContext } from "../config-context";
 
 
-const FormContainer = ({ displayEntity = null, onSuccess }) => {
+const FormContainer = ({ displayEntity = null, onSuccess, initialValue = null, }) => {
 
-    const [entitiesStack, setEntitiesStack] = useState([{caller: undefined, requestCode:"root", entity: displayEntity, formName:"root"}])
-    const [openForResultForms, setOpenForResultForms] = useState({root:{caller:"root", requestCode:"root", entity: displayEntity, formName:"root"}})
+    const [entitiesStack, setEntitiesStack] = useState([{caller: undefined, requestCode:"root", entity: displayEntity, formName:"root", initialValue: initialValue,}])
+    const [openForResultForms, setOpenForResultForms] = useState({root:{caller:"root", requestCode:"root", entity: displayEntity, formName:"root", initialValue: initialValue,}})
     const configContext = useContext(ConfigContext);
     const url = configContext.url;
 
@@ -36,7 +37,8 @@ const FormContainer = ({ displayEntity = null, onSuccess }) => {
         console.log(data);
         const item = openForResultForms[name];
         
-        requestAddNewEntity(item.entity, data, url).then((response) => {
+        if (initialValue === null){
+          requestAddNewEntity(item.entity, data, url).then((response) => {
             if(name !== "root"){
                 item.setValue(response[item.entity.mutations.add].id);
                 let value = item.caller.getFieldsValue();
@@ -69,7 +71,14 @@ const FormContainer = ({ displayEntity = null, onSuccess }) => {
                 onSuccess && onSuccess()
             }
             
-        });
+          });
+        }
+        else {
+          requestEditEntity(item.entity, initialValue, data).then((response) => {
+            console.log("response");
+            console.log(response);
+          });
+        }  
     }
 
     return (

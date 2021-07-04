@@ -19,14 +19,15 @@ import {
   isEnum,
 } from "./utils";
 import { capitalize } from "../../utils/utils_string";
-import { SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";
+import EditButton from "./EditButton/EditButton";
 import "antd/dist/antd.css";
 
 const { Option } = Select;
 
-const Table = ({ displayEntity = null, url, entities }) => {
+const Table = ({ displayEntity = null, url, entities, onEditForm }) => {
   const intl = useIntl();
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -51,6 +52,11 @@ const Table = ({ displayEntity = null, url, entities }) => {
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
   const [selectValues, setSelectValues] = useState();
   const [sort, setSort] = useState();
+
+  const handleClickEditForm = (record) => {
+    let editForm = true;
+    onEditForm(editForm, record);
+  };
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
@@ -618,6 +624,29 @@ const Table = ({ displayEntity = null, url, entities }) => {
               handleRefresh={() => {
                 refreshTable();
               }}
+            />
+          </Space>
+        ),
+      });
+
+      pasedColumns.push({
+        title: "Action",
+        key: "action",
+        render: (text, record) => (
+          <Space size="middle">
+            {/*<EditButton
+              record={record}
+              displayEntity={displayEntity}
+              handleRefresh={() => {
+                refreshTable();
+              }}
+            />*/}
+            <Button
+              type="primary"
+              shape="round"
+              icon={<EditOutlined />}
+              size="large"
+              onClick={() => handleClickEditForm(record)}
             />
           </Space>
         ),

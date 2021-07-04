@@ -5,12 +5,11 @@ import PropTypes from "prop-types";
 import { requestEntities } from "./utils";
 import Table from "./Table/Table";
 import styles from "./App.css";
-import {FormattedMessage, useIntl} from 'react-intl';
+import { FormattedMessage, useIntl } from "react-intl";
 import { EntitiesContext } from "./entities-context";
 import { ConfigContext } from "./config-context";
-import 'antd/dist/antd.css';
+import "antd/dist/antd.css";
 import FormContainer from "./Form/FormContainer";
-
 
 const { Title, Paragraph } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -26,6 +25,10 @@ const App = ({ url }) => {
   const intl = useIntl();
 
   const [showForm, setShowForm] = useState(false);
+
+  const [showEditForm, setShowEditForm] = useState(false);
+
+  const [currentValues, setCurrentValues] = useState(null);
 
   useEffect(() => {
     requestEntities(url).then((entities) => {
@@ -43,7 +46,12 @@ const App = ({ url }) => {
 
   const handleClick = (entity, ind) => {
     setCurrentEntity(entity);
-    setResultTitle(intl.formatMessage({ id:`entity.${entity.name}.plural`, defaultMessage:`Resultados de ${entity.name}`}));
+    setResultTitle(
+      intl.formatMessage({
+        id: `entity.${entity.name}.plural`,
+        defaultMessage: `Resultados de ${entity.name}`,
+      })
+    );
     setSelectedKey(ind.toString());
   };
   const renderEntities = entities.map((entity, index) => (
@@ -63,6 +71,14 @@ const App = ({ url }) => {
 
   const onShowFormBtn = () => {
     setShowForm(!showForm);
+  };
+
+  const onShowEditFormBtn = (editForm, record) => {
+    if (editForm) {
+      setShowEditForm(!showEditForm);
+      setCurrentValues(record);
+      console.log(record);
+    }
   };
 
   const onCollapse = (collapsed) => {
@@ -97,12 +113,52 @@ const App = ({ url }) => {
                     {showForm ? "Show Table" : "Add new entry"}
                   </Button>
 
-                  <div>
+                  <Button
+                    style={{ float: "right" }}
+                    type="primary"
+                    size="large"
+                    onClick={onShowEditFormBtn}
+                  >
+                    {showEditForm ? "Show Table" : "Edit entry"}
+                  </Button>
+
+                  {/*<div>
                     {showForm ? (
                       currentEntity && <FormContainer displayEntity={currentEntity} key={currentEntity.name} url={url} onSuccess={()=>setShowForm(false)}/>
                     ) : (
                       currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}/>
                     )}
+                  </div>*/}
+
+                  <div>
+                    {showForm
+                      ? currentEntity && (
+                          <FormContainer
+                            displayEntity={currentEntity}
+                            key={currentEntity.name}
+                            url={url}
+                            onSuccess={() => setShowForm(false)}
+                          />
+                        )
+                      : showEditForm
+                      ? currentEntity && (
+                          <FormContainer
+                            displayEntity={currentEntity}
+                            key={currentEntity.name}
+                            url={url}
+                            onSuccess={() => setShowForm(false)}
+                            initialValue={currentValues}
+                          />
+                        )
+                      : currentEntity && (
+                          <Table
+                            displayEntity={currentEntity}
+                            key={currentEntity.name}
+                            url={url}
+                            entities={allEntities}
+                            onEditForm={onShowEditFormBtn}
+                          />
+                        )}
                   </div>
                 </Content>
                 <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
@@ -113,7 +169,6 @@ const App = ({ url }) => {
         </ConfigProvider>
       </EntitiesContext.Provider>
     </ConfigContext.Provider>
-    
   );
 };
 
