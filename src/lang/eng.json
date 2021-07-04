@@ -3,6 +3,7 @@
     "entity.season.plural" : "Seasons",
     "entity.season.fields.serie": "Serie",
     "entity.season.fields.number": "Number",
+    "entity.season.fields.state": "State",
     
     "entity.serie.simple" : "Serie",
     "entity.serie.plural" : "Series",
