@@ -152,7 +152,7 @@ const formatValue = (value, entity, operator) => {
 
 const isStringOrEnum = (entity) => (entity.type.kind === "ENUM" || entity.type.name === "String" || (entity.type.kind === "NON_NULL" && entity.type.ofType.name === "String") || (entity.type.kind === "NON_NULL" && entity.type.ofType.kind === "ENUM") || entity.extensions?.relation?.displayFieldScalarType === "String")
 
-export const requestEntity = async (displayEntities, url, page, size, filters, sort) => {
+export const requestEntity = async (displayEntities, url, page, size, filters, sort, entities) => {
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];
@@ -162,8 +162,17 @@ export const requestEntity = async (displayEntities, url, page, size, filters, s
     } else {
       if (fields[i].type.kind !== "LIST") {
         if (fields[i]?.extensions?.relation?.displayField) {
-          let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}, id}`;
-          queryFields.push(obj);
+          if(fields[i].extensions.relation.embedded && entities){
+            const embeddedEntity = entities.filter((item => item.name === fields[i].type.name))[0]
+            let fieldsStr = "";
+            embeddedEntity.fields.forEach(item => fieldsStr = fieldsStr + ` ${item.name} `)
+            let obj = `${fields[i].name}{${fieldsStr}}`;
+            queryFields.push(obj);
+          } else {
+            let obj = `${fields[i].name}{${fields[i].extensions.relation.displayField}${fields[i].extensions.relation.embedded?"":", id"}}`;
+            queryFields.push(obj);
+          }
+          
         } else if (fields[i]?.extensions?.relation == null) {
           queryFields.push(fields[i].name);
         }
