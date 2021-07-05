@@ -90,7 +90,7 @@ const generateEditableCellForEntity = (entity => {
 
 
 
-const Collection = ({field, inline = true, parentId = "60dbca363507a52512db5e93", mode, form}) => {
+const Collection = ({field, inline = true, parentId, mode, form}) => {
 
 
   const searchInputRef = useRef();
