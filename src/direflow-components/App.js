@@ -27,6 +27,10 @@ const App = ({ url }) => {
 
   const [showForm, setShowForm] = useState(false);
 
+  const [showEditForm, setShowEditForm] = useState(false);
+
+  const [currentValues, setCurrentValues] = useState(null);
+
   useEffect(() => {
     requestEntities(url).then((entities) => {
       if (entities) {
@@ -68,6 +72,15 @@ const App = ({ url }) => {
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
+
+  const onShowEditFormBtn = (editForm, record) => {
+    if (editForm) {
+      setShowEditForm(!showEditForm);
+      setCurrentValues(record);
+      console.log("Change form to edit entity" + { showEditForm });
+    }
+  };
+
   return (
     <ConfigContext.Provider value={{url}}>
       <EntitiesContext.Provider value={allEntities} >
@@ -101,7 +114,7 @@ const App = ({ url }) => {
                     {showForm ? (
                       currentEntity && <FormContainer displayEntity={currentEntity} key={currentEntity.name} url={url} onSuccess={()=>setShowForm(false)}/>
                     ) : (
-                      currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}/>
+                      currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}  onEditForm={onShowEditFormBtn}/>
                     )}
                   </div>
                 </Content>
