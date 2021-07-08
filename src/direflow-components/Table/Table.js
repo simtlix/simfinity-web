@@ -8,6 +8,8 @@ import {
   InputNumber,
   Switch,
   DatePicker,
+  Col,
+  Row,
 } from "antd";
 import PropTypes from "prop-types";
 import {
@@ -19,14 +21,14 @@ import {
   isEnum,
 } from "./utils";
 import { capitalize } from "../../utils/utils_string";
-import { SearchOutlined } from "@ant-design/icons";
+import { EditOutlined, SearchOutlined } from "@ant-design/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";
 import "antd/dist/antd.css";
 
 const { Option } = Select;
 
-const Table = ({ displayEntity = null, url, entities }) => {
+const Table = ({ displayEntity = null, url, entities, onEditForm }) => {
   const intl = useIntl();
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -612,13 +614,27 @@ const Table = ({ displayEntity = null, url, entities }) => {
         key: "action",
         render: (text, record) => (
           <Space size="middle">
-            <DeleteButton
+            <Row>
+              <Col>
+              <DeleteButton
               record={record}
               displayEntity={displayEntity}
               handleRefresh={() => {
                 refreshTable();
               }}
             />
+              </Col>
+              <Col>
+              <Button
+              type="primary"
+              shape="round"
+              icon={<EditOutlined />}
+              size="large"
+              onClick={() => handleClickEditForm(record)}
+            />
+              </Col>
+            </Row>
+            
           </Space>
         ),
       });
@@ -663,6 +679,11 @@ const Table = ({ displayEntity = null, url, entities }) => {
         }
       });
     }
+  };
+
+  const handleClickEditForm = (record) => {
+    let editForm = true;
+    onEditForm(editForm, record);
   };
 
   return (

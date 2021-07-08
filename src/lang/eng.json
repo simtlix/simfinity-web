@@ -8,6 +8,13 @@
   "entity.serie.plural": "Series",
   "entity.serie.fields.name": "Name",
 
+  "entity.episode.plural": "Episodes",
+
+  "entity.assignedStarAndSerie.plural": "Assigned Stars And Series",
+
+  "entity.star.fields.name": "Star",
+  "entity.star.plural": "Stars",
+
   "selectentity.tooltip": "Create..",
 
   "table.search": "Search {field}",
