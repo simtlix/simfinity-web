@@ -30,6 +30,23 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
 
   currentEntity.current = current;
 
+  const createCallback = (id)=>{
+    setInitialVaule(id)
+    let value = form.getFieldsValue();
+    let first = value;
+    fixedName.forEach((namePart, index) =>{
+      if(index<fixedName.length-1){
+          value = value[namePart]
+      }
+      
+    })
+
+    value.id = id;
+
+    form.setFieldsValue(first);
+
+  }
+
   useEffect(() => {
     if(initialValue){
       const fetch = async () => {
@@ -139,7 +156,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const element = useCallback(()=>{
 
     const onPlusButtonClick = () => {
-      openForResult(form, fixedName, currentEntity.current, setInitialVaule);
+      openForResult(form, fixedName, currentEntity.current, createCallback);
     }
 
     return (

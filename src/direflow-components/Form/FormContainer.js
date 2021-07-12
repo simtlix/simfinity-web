@@ -86,20 +86,7 @@ const FormContainer = ({ displayEntity = null, onSuccess, mode="UPDATE", id="60d
             requestAddNewEntity(item.entity, data, url).then((response) => {
                 if(name !== "root"){
                     item.setValue(response[item.entity.mutations.add].id);
-                    let value = item.caller.getFieldsValue();
-                    let first = value;
-                    item.callerField.forEach((namePart, index) =>{
-                        if(index<item.callerField.length-1){
-                            value = value[namePart]
-                        }
-                        
-                    })
-    
-                    value.id = response[item.entity.mutations.add].id;
-    
-                    item.caller.setFieldsValue(first);
-    
-    
+                    
                     setOpenForResultForms(old => {
                         let newState = {...old}
                         delete newState[name];
@@ -109,7 +96,6 @@ const FormContainer = ({ displayEntity = null, onSuccess, mode="UPDATE", id="60d
                     setEntitiesStack(old => {
                         let newState = [...old]
                         newState.pop();
-                        newState[newState.length-1].initialValue = first;
                         return newState;
                     });
                 } else {
