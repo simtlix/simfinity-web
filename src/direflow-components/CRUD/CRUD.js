@@ -3,9 +3,9 @@ import React, { useEffect, useState, useRef } from "react";
 import FormStack from "../Form/FormStack";
 import Table from "../Table/Table"
 
-const MODE_LIST = "list";
-const MODE_CREATE = "create";
-const MODE_UPDATE = "update";
+const MODE_LIST = "LIST";
+const MODE_CREATE = "CREATE";
+const MODE_UPDATE = "UPDATE";
 
 const CRUD = ({entity, url, entities}) =>{
     const [mode, setMode] = useState(MODE_LIST)

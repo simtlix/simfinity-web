@@ -5,6 +5,8 @@ import { FormItems } from "./FormItems";
 import Collection from "./Collection";
 import 'antd/dist/antd.css';
 import { useIntl } from "react-intl";
+import { isDate } from "./utils"
+import moment from "moment";
 
 const { Panel } = Collapse; 
 
@@ -23,6 +25,13 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
 
   const [form] = FormAntd.useForm();
   const intl = useIntl()
+
+  displayEntity.fields.forEach(field => {
+    if(isDate(field) && initialValues && initialValues[field.name]){
+      initialValues[field.name] = moment(initialValues[field.name])
+    }
+  });
+
   form.setFieldsValue(initialValues);
 
   if(!displayEntity){

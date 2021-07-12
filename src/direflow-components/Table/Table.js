@@ -24,6 +24,7 @@ import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";
+import EditButton from "./EditButton/EditButton";
 import "antd/dist/antd.css";
 
 const { Option } = Select;
@@ -540,6 +541,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
               setLastDeleted(record.id)
             }}
           />
+          <EditButton onClick={()=>{onUpdateRequested(record.id)}}></EditButton>
         </Space>
       ),
     });

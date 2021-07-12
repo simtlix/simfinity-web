@@ -16,7 +16,7 @@ export const Field = ({field, parentFieldName, entity, form, openForResult, rend
         return null;
     } else if (field?.type?.kind === "OBJECT" &&
         field?.extensions?.relation?.embedded == null) {
-        return <SelectEntities key={fieldName} name={fieldName} field={field} form={form} openForResult={openForResult} label={renderLabel?label:undefined} />;
+        return <SelectEntities key={`${fieldName}`} name={fieldName} field={field} form={form} openForResult={openForResult} label={renderLabel?label:undefined} />;
     } else if (isEnum(field)) {
         return (
             <FormAntd.Item key={fieldName} name={fieldName} label={renderLabel?label:undefined}>
