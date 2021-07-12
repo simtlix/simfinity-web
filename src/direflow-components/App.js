@@ -9,7 +9,8 @@ import {FormattedMessage, useIntl} from 'react-intl';
 import { EntitiesContext } from "./entities-context";
 import { ConfigContext } from "./config-context";
 import 'antd/dist/antd.css';
-import FormContainer from "./Form/FormContainer";
+import FormStack from "./Form/FormStack";
+import CRUD from "./CRUD/CRUD";
 
 
 const { Title, Paragraph } = Typography;
@@ -88,22 +89,8 @@ const App = ({ url }) => {
                     {resultTitle}
                   </Title>
 
-                  <Button
-                    style={{ float: "right" }}
-                    type="primary"
-                    size="large"
-                    onClick={onShowFormBtn}
-                  >
-                    {showForm ? "Show Table" : "Add new entry"}
-                  </Button>
-
-                  <div>
-                    {showForm ? (
-                      currentEntity && <FormContainer displayEntity={currentEntity} key={currentEntity.name} url={url} onSuccess={()=>setShowForm(false)}/>
-                    ) : (
-                      currentEntity && <Table displayEntity={currentEntity} key={currentEntity.name} url={url} entities={allEntities}/>
-                    )}
-                  </div>
+                    {currentEntity && <CRUD entity={currentEntity} key={currentEntity.name} entities={allEntities} url={url}></CRUD>}
+                  
                 </Content>
                 <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
                 <div ref={popupRef}></div>

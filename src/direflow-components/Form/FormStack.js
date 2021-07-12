@@ -10,7 +10,7 @@ import { EntitiesContext } from "../entities-context";
 
 
 
-const FormContainer = ({ displayEntity = null, onSuccess, mode="UPDATE", id="60dbca363507a52512db5e93" }) => {
+const FormStack = ({ displayEntity = null, onSuccess, mode="UPDATE", id="60dbca363507a52512db5e93" }) => {
 
     const [entitiesStack, setEntitiesStack] = useState([{caller: undefined, requestCode:"root", entity: displayEntity, formName:"root", mode}])
     const [openForResultForms, setOpenForResultForms] = useState({root:{caller:"root", requestCode:"root", entity: displayEntity, formName:"root", mode}})
@@ -127,4 +127,4 @@ const FormContainer = ({ displayEntity = null, onSuccess, mode="UPDATE", id="60d
 
 }
 
-export default FormContainer;
+export default FormStack;

@@ -8,6 +8,8 @@ import {
   InputNumber,
   Switch,
   DatePicker,
+  Row,
+  Col
 } from "antd";
 import PropTypes from "prop-types";
 import {
@@ -19,14 +21,14 @@ import {
   isEnum,
 } from "./utils";
 import { capitalize } from "../../utils/utils_string";
-import { SearchOutlined } from "@ant-design/icons";
+import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";
 import "antd/dist/antd.css";
 
 const { Option } = Select;
 
-const Table = ({ displayEntity = null, url, entities }) => {
+const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpdateRequested}) => {
   const intl = useIntl();
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -425,7 +427,7 @@ const Table = ({ displayEntity = null, url, entities }) => {
                 onClick={() =>
                   handleSearch(selectedKeys, confirm, dataIndex, type)
                 }
-                icon={<SearchOutlined />}
+                icon={<PlusOutlined />}
                 size="small"
                 style={{ width: 90 }}
               >
@@ -628,12 +630,39 @@ const Table = ({ displayEntity = null, url, entities }) => {
   };
 
   return (
-    <TableAntd
-      columns={columns}
-      dataSource={resultList}
-      onChange={handleTableChange}
-      pagination={{ ...pagination, total: totalCount }}
-    />
+    <>
+    <Row>
+      <Col span={24}>
+        <Space direction={"vertical"} style={{width:"100%"}}>
+          <Row>
+            <Col span={24} style={{display:"flex", justifyContent:"flex-end"}}>
+              <Button
+                  type="primary"
+                  onClick={() =>
+                    onCreateRequested()
+                  }
+                  icon={<PlusOutlined />}
+                  size="small"
+                >
+                </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <TableAntd
+              columns={columns}
+              dataSource={resultList}
+              onChange={handleTableChange}
+              pagination={{ ...pagination, total: totalCount }}
+              />
+            </Col>
+          </Row>
+        </Space>
+      </Col>
+    </Row>
+    
+    </>
+    
   );
 };
 
