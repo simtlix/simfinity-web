@@ -1,11 +1,14 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { deleteEntity } from './utils';
 import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal, Button, Space } from "antd";
+import { ConfigContext } from "../../config-context";
 
 function DeleteButton({record, displayEntity, handleRefresh}) {
 
     const { confirm } = Modal;
+    const configContext = useContext(ConfigContext);
+    const url = configContext.url;
 
     function showDeleteConfirm() {
       console.log(displayEntity);
@@ -25,7 +28,7 @@ function DeleteButton({record, displayEntity, handleRefresh}) {
 
     const clickButtonDelete = (entity, record) => {
      
-            deleteEntity(entity, record.id).then((response) => {
+            deleteEntity(entity, record.id, url).then((response) => {
             handleRefresh();
         })
       }

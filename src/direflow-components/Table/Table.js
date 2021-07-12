@@ -51,6 +51,7 @@ const Table = ({ displayEntity = null, url, entities }) => {
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
   const [selectValues, setSelectValues] = useState();
   const [sort, setSort] = useState();
+  const [lastDeleted, setLastDeleted] = useState();
 
   useEffect(() => {
     if (displayEntity && selectValuesFilter) {
@@ -479,6 +480,7 @@ const Table = ({ displayEntity = null, url, entities }) => {
     isDate,
     setColumns
   ) => {
+
     const filteredColumns = displayEntity.fields.filter((entity) => {
       if (
         entity.name !== "id" &&
@@ -523,6 +525,23 @@ const Table = ({ displayEntity = null, url, entities }) => {
         }
       },
     }));
+
+    pasedColumns.push({
+      title: "Action",
+      key: "action",
+      render: (text, record) => (
+        <Space size="middle">
+          <DeleteButton
+            record={record}
+            displayEntity={displayEntity}
+            handleRefresh={() => {
+              setLastDeleted(record.id)
+            }}
+          />
+        </Space>
+      ),
+    });
+
     setColumns(pasedColumns);
   };
 
@@ -533,29 +552,6 @@ const Table = ({ displayEntity = null, url, entities }) => {
   }, [getColumnSearchProps]);
 
   useEffect(() => {
-    const refreshTable = () => {
-      requestEntity(displayEntity).then((response) => {
-        if (response) {
-          const parserResponse = response[displayEntity.queryAll].map(
-            (element) => {
-              const myObj = {};
-              for (const prop in element) {
-                if (typeof element[prop] === "object") {
-                  let _valueObject = Object.values(element[prop]);
-                  myObj[prop] = _valueObject[0];
-                } else {
-                  myObj[prop] = element[prop];
-                }
-              }
-              myObj.key = element.id;
-              return myObj;
-            }
-          );
-          setResultList(parserResponse);
-        }
-      });
-    };
-
     if (displayEntity) {
       createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
 
@@ -593,41 +589,7 @@ const Table = ({ displayEntity = null, url, entities }) => {
         }
       });
     }
-
-    if (displayEntity) {
-      const filteredColumns = displayEntity.fields.filter(
-        (entity) =>
-          entity.name !== "id" &&
-          entity.type.kind !== "LIST" &&
-          !entity?.extensions?.relation?.embedded
-      );
-      let pasedColumns = filteredColumns.map((entity) => ({
-        title: capitalize(entity.name),
-        dataIndex: entity.name,
-        key: entity.name,
-      }));
-
-      pasedColumns.push({
-        title: "Action",
-        key: "action",
-        render: (text, record) => (
-          <Space size="middle">
-            <DeleteButton
-              record={record}
-              displayEntity={displayEntity}
-              handleRefresh={() => {
-                refreshTable();
-              }}
-            />
-          </Space>
-        ),
-      });
-
-      setColumns(pasedColumns);
-
-      refreshTable();
-    }
-  }, [displayEntity, pagination, filters, url, sort]);
+  }, [displayEntity, pagination, filters, url, sort, lastDeleted]);
 
   const handleTableChange = (pagination, filters, sorter) => {
     setPagination((paginationPrevious) => {

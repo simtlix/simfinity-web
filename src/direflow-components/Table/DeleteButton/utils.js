@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const deleteEntity = async (displayEntities, id) => {
+export const deleteEntity = async (displayEntities, id, url) => {
   const entityName = displayEntities.mutations.delete
   try {
     const data = JSON.stringify({
@@ -14,7 +14,7 @@ export const deleteEntity = async (displayEntities, id) => {
     const config = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      url: "https://multiscreen-techgroup.rj.r.appspot.com/graphql",
+      url,
       data,
     };
 
