@@ -355,6 +355,30 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   }
 
+  const onCreate = (value) =>{
+
+    setData(old => {
+      const newState = [...old,value]
+      return newState;
+      
+    })
+
+    const formData = form.getFieldValue(field.name) || {};
+    if(formData.added){
+      formData.added.push(value);
+    } else {
+      formData.added = [value]
+    }
+    
+    const newFormData = {}
+    newFormData[field.name] = {...formData}
+
+    form.setFieldsValue(newFormData);
+
+    setModalVisible(false);
+
+  }
+
   return (
     <Form.Item name={field.name} wrapperCol={{ sm: 24 }}>
       {inline &&
@@ -375,7 +399,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
             </Row>
             <Row span={24}>
               <Col span={24}>
-                {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult}></CollectionModalForm>}
+                {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onCreate={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
                 <Table components={components} columns={columns} dataSource={data} /> 
               </Col>
             </Row>
