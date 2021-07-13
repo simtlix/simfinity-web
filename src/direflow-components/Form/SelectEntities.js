@@ -18,8 +18,8 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const [selectValues, setSelectValues] = useState(undefined);
   const currentEntity = useRef();
   const fixedName = [name,"id"];
-  const [initialValue, setInitialVaule] = useState(form.getFieldValue(fixedName));
-  const initialValueFromForm = form.getFieldValue(fixedName);
+  const [initialValue, setInitialVaule] = useState();
+  const initialValueFromForm = initialValue?initialValue:form.getFieldValue(fixedName);
   const intl = useIntl()
   let current;
 
@@ -161,7 +161,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
     }
 
     return (
-      <FormAntd.Item name={fixedName} label={label}  initialValue={initialValue?initialValue:initialValueFromForm}>
+      <FormAntd.Item name={fixedName} label={label} initialValue={initialValue?initialValue:initialValueFromForm}>
         <Space>
           <Select showSearch          
                 defaultActiveFirstOption={false}
@@ -169,6 +169,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
                 filterOption={false}
                 onSearch={value => setSelectValues(value)}
                 notFoundContent={null}
+                onChange={(value) => {createCallback(value);}}
                 value={initialValue?initialValue:initialValueFromForm}
                 style={{ display: 'inline-block', width:"200px"}}
                 >
@@ -181,7 +182,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
         </Space>
       </FormAntd.Item>
     );
-  },[responseEntity, initialValue]);
+  },[responseEntity, initialValue, initialValueFromForm]);
 
   return element();
 };

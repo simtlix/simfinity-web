@@ -644,7 +644,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                     onCreateRequested()
                   }
                   icon={<PlusOutlined />}
-                  size="small"
+                  size="large"
                 >
                 </Button>
             </Col>

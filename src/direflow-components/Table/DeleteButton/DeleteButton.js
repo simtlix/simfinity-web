@@ -39,7 +39,7 @@ function DeleteButton({record, displayEntity, handleRefresh}) {
                 type="primary" 
                 shape="round" 
                 icon={<DeleteOutlined />} 
-                size="large" 
+                size="small" 
                 onClick={showDeleteConfirm}/>
         </React.Fragment>
     )

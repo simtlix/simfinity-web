@@ -10,7 +10,7 @@ function EditButton({ onClick }) {
         type="primary"
         shape="round"
         icon={<EditOutlined />}
-        size="large"
+        size="small"
         onClick={onClick}
       />
     </React.Fragment>

@@ -2,8 +2,8 @@
 /* eslint-disable react/display-name */
 import React, { useRef, useContext, useState, useEffect } from 'react';
 import 'antd/dist/antd.css';
-import { Table, Input, Button, Space, Form } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { Table, Input, Button, Space, Form, Row, Col } from 'antd';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { EntitiesContext } from "../entities-context";
 import { isDate } from './utils'
 import { capitalize } from "../../utils/utils_string";
@@ -11,6 +11,7 @@ import { requestEntity } from '../utils';
 import {useIntl} from 'react-intl';
 import { ConfigContext } from "../config-context";
 import { Field } from './Field';
+import { CollectionModalForm } from './CollectionModalForm'
 const EditableContext = React.createContext(null);
 
 
@@ -90,7 +91,7 @@ const generateEditableCellForEntity = (entity => {
 
 
 
-const Collection = ({field, inline = true, parentId, mode, form}) => {
+const Collection = ({field, inline = true, parentId, mode, form, openForResult}) => {
 
 
   const searchInputRef = useRef();
@@ -102,6 +103,7 @@ const Collection = ({field, inline = true, parentId, mode, form}) => {
   const [data, setData] = useState([])
   const configContext = useContext(ConfigContext);
   const url = configContext.url;
+  const [modalVisible, setModalVisible] = useState(false)
   
   filters[filterField.name] = {
     value: parentId,
@@ -345,9 +347,64 @@ const Collection = ({field, inline = true, parentId, mode, form}) => {
 
   const columns = createColumns(collectionEntity, inline);
 
+  const onCreateInlineRequested = () =>{
+    setModalVisible(true);
+  }
+
+  const onCreateRequested = () => {
+
+  }
+
   return (
-    <Form.Item name={field.name}>
-      {inline? <Table components={components} columns={columns} dataSource={data} /> : <Table columns={columns} dataSource={data} />}
+    <Form.Item name={field.name} wrapperCol={{ sm: 24 }}>
+      {inline &&
+        <Row span={24}>
+          <Col span={24}>
+            <Row span={24}>
+              <Col span={24} style={{display:"flex", justifyContent:"flex-end"}}>
+                <Button
+                    type="primary"
+                    onClick={() =>
+                      onCreateInlineRequested()
+                    }
+                    icon={<PlusOutlined />}
+                    size="large"
+                  >
+                  </Button>
+              </Col>
+            </Row>
+            <Row span={24}>
+              <Col span={24}>
+                {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult}></CollectionModalForm>}
+                <Table components={components} columns={columns} dataSource={data} /> 
+              </Col>
+            </Row>
+          </Col>
+          
+        </Row>
+      }
+      {!inline && 
+        <>
+          <Row>
+            <Col span={24} style={{display:"flex", justifyContent:"flex-end"}}>
+              <Button
+                  type="primary"
+                  onClick={() =>
+                    onCreateRequested()
+                  }
+                  icon={<PlusOutlined />}
+                  size="large"
+                >
+                </Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={24}>
+              <Table columns={columns} dataSource={data} /> 
+            </Col>
+          </Row>
+        </>
+      }
     </Form.Item>
     );
   

@@ -65,7 +65,7 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
                         data = initialValues[field.name]
                       }
                       return (<Panel header={intl.formatMessage({id:`entity.${displayEntity.name}.fields.${field.name}`, defaultMessage:field.name})} key={index}>
-                                  <Collection key={field.name} field={field} data={data} form={form} parentId={initialValues && initialValues.id?initialValues.id:undefined} mode={mode}/>
+                                  <Collection key={field.name} field={field} data={data} form={form} parentId={initialValues && initialValues.id?initialValues.id:undefined} mode={mode} openForResult={openForResultHandler}/>
                               </Panel>)
                     })
                   }
