@@ -15,5 +15,8 @@
     "table.filter.search": "Sarch",
     "table.filter.reset": "Reset",
     "table.filter.filter": "Filter",
-    "table.total": "Total {total} items"
+    "table.total": "Total {total} items",
+    "form.collection.ok": "Ok",
+    "form.collection.cancel": "Cancel"
+
 }

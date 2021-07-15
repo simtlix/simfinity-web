@@ -10,14 +10,6 @@ import moment from "moment";
 
 const { Panel } = Collapse; 
 
-const layout = {
-  labelCol: {
-    span: 8,
-  },
-  wrapperCol: {
-    span: 16,
-  },
-};
 
 
 
@@ -51,8 +43,10 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
     <>
       <Row style={{display: visible?"":"none"}}>
         <Col span={24}>
-          <FormAntd {...layout} form={form} initialValues={initialValues} name={name} >
-          <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={displayEntity}></FormItems>
+          <FormAntd form={form} initialValues={initialValues} name={name} >
+          <Row gutter={24}>
+            <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={displayEntity}></FormItems>
+          </Row>
           { collectionFields.length > 0 && 
               <Row>
                 <Col span={24}>

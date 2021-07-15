@@ -399,8 +399,10 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
             </Row>
             <Row span={24}>
               <Col span={24}>
-                {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onCreate={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
-                <Table components={components} columns={columns} dataSource={data} /> 
+                <Space direction="vertical" style={{width:"100%"}}>
+                  {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onCreate={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
+                  <Table components={components} columns={columns} dataSource={data} /> 
+                </Space>
               </Col>
             </Row>
           </Col>

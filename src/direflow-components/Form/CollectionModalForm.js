@@ -1,13 +1,14 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import 'antd/dist/antd.css';
-import {  Form, Button } from 'antd';
+import {  Form, Button, Space, Row, Col } from 'antd';
 import { FormItems } from "./FormItems";
+import { useIntl, FormattedMessage } from 'react-intl';
 
 
 export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultHandler, collectionField }) => {
   const [form] = Form.useForm();
-  
+  const intl = useIntl();
   
 
   const filteredFields = entity.fields.filter(
@@ -30,8 +31,14 @@ export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultH
   return (
     <Form
         form={form}
-        layout="horizontal"
-        wrapperCol={{ sm: 8 }}      
+        wrapperCol={{sm:20}}
+        labelCol={{sm:4}}
+        style={{
+          padding: "24px",
+          background: "#fbfbfb",
+          border: "1px solid #d9d9d9",
+        }}
+         
         name="form_in_modal"
         onFinish={(values) => {
             form
@@ -46,29 +53,38 @@ export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultH
           }}
 
       >
-        <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={entity}></FormItems>
-        <Form.Item>
-                <Button type="primary" onClick={() => {
-            form
-              .validateFields()
-              .then((values) => {
-                  console.log(values)
-                form.resetFields();
-                onCreate(values);
-              })
-              .catch((info) => {
-                console.log('Validate Failed:', info);
-              });
-          }}>
-                  Submit
-                </Button>
-                <Button type="dashed" onClick={() => {
-            form.resetFields();
-            onCancel();
-          }}>
-                  Cancel
-                </Button>
-         </Form.Item>
+        <Row gutter={24}>
+          <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={entity}></FormItems>
+        </Row>
+        <Row gutter={24}>
+          <Col span={24}>
+            <Form.Item wrapperCol={{sm:24}}>
+                    <Space style={{display:"flex", justifyContent:"flex-end"}}>
+                      <Button type="primary" onClick={() => {
+                  form
+                    .validateFields()
+                    .then((values) => {
+                        console.log(values)
+                      form.resetFields();
+                      onCreate(values);
+                    })
+                    .catch((info) => {
+                      console.log('Validate Failed:', info);
+                    });
+                }}>
+                        <FormattedMessage id="form.collection.ok" ></FormattedMessage>
+                      </Button>
+                      <Button onClick={() => {
+                  form.resetFields();
+                  onCancel();
+                }}>
+                        <FormattedMessage id="form.collection.cancel" ></FormattedMessage>
+
+                      </Button> 
+                    </Space>
+            </Form.Item>
+          </Col>
+         </Row>
       </Form>
   );
 };
