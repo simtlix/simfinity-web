@@ -15,7 +15,7 @@ export const Field = ({field, parentFieldName, entity, form, openForResult, rend
     if (field?.extensions?.stateMachine) {
         return null;
     } else if (field?.type?.kind === "OBJECT" &&
-        field?.extensions?.relation?.embedded == null) {
+        !(field?.extensions?.relation?.embedded)) {
         return <Col span={span}><SelectEntities key={`${fieldName}`} name={fieldName} field={field} form={form} openForResult={openForResult} label={renderLabel?label:undefined} /></Col>;
     } else if (isEnum(field)) {
         return (
