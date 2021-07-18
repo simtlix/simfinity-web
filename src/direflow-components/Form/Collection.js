@@ -12,6 +12,9 @@ import {useIntl} from 'react-intl';
 import { ConfigContext } from "../config-context";
 import { Field } from './Field';
 import { CollectionModalForm } from './CollectionModalForm'
+import { EditButton } from './EditButton/EditButton'
+import { DeleteButton } from './DeleteButton/DeleteButton';
+
 const EditableContext = React.createContext(null);
 
 
@@ -103,7 +106,9 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   const [data, setData] = useState([])
   const configContext = useContext(ConfigContext);
   const url = configContext.url;
-  const [modalVisible, setModalVisible] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalMode, setModalMode] = useState();
+  const [modalDefaultData, setModalDefaultData] = useState();
   
   filters[filterField.name] = {
     value: parentId,
@@ -212,6 +217,36 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   });
 
 
+  const onUpdateRequested = (id) => {
+    const filtersForEntity = {}
+        filtersForEntity.id = {
+          value: id,
+          key: "id",
+          operator: "EQ",
+          entity:{
+            type:{
+              kind:"Scalar",
+              name:"String"
+            },
+            extensions:{
+              relation:{
+                displayFieldScalarType: "String",
+              }
+            }
+          }
+        }
+
+        requestEntity(collectionEntity,url,1,1,filtersForEntity).then((response)=>{
+            if (response && response.data) {
+              const original = response.data.data[collectionEntity.queryAll][0];
+              setModalDefaultData(original);
+              setModalMode("UPDATE");
+              setModalVisible(true);
+            }
+          }
+        )
+  }
+
   const createColumns = (displayEntity, inline) => {
     const filteredColumns = displayEntity.fields.filter(
       (entity) => {
@@ -310,7 +345,6 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
             form.setFieldsValue(newFormData);
 
-            console.log(original);
           }
         })
         
@@ -318,10 +352,6 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
       };
   
       const columns = pasedColumns.map((col) => {
-        //if (!col.editable) {
-        //  return col;
-        //}
-  
         return {
           ...col,
           onCell: (record) => ({
@@ -332,6 +362,42 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
             handleSave: handleSave,
           }),
         };
+      });
+
+      columns.push({
+        title: "Action",
+        key: "action",
+        render: (text, record) => (
+          <Space size="middle">
+            <DeleteButton
+              record={record}
+              onDelete={(record) => {
+                setData(oldData => {
+                  return oldData.filter(item => item.id !== record.id)
+                 })
+
+                 //In case the item was previously updated
+                 if(formData.updated){
+                  const newUpdated = formData.updated.filter(item => item.id !== record.id)
+                  formData.updated = newUpdated;
+                 }
+
+                const formData = form.getFieldValue(field.name) || {};
+                if(formData.deleted){
+                  formData.deleted.push(record.id)
+                } else {
+                  formData.deleted = [record.id]
+                }
+                
+                const newFormData = {}
+                newFormData[field.name] = {...formData}
+
+                form.setFieldsValue(newFormData);
+              }}
+            />
+            <EditButton onClick={()=>{onUpdateRequested(record.id)}}></EditButton>
+          </Space>
+        ),
       });
   
       return columns;
@@ -347,11 +413,17 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   const columns = createColumns(collectionEntity, inline);
 
-  const onCreateInlineRequested = () =>{
+  const onCreateInlineRequested = () => {
+    setModalDefaultData(undefined);
+    setModalMode("CREATE");
     setModalVisible(true);
   }
 
   const onCreateRequested = () => {
+
+  }
+
+  const onUpdate = (value) => {
 
   }
 
@@ -400,7 +472,9 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
             <Row span={24}>
               <Col span={24}>
                 <Space direction="vertical" style={{width:"100%"}}>
-                  {modalVisible && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onCreate={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
+                  {modalVisible && modalMode === "CREATE" && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onSubmit={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
+                  {modalVisible && modalMode === "UPDATE" && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onSubmit={onUpdate} onCancel={()=>setModalVisible(false)} initialValues={modalDefaultData}></CollectionModalForm>}
+
                   <Table components={components} columns={columns} dataSource={data} /> 
                 </Space>
               </Col>

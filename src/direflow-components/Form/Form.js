@@ -35,7 +35,11 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
   )
 
   const collectionFields = displayEntity.fields.filter(
-    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT'
+    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && !(field.extensions?.relation?.embedded)
+  )
+
+  const collectionEmbeddedFields = displayEntity.fields.filter(
+    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && (field.extensions?.relation?.embedded)
   )
 
 

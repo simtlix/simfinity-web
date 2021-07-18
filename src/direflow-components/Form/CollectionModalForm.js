@@ -4,12 +4,19 @@ import 'antd/dist/antd.css';
 import {  Form, Button, Space, Row, Col } from 'antd';
 import { FormItems } from "./FormItems";
 import { useIntl, FormattedMessage } from 'react-intl';
+import { isDate } from './utils';
+import moment from 'moment';
 
 
-export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultHandler, collectionField }) => {
+export const CollectionModalForm = ({ onSubmit, onCancel, entity, openForResultHandler, collectionField, initialValues }) => {
   const [form] = Form.useForm();
   const intl = useIntl();
   
+  entity.fields.forEach(field => {
+    if(isDate(field) && initialValues && initialValues[field.name]){
+      initialValues[field.name] = moment(initialValues[field.name])
+    }
+  });
 
   const filteredFields = entity.fields.filter(
     (field) => {
@@ -31,6 +38,7 @@ export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultH
   return (
     <Form
         form={form}
+        initialValues={initialValues}
         wrapperCol={{sm:20}}
         labelCol={{sm:4}}
         style={{
@@ -45,7 +53,7 @@ export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultH
               .validateFields()
               .then((values) => {
                 form.resetFields();
-                onCreate(values);
+                onSubmit(values);
               })
               .catch((info) => {
                 console.log('Validate Failed:', info);
@@ -66,7 +74,7 @@ export const CollectionModalForm = ({ onCreate, onCancel, entity, openForResultH
                     .then((values) => {
                         console.log(values)
                       form.resetFields();
-                      onCreate(values);
+                      onSubmit(values);
                     })
                     .catch((info) => {
                       console.log('Validate Failed:', info);
