@@ -18,7 +18,8 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const [selectValues, setSelectValues] = useState(undefined);
   const currentEntity = useRef();
   const fixedName = [name,"id"];
-  const [initialValue, setInitialVaule] = useState(form.getFieldValue(fixedName));
+  const [initialValue, setInitialVaule] = useState();
+  const initialValueFromForm = initialValue?initialValue:form.getFieldValue(fixedName);
   const intl = useIntl()
   let current;
 
@@ -30,8 +31,25 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
 
   currentEntity.current = current;
 
+  const createCallback = (id)=>{
+    setInitialVaule(id)
+    let value = form.getFieldsValue();
+    let first = value;
+    fixedName.forEach((namePart, index) =>{
+      if(index<fixedName.length-1){
+          value = value[namePart]
+      }
+      
+    })
+
+    value.id = id;
+
+    form.setFieldsValue(first);
+
+  }
+
   useEffect(() => {
-    if(initialValue){
+    if(initialValue || initialValueFromForm){
       const fetch = async () => {
           
         let selectFilters = {}
@@ -47,7 +65,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
         currentEntity.current = current;
 
         selectFilters["id"] = {
-          value: initialValue,
+          value: initialValue?initialValue:initialValueFromForm,
           key: "id",
           operator: "EQ",
           entity:{
@@ -68,7 +86,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
       }
       );
     }
-  }, [initialValue])
+  }, [initialValue, initialValueFromForm])
 
   useEffect(() => {
     if (selectValues) {
@@ -139,11 +157,11 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const element = useCallback(()=>{
 
     const onPlusButtonClick = () => {
-      openForResult(form, fixedName, currentEntity.current, setInitialVaule);
+      openForResult(form, fixedName, currentEntity.current, createCallback);
     }
 
     return (
-      <FormAntd.Item name={fixedName} label={label}  initialValue={initialValue}>
+      <FormAntd.Item name={fixedName} label={label} initialValue={initialValue?initialValue:initialValueFromForm}>
         <Space>
           <Select showSearch          
                 defaultActiveFirstOption={false}
@@ -151,7 +169,8 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
                 filterOption={false}
                 onSearch={value => setSelectValues(value)}
                 notFoundContent={null}
-                value={initialValue}
+                onChange={(value) => {createCallback(value);}}
+                value={initialValue?initialValue:initialValueFromForm}
                 style={{ display: 'inline-block', width:"200px"}}
                 >
             {renderSelect()}
@@ -163,7 +182,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
         </Space>
       </FormAntd.Item>
     );
-  },[responseEntity, initialValue]);
+  },[responseEntity, initialValue, initialValueFromForm]);
 
   return element();
 };
