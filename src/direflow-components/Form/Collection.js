@@ -96,14 +96,33 @@ const generateEditableCellForEntity = (entity => {
 
 const Collection = ({field, inline = true, parentId, mode, form, openForResult}) => {
 
+  const entitiesContext = useContext(EntitiesContext);
+
+  const collectionEntity = entitiesContext.filter((e) => e.name === field.type.ofType.name)[0];
+
+  const isEmbedded = field.extensions?.relation?.embedded;
+
+  const filteredColumns = collectionEntity.fields.filter(
+    (entity) => {
+      if (entity.name !== "id" &&
+        entity.type.kind !== "LIST" &&
+        entity.type.kind !== "OBJECT") {
+        return true;
+      } else if (entity.type.kind === "OBJECT" &&
+        entity?.extensions?.relation?.displayField && 
+        entity?.extensions?.relation?.connectionField !== field?.extensions?.relation?.connectionField) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  );
 
   const searchInputRef = useRef();
-  const entitiesContext = useContext(EntitiesContext);
-  const collectionEntity = entitiesContext.filter((e) => e.name === field.type.ofType.name)[0];
   const filterField = collectionEntity.fields.filter(item => item.extensions?.relation?.connectionField === field.extensions?.relation?.connectionField)[0]
   const intl = useIntl();
   const filters = {}
-  const [data, setData] = useState([])
+  const [data, setData] = useState(isEmbedded?form.getFieldValue(field.name):[])
   const configContext = useContext(ConfigContext);
   const url = configContext.url;
   const [modalVisible, setModalVisible] = useState(false);
@@ -128,7 +147,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   }
 
   useEffect(()=>{
-    if(parentId){
+    if(parentId && !isEmbedded){
       requestEntity(collectionEntity,url,1,1000,filters).then((response)=>{
         if (response && response.data) {
           const parserResponse = response.data.data[collectionEntity.queryAll].map(
@@ -248,22 +267,6 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   }
 
   const createColumns = (displayEntity, inline) => {
-    const filteredColumns = displayEntity.fields.filter(
-      (entity) => {
-        if (entity.name !== "id" &&
-          entity.type.kind !== "LIST" &&
-          entity.type.kind !== "OBJECT") {
-          return true;
-        } else if (entity.type.kind === "OBJECT" &&
-          entity?.extensions?.relation?.displayField && 
-          entity?.extensions?.relation?.connectionField !== field?.extensions?.relation?.connectionField) {
-          return true;
-        } else {
-          return false;
-        }
-      }
-    );
-  
     const pasedColumns = filteredColumns.map((field) => ({
       title: intl.formatMessage({ id:`entity.${displayEntity.name}.fields.${field.name}`, defaultMessage:capitalize(field.name)}),
       ...getColumnSearchProps(field.type.kind === "OBJECT" &&
@@ -423,9 +426,72 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   }
 
-  const onUpdate = (value) => {
+  const onUpdate = (row) => {
 
-  }
+    setData(old => {
+      const newState = old.map(item => {
+        if(item.id === row.id){
+          return row
+        } else {
+          return item;
+        }
+      });
+      return newState;
+    })
+
+    const filtersForEntity = {}
+    filtersForEntity.id = {
+      value: row.id,
+      key: "id",
+      operator: "EQ",
+      entity:{
+        type:{
+          kind:"Scalar",
+          name:"String"
+        },
+        extensions:{
+          relation:{
+            displayFieldScalarType: "String",
+          }
+        }
+      }
+    }
+
+    requestEntity(collectionEntity,url,1,1,filtersForEntity).then((response)=>{
+      if (response && response.data) {
+        const original = response.data.data[collectionEntity.queryAll][0];
+        filteredColumns.forEach(field => {
+          if(field?.type?.kind !== "OBJECT" && !(field?.extensions?.stateMachine)){
+            original[field.name] = row[field.name];
+          } else if(field?.type?.kind === "OBJECT") {
+            original[field.name] = {id: row[field.name].id}
+          } else if(field?.extensions?.stateMachine) {
+            delete original[field.name];
+          }
+        })
+        original[filterField.name] = {id: original[filterField.name].id};
+
+        const formData = form.getFieldValue(field.name) || {};
+        if(formData.updated){
+          const newUpdated = formData.updated.filter(item => item.id !== original.id)
+          newUpdated.push(original);
+          formData.updated = newUpdated;
+        } else {
+          formData.updated = [original]
+        }
+        
+        const newFormData = {}
+        newFormData[field.name] = {...formData}
+
+        form.setFieldsValue(newFormData);
+
+        setModalVisible(false);
+
+      }
+    })
+    
+
+  };
 
   const onCreate = (value) =>{
 

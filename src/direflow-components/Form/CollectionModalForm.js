@@ -53,6 +53,9 @@ export const CollectionModalForm = ({ onSubmit, onCancel, entity, openForResultH
               .validateFields()
               .then((values) => {
                 form.resetFields();
+                if(initialValues){
+                  values.id = initialValues.id;
+                }
                 onSubmit(values);
               })
               .catch((info) => {
@@ -74,6 +77,9 @@ export const CollectionModalForm = ({ onSubmit, onCancel, entity, openForResultH
                     .then((values) => {
                         console.log(values)
                       form.resetFields();
+                      if(initialValues){
+                        values.id = initialValues.id;
+                      }
                       onSubmit(values);
                     })
                     .catch((info) => {
