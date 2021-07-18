@@ -10,15 +10,15 @@ import {
   DatePicker,
 } from "antd";
 import PropTypes from "prop-types";
+import { requestEntity } from "./utils";
 import {
-  requestEntity,
   isBoolean,
   isNumber,
   isString,
   isDate,
   isEnum,
-} from "./utils";
-import { capitalize } from "../../utils/utils_string";
+  capitalize,
+} from "../utils";
 import { SearchOutlined } from "@ant-design/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";

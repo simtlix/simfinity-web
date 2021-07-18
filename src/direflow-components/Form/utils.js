@@ -1,8 +1,5 @@
 import axios from "axios";
 
-
-
-
 export const requestAddNewEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.add;
   const responseFields = "id";
@@ -37,39 +34,5 @@ export const requestAddNewEntity = async (displayEntities, userInput, url) => {
   }
 };
 
-export const isBoolean = (field) => {
-  if(field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean")
-    return true;
-  else
-    return false;
-}
-
-export const isNumber = (field) => {
-  if(field.type.name === "Int" || field.type?.ofType?.name === "Int" || field.type.name === "Float" || field.type?.ofType?.name === "Float")
-    return true;
-  else
-    return false;
-}
-
-export const isString = (field) => {
-  if(field.type.name === "String" || field.type?.ofType?.name === "String")
-    return true;
-  else
-    return false;
-}
-
-export const isDate = (field) => {
-  if(field.type.name === "Date" || field.type?.ofType?.name === "Date" || field.type.name === "DateTime" || field.type?.ofType?.name === "DateTime")
-    return true;
-  else
-    return false;
-}
-
-export const isEnum = (field) => {
-  if(field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM")
-    return true;
-  else
-    return false;
-}
 
 
