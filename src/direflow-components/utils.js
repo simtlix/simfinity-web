@@ -102,3 +102,31 @@ export const requestEntities = async (url) => {
     console.log(error);
   }
 };
+
+export const isBoolean = (field) => {
+  return field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean";
+}
+
+export const isNumber = (field) => {
+  return field.type.name === "Int" || field.type?.ofType?.name === "Int" || field.type.name === "Float" || field.type?.ofType?.name === "Float";
+}
+
+export const isString = (field) => {
+  return field.type.name === "String" || field.type?.ofType?.name === "String";
+}
+
+export const isDate = (field) => {
+  return field.type.name === "Date" || field.type?.ofType?.name === "Date" || field.type.name === "DateTime" || field.type?.ofType?.name === "DateTime" ||
+         field.extensions?.relation?.displayFieldScalarType === "Date" || field.extensions?.relation?.displayFieldScalarType === "DateTime";
+}
+
+export const isEnum = (field) => {
+  return field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM";
+}
+
+// String Formatter
+export const capitalize = (s) => {
+  if (typeof s !== "string") return "";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};
+

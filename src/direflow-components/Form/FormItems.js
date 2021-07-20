@@ -3,7 +3,7 @@ import { Form as FormAntd, Input, Select, DatePicker, InputNumber} from "antd";
 import { SelectEntities } from "./SelectEntities";
 import { EmbeddedForm } from "./EmbeddedForm";
 import { useIntl } from 'react-intl';
-import { isDate, isEnum, isNumber} from './utils'
+import { isDate, isEnum, isNumber} from '../utils'
 
 const { Option } = Select;
 
