@@ -16,7 +16,9 @@
     "start": "direflow-scripts start",
     "build": "direflow-scripts build",
     "build:lib": "direflow-scripts build:lib",
-    "test": "direflow-scripts test"
+    "test": "direflow-scripts test",
+    "lint": "eslint src/",
+    "lint-fix": "eslint src/ --fix"
   },
   "dependencies": {
     "antd": "^4.13.1",
@@ -69,8 +71,9 @@
   },
   "lint-staged": {
     "*.{js,json,css,md,html}": [
-      "prettier --single-quote --write",
-      "git add"
+      "yarn lint --fix",
+      "pretty-quick --staged",
+      "git add ."
     ]
   }
 }
