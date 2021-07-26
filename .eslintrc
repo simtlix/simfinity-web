@@ -3,7 +3,8 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true
+    "node": true,
+    "jest": true
   },
   "settings": {
     "pragma": "React",
@@ -16,11 +17,22 @@
   },
   "parserOptions": {
     "ecmaFeatures": {
-      "jsx": true
+      "jsx": true,
+      "arrowFunctions": true
     },
     "ecmaVersion": 2018,
     "sourceType": "module"
   },
   "plugins": ["react"],
-  "rules": {}
+  "rules": {
+    "react/display-name": "error",
+    "react/prop-types": "off",
+    "no-unused-vars": [
+      "warn",
+      {
+        "args": "none",
+        "argsIgnorePattern": "req|res|next|val"
+      }
+    ]
+  }
 }
