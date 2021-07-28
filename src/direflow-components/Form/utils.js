@@ -42,6 +42,13 @@ export const requestUpdateEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.update;
   const responseFields = "id";
   const objUserInput = userInput;
+  Object.keys(objUserInput).forEach(key =>{
+    if(objUserInput[key].added) {
+      objUserInput[key].added.forEach(item => {
+        delete item.id;
+      })
+    }
+  })
 
   // we have the format {"propertyName": "propertyValue"}
   const json = JSON.stringify(objUserInput);

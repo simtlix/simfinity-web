@@ -241,8 +241,20 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   const onUpdateRequested = (id) => {
 
-
+    //This snipet handle the case when the item was already updated
     const formData = form.getFieldValue(field.name) ;
+
+    if(formData?.added) {
+      let items = formData.added.filter(item => item.id === id)
+      if(items.length>0){
+        const item = items[0];
+        setModalDefaultData(item);
+        setModalMode("UPDATE");
+        setModalVisible(true);
+        return;
+      }
+    }
+
     if(formData?.updated){
       let items = formData.updated.filter(item => item.id === id)
       if(items.length>0){
@@ -446,6 +458,57 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   const onUpdate = (row) => {
 
+    const fixFields = (value, valueForTable) => {
+      filteredColumns.forEach(field => {
+        if(field?.type?.kind !== "OBJECT" && !(field?.extensions?.stateMachine)){
+          value[field.name] = row[field.name];
+          valueForTable[field.name] = row[field.name];
+        } else if(field?.type?.kind === "OBJECT") {
+          value[field.name] = {id: row[field.name].id}
+          valueForTable[field.name] = instancesContext.current[field.type.name][row[field.name].id][field.extensions.relation.displayField];
+        } else if(field?.extensions?.stateMachine) {
+          delete value[field.name];
+        }
+      })
+      
+    }
+
+    
+    //This snipet handle the case when the item added and then updated
+    const formData = form.getFieldValue(field.name) ;
+
+    if(formData?.added) {
+      let items = formData.added.filter(item => item.id === row.id)
+      if(items.length>0){
+        const value = items[0];
+        const valueForTable = {...value};
+        fixFields(value,valueForTable);
+        setData(old => {
+          const newState = old.map(item => {
+            if(item.id === row.id){
+              return valueForTable;
+            } else {
+              return item;
+            }
+          });
+          return newState;
+        })
+        let newAdded = formData.added.filter(item => item.id !== row.id)
+        newAdded.push(value);
+        formData.added = newAdded;
+
+        const newFormData = {}
+        newFormData[field.name] = {...formData}
+
+        form.setFieldsValue(newFormData);
+
+        setModalVisible(false);
+
+        return;
+      }
+    }
+
+    //Updating a an item that was not previously added
     const filtersForEntity = {}
     filtersForEntity.id = {
       value: row.id,
@@ -466,24 +529,10 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
     requestEntity(collectionEntity,url,1,1,filtersForEntity).then((response)=>{
       if (response && response.data) {
-
-        
-
         const original = response.data.data[collectionEntity.queryAll][0];
         const originalForTable = {...original};
-        filteredColumns.forEach(field => {
-          if(field?.type?.kind !== "OBJECT" && !(field?.extensions?.stateMachine)){
-            original[field.name] = row[field.name];
-            originalForTable[field.name] = row[field.name];
-          } else if(field?.type?.kind === "OBJECT") {
-            original[field.name] = {id: row[field.name].id}
-            originalForTable[field.name] = instancesContext.current[field.type.name][row[field.name].id][field.extensions.relation.displayField];
-          } else if(field?.extensions?.stateMachine) {
-            delete original[field.name];
-          }
-        })
+        fixFields(original,originalForTable);
         original[filterField.name] = {id: original[filterField.name].id};
-
         setData(old => {
           const newState = old.map(item => {
             if(item.id === row.id){
@@ -520,11 +569,18 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   };
 
   const onCreate = (value) =>{
-
     value.id = new Date().getTime();
 
+    const valueForTable = {...value}
+
+    filteredColumns.forEach(field => {
+      if(field?.type?.kind === "OBJECT") {
+        valueForTable[field.name] = instancesContext.current[field.type.name][valueForTable[field.name].id][field.extensions.relation.displayField];
+      } 
+    })
+
     setData(old => {
-      const newState = [...old,value]
+      const newState = [...old,valueForTable]
       return newState;
       
     })
