@@ -318,6 +318,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
     if(!inline){
       return pasedColumns
     }else{
+      /*
       const handleSave = (row) => {
 
         setData(old => {
@@ -383,6 +384,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
         
 
       };
+      */
   
       const columns = pasedColumns.map((col) => {
         return {
@@ -392,7 +394,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
             editable: true,
             dataIndex: col.dataIndex,
             title: col.title,
-            handleSave: handleSave,
+            handleSave: onUpdate,
           }),
         };
       });
@@ -409,19 +411,29 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
                   return oldData.filter(item => item.id !== record.id)
                  })
 
+                 const formData = form.getFieldValue(field.name) || {};
+
+                 //In case the item was previously added
+                 let wasPreviouslyAdded = false;
+                 if(formData.added){
+                  const newAdded = formData.added.filter(item => item.id !== record.id)
+                  formData.added = newAdded;
+                  wasPreviouslyAdded = true;
+                 }
+
                  //In case the item was previously updated
                  if(formData.updated){
                   const newUpdated = formData.updated.filter(item => item.id !== record.id)
                   formData.updated = newUpdated;
                  }
 
-                const formData = form.getFieldValue(field.name) || {};
-                if(formData.deleted){
-                  formData.deleted.push(record.id)
-                } else {
-                  formData.deleted = [record.id]
+                if(!wasPreviouslyAdded){
+                  if(formData.deleted){
+                    formData.deleted.push(record.id)
+                  } else {
+                    formData.deleted = [record.id]
+                  }
                 }
-                
                 const newFormData = {}
                 newFormData[field.name] = {...formData}
 
