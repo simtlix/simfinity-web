@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
-import React, {useCallback, useState, useContext, useEffect } from "react";
+import React, {useCallback, useState, useContext, useEffect, useRef } from "react";
 import { Form as FormAntd} from "antd";
 import Form from "./Form";
 import { requestAddNewEntity, requestUpdateEntity } from "./utils";
 import { ConfigContext } from "../config-context";
 import { requestEntity } from '../utils';
 import { EntitiesContext } from "../entities-context";
+import { InstancesContext } from "./InstancesContext";
 
 
 
@@ -17,6 +18,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
     const configContext = useContext(ConfigContext);
     const url = configContext.url;
     const entitiesContext = useContext(EntitiesContext);
+    const instancesRef = useRef({});
 
 
     const openForResult = useCallback((caller, fieldNameArr, entity, setValue) => {
@@ -76,14 +78,29 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         console.log(data);
         const item = openForResultForms[name];
 
+        
+
         if(name === "root" && mode === "UPDATE") {
             data.id = id;
             requestUpdateEntity(item.entity, data, url).then((response) => {
+                if(instancesRef.current[item.entity.name]){
+                    instancesRef.current[item.entity.name][data.id] = data;
+                } else {
+                    instancesRef.current[item.entity.name] = {}
+                    instancesRef.current[item.entity.name][data.id] = data;
+                }
                 console.log(response);
                 onSuccess && onSuccess()
             });
         } else {
             requestAddNewEntity(item.entity, data, url).then((response) => {
+                data.id = response[item.entity.mutations.add].id;
+                if(instancesRef.current[item.entity.name]){
+                    instancesRef.current[item.entity.name][data.id] = data;
+                } else {
+                    instancesRef.current[item.entity.name] = {}
+                    instancesRef.current[item.entity.name][data.id] = data;
+                }
                 if(name !== "root"){
                     item.setValue(response[item.entity.mutations.add].id);
                     
@@ -108,17 +125,20 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         
     }
     const render = useCallback(()=>{return (
+        
         <FormAntd.Provider onFormFinish={(name, { values, forms }) => {
             
             onSubmit(values, name, forms)
 
         }}>
-            {
+            <InstancesContext.Provider value={instancesRef}>
+                {
 
-                entitiesStack.map((item,index)=>{
-                    return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} initialValues={item.initialValue} mode={mode}></Form>
-                })
-            }
+                    entitiesStack.map((item,index)=>{
+                        return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} initialValues={item.initialValue} mode={mode}></Form>
+                    })
+                }
+            </InstancesContext.Provider>
         </FormAntd.Provider>
     )},[entitiesStack])
     

@@ -6,6 +6,8 @@ import { ConfigContext } from "../config-context";
 import { isString, isNumber, isBoolean } from "./utils";
 import { PlusOutlined } from '@ant-design/icons';
 import { useIntl } from "react-intl";
+import { InstancesContext } from './InstancesContext';
+
 
 
 const { Option } = Select;
@@ -13,6 +15,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const displayField = field?.extensions?.relation?.displayField;
   const entitiesContext = useContext(EntitiesContext);
   const configContext = useContext(ConfigContext);
+  const instancesContext = useContext(InstancesContext)
   const url = configContext.url;
   const [responseEntity, setResponseEntity] = useState([]);
   const [selectValues, setSelectValues] = useState(undefined);
@@ -82,6 +85,16 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
         }
       }
       fetch().then((data)=>{
+        if(data){
+          if(instancesContext.current[current.name]){
+            instancesContext.current[current.name][data[0].id] = data[0];
+          } else {
+            instancesContext.current[current.name] = {};
+            instancesContext.current[current.name][data[0].id] = data[0];
+          }
+        }
+        
+        
         setResponseEntity(data);
       }
       );

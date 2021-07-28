@@ -10,6 +10,7 @@ import { capitalize } from "../../utils/utils_string";
 import { requestEntity } from '../utils';
 import {useIntl} from 'react-intl';
 import { ConfigContext } from "../config-context";
+import { InstancesContext } from './InstancesContext';
 import { Field } from './Field';
 import { CollectionModalForm } from './CollectionModalForm'
 import { EditButton } from './EditButton/EditButton'
@@ -97,6 +98,8 @@ const generateEditableCellForEntity = (entity => {
 const Collection = ({field, inline = true, parentId, mode, form, openForResult}) => {
 
   const entitiesContext = useContext(EntitiesContext);
+
+  const instancesContext = useContext(InstancesContext);
 
   const collectionEntity = entitiesContext.filter((e) => e.name === field.type.ofType.name)[0];
 
@@ -237,6 +240,21 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
 
   const onUpdateRequested = (id) => {
+
+
+    const formData = form.getFieldValue(field.name) ;
+    if(formData?.updated){
+      let items = formData.updated.filter(item => item.id === id)
+      if(items.length>0){
+        const item = items[0];
+        setModalDefaultData(item);
+        setModalMode("UPDATE");
+        setModalVisible(true);
+        return;
+      }
+    }
+
+
     const filtersForEntity = {}
         filtersForEntity.id = {
           value: id,
@@ -267,17 +285,17 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   }
 
   const createColumns = (displayEntity, inline) => {
-    const pasedColumns = filteredColumns.map((field) => ({
-      title: intl.formatMessage({ id:`entity.${displayEntity.name}.fields.${field.name}`, defaultMessage:capitalize(field.name)}),
-      ...getColumnSearchProps(field.type.kind === "OBJECT" &&
-        field?.extensions?.relation?.displayField ? `${field.name}.${field.extensions.relation.displayField}` : field.name, field),
-      dataIndex: field.name,
-      field,
+    const pasedColumns = filteredColumns.map((item) => ({
+      title: intl.formatMessage({ id:`entity.${displayEntity.name}.fields.${item.name}`, defaultMessage:capitalize(item.name)}),
+      ...getColumnSearchProps(item.type.kind === "OBJECT" &&
+        item?.extensions?.relation?.displayField ? `${item.name}.${item.extensions.relation.displayField}` : item.name, item),
+      dataIndex: item.name,
+      field: item,
       entity: collectionEntity,
-      key: field.type.kind === "OBJECT" &&
-        field?.extensions?.relation?.displayField ? `${field.name}.${field.extensions.relation.displayField}` : field.name,
+      key: item.type.kind === "OBJECT" &&
+        item?.extensions?.relation?.displayField ? `${item.name}.${item.extensions.relation.displayField}` : item.name,
       render: (text) => {
-        if (isDate(field) && text) {
+        if (isDate(item) && text) {
           return new Date(text).toLocaleDateString();
         } else {
           return text;
@@ -323,13 +341,13 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
         requestEntity(collectionEntity,url,1,1,filtersForEntity).then((response)=>{
           if (response && response.data) {
             const original = response.data.data[collectionEntity.queryAll][0];
-            filteredColumns.forEach(field => {
-              if(field?.type?.kind !== "OBJECT" && !(field?.extensions?.stateMachine)){
-                original[field.name] = row[field.name];
-              } else if(field?.type?.kind === "OBJECT") {
-                original[field.name] = {id: original[field.name].id}
-              } else if(field?.extensions?.stateMachine) {
-                delete original[field.name];
+            filteredColumns.forEach(item => {
+              if(item?.type?.kind !== "OBJECT" && !(item?.extensions?.stateMachine)){
+                original[item.name] = row[item.name];
+              } else if(item?.type?.kind === "OBJECT") {
+                original[item.name] = {id: original[item.name].id}
+              } else if(item?.extensions?.stateMachine) {
+                delete original[item.name];
               }
             })
             original[filterField.name] = {id: original[filterField.name].id};
@@ -428,17 +446,6 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
   const onUpdate = (row) => {
 
-    setData(old => {
-      const newState = old.map(item => {
-        if(item.id === row.id){
-          return row
-        } else {
-          return item;
-        }
-      });
-      return newState;
-    })
-
     const filtersForEntity = {}
     filtersForEntity.id = {
       value: row.id,
@@ -459,17 +466,34 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
 
     requestEntity(collectionEntity,url,1,1,filtersForEntity).then((response)=>{
       if (response && response.data) {
+
+        
+
         const original = response.data.data[collectionEntity.queryAll][0];
+        const originalForTable = {...original};
         filteredColumns.forEach(field => {
           if(field?.type?.kind !== "OBJECT" && !(field?.extensions?.stateMachine)){
             original[field.name] = row[field.name];
+            originalForTable[field.name] = row[field.name];
           } else if(field?.type?.kind === "OBJECT") {
             original[field.name] = {id: row[field.name].id}
+            originalForTable[field.name] = instancesContext.current[field.type.name][row[field.name].id][field.extensions.relation.displayField];
           } else if(field?.extensions?.stateMachine) {
             delete original[field.name];
           }
         })
         original[filterField.name] = {id: original[filterField.name].id};
+
+        setData(old => {
+          const newState = old.map(item => {
+            if(item.id === row.id){
+              return originalForTable;
+            } else {
+              return item;
+            }
+          });
+          return newState;
+        })
 
         const formData = form.getFieldValue(field.name) || {};
         if(formData.updated){
@@ -479,6 +503,8 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
         } else {
           formData.updated = [original]
         }
+
+        
         
         const newFormData = {}
         newFormData[field.name] = {...formData}
@@ -494,6 +520,8 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
   };
 
   const onCreate = (value) =>{
+
+    value.id = new Date().getTime();
 
     setData(old => {
       const newState = [...old,value]
