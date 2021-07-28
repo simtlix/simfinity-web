@@ -3,7 +3,7 @@ import { EntitiesContext } from "../entities-context";
 import { Form as FormAntd, Select, Button, Tooltip, Space } from "antd";
 import { requestEntity } from "../Table/utils";
 import { ConfigContext } from "../config-context";
-import { isString, isNumber, isBoolean } from "./utils";
+import { isString, isNumber, isBoolean } from "../utils";
 import { PlusOutlined } from '@ant-design/icons';
 import { useIntl } from "react-intl";
 import { InstancesContext } from './InstancesContext';

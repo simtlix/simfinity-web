@@ -104,6 +104,7 @@ export const requestEntities = async (url) => {
 };
 
 
+
 const buildFilters = (filters) => {
   if(!filters)
     return ''
@@ -207,6 +208,7 @@ export const requestEntity = async (displayEntities, url, page, size, filters, s
     console.log(error);
   }
 };
+
 
 export const isBoolean = (field) => {
   return field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean";

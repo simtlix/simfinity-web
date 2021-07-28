@@ -12,8 +12,8 @@ import {
   Col
 } from "antd";
 import PropTypes from "prop-types";
+import { requestEntity } from "./utils";
 import {
-  requestEntity,
   isBoolean,
   isNumber,
   isString,
@@ -22,6 +22,7 @@ import {
 } from "./utils";
 import { capitalize } from "../../utils/utils_string";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+
 import { FormattedMessage, useIntl } from "react-intl";
 import DeleteButton from "./DeleteButton/DeleteButton";
 import EditButton from "./EditButton/EditButton";

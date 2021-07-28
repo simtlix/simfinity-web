@@ -1,6 +1,7 @@
 import React from "react";
 import { Field } from "./Field";
 
+
 export const FormItems = ({fields, parentFieldName, form, openForResult, entity, span=12}) =>{
     const renderFormFields = fields.map((field) => {
         const fieldName = parentFieldName ? [parentFieldName, field.name] : field.name;

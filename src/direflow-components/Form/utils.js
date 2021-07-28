@@ -1,9 +1,5 @@
 import axios from "axios";
 
-
-
-
-
 export const requestAddNewEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.add;
   const responseFields = "id";
@@ -114,5 +110,6 @@ export const isEnum = (field) => {
   else
     return false;
 }
+
 
 
