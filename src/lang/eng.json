@@ -1,18 +1,22 @@
 {
-  "entity.season.simple": "Season",
-  "entity.season.plural": "Seasons",
-  "entity.season.fields.serie": "Serie",
-  "entity.season.fields.number": "Number",
+    "entity.season.simple" : "Season",
+    "entity.season.plural" : "Seasons",
+    "entity.season.fields.serie": "Serie",
+    "entity.season.fields.number": "Number",
+    "entity.season.fields.state": "State",
+    
+    "entity.serie.simple" : "Serie",
+    "entity.serie.plural" : "Series",
+    "entity.serie.fields.name": "Name",
+   
+    "selectentity.tooltip": "Create..",
 
-  "entity.serie.simple": "Serie",
-  "entity.serie.plural": "Series",
-  "entity.serie.fields.name": "Name",
+    "table.search": "Search {field}",
+    "table.filter.search": "Sarch",
+    "table.filter.reset": "Reset",
+    "table.filter.filter": "Filter",
+    "table.total": "Total {total} items",
+    "form.collection.ok": "Ok",
+    "form.collection.cancel": "Cancel"
 
-  "selectentity.tooltip": "Create..",
-
-  "table.search": "Search {field}",
-  "table.filter.search": "Sarch",
-  "table.filter.reset": "Reset",
-  "table.filter.filter": "Filter",
-  "table.total": "Total {total} items"
 }

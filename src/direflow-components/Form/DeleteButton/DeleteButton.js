@@ -1,17 +1,13 @@
-import React, {useContext} from 'react';
-import { deleteEntity } from './utils';
+/* eslint-disable react/prop-types */
+import React from 'react';
 import { DeleteOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
-import { Modal, Button, Space } from "antd";
-import { ConfigContext } from "../../config-context";
+import { Modal, Button  } from "antd";
 
-function DeleteButton({record, displayEntity, handleRefresh}) {
+export function DeleteButton({record, onDelete}) {
 
     const { confirm } = Modal;
-    const configContext = useContext(ConfigContext);
-    const url = configContext.url;
 
     function showDeleteConfirm() {
-      console.log(displayEntity);
         confirm({
           title: 'Are you sure delete this item?',
           icon: <ExclamationCircleOutlined />,
@@ -19,19 +15,18 @@ function DeleteButton({record, displayEntity, handleRefresh}) {
           okType: 'danger',
           cancelText: 'No',
           onOk() {
-            clickButtonDelete(displayEntity, record);
+            clickButtonDelete(record);
           },
           onCancel() {
           },
         });
       }
 
-    const clickButtonDelete = (entity, record) => {
+    const clickButtonDelete = (record) => {
      
-            deleteEntity(entity, record.id, url).then((response) => {
-            handleRefresh();
-        })
-      }
+            onDelete(record);
+        }
+      
 
     return (
         <React.Fragment>
@@ -44,6 +39,4 @@ function DeleteButton({record, displayEntity, handleRefresh}) {
         </React.Fragment>
     )
 }
-
-export default DeleteButton
 
