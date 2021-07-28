@@ -6,8 +6,7 @@ import { Table, Input, Button, Space, Form, Row, Col } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { EntitiesContext } from "../entities-context";
 import { isDate } from './utils'
-import { capitalize } from "../../utils/utils_string";
-import { requestEntity } from '../utils';
+import { requestEntity, capitalize } from '../utils';
 import {useIntl} from 'react-intl';
 import { ConfigContext } from "../config-context";
 import { InstancesContext } from './InstancesContext';

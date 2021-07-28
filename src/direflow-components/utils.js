@@ -230,3 +230,8 @@ export const isDate = (field) => {
 export const isEnum = (field) => {
   return field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM";
 }
+
+export const capitalize = (s) => {
+  if (typeof s !== "string") return "";
+  return s.charAt(0).toUpperCase() + s.slice(1);
+};

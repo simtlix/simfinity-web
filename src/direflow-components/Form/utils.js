@@ -39,7 +39,7 @@ export const requestUpdateEntity = async (displayEntities, userInput, url) => {
   const responseFields = "id";
   const objUserInput = userInput;
   Object.keys(objUserInput).forEach(key =>{
-    if(objUserInput[key].added) {
+    if(objUserInput[key]?.added) {
       objUserInput[key].added.forEach(item => {
         delete item.id;
       })

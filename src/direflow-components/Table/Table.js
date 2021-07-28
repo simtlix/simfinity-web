@@ -19,8 +19,8 @@ import {
   isString,
   isDate,
   isEnum,
-} from "./utils";
-import { capitalize } from "../../utils/utils_string";
+  capitalize,
+} from "../utils";
 import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { FormattedMessage, useIntl } from "react-intl";
