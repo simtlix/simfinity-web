@@ -5,7 +5,7 @@ import {FormItems} from "./FormItems"
 import { useIntl } from 'react-intl';
 import 'antd/dist/antd.css';
 
-export const EmbeddedForm = ({ field, index, form, openForResult, entity }) => {
+export const EmbeddedForm = ({ field, index, form, openForResult, entity, span}) => {
   const nameField = field?.name != null ? field.name : "";
   const entitiesContext = useContext(EntitiesContext);
   const intl = useIntl()
@@ -14,18 +14,21 @@ export const EmbeddedForm = ({ field, index, form, openForResult, entity }) => {
   const filteredFields = entityEmbedded[0].fields.filter(
     (field) => field.name !== "id" && field.type.kind !== "LIST"
   );  
-  return (<Row>
-               <Col >
+  return (
+               <Col span={24}>
                 <Card size="small" title={intl.formatMessage({id:`entity.${entity.name}.fields.${field.name}`, defaultMessage:field.name})} >
+                  <Row gutter={24}>
                   <FormItems 
                     fields={filteredFields}
                     parentFieldName={nameField}
                     form={form}
                     openForResult={openForResult}
                     entity={entity}
+                    span={span}
                     ></FormItems>
+                    </Row>
                 </Card>
                </Col>
-          </Row>
+         
           );
 };

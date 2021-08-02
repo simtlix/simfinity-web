@@ -30,13 +30,19 @@ function DeleteButton({ record, displayEntity, handleRefresh }) {
     });
   };
 
+  const clickButtonDelete = (entity, record) => {
+    deleteEntity(entity, record.id, url).then((response) => {
+      handleRefresh();
+    });
+  };
+
   return (
     <React.Fragment>
       <Button
         type="primary"
         shape="round"
         icon={<DeleteOutlined />}
-        size="large"
+        size="small"
         onClick={showDeleteConfirm}
       />
     </React.Fragment>
