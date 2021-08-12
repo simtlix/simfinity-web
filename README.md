@@ -8,7 +8,7 @@
 ```
 You should provide to the web component the url of the API
 
-# Getting starged
+# Getting started
 
 ## Pre-requisites
 Yarn: https://yarnpkg.com/
