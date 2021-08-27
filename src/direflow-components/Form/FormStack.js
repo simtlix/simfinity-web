@@ -21,7 +21,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
     const instancesRef = useRef({});
 
 
-    const openForResult = useCallback((caller, fieldNameArr, entity, setValue) => {
+    const openForResult = useCallback((caller, fieldNameArr, entity, setValue, linkField, containerEntity) => {
 
         let formName = "";
 
@@ -31,12 +31,12 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
 
         setOpenForResultForms((oldState)=>{
             const newState = {...oldState};
-            newState[formName] = {caller, formName: formName, callerField: fieldNameArr, entity, setValue, mode:"CREATE"}
+            newState[formName] = {caller, formName: formName, callerField: fieldNameArr, entity, setValue, mode:"CREATE", linkField, containerEntity}
             return newState;
         });
 
         setEntitiesStack((oldState) => {
-            const newState = [...oldState, {caller, formName: formName, callerField: fieldNameArr, entity, setValue, mode:"CREATE"}];
+            const newState = [...oldState, {caller, formName: formName, callerField: fieldNameArr, entity, setValue, mode:"CREATE", linkField, containerEntity}];
             return newState;
         })
     }, [entitiesStack, openForResultForms]);
@@ -135,7 +135,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
                 {
 
                     entitiesStack.map((item,index)=>{
-                        return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} initialValues={item.initialValue} mode={mode}></Form>
+                        return <Form key={item.formName} name={item.formName} visible={entitiesStack.length-1===index} displayEntity={item.entity} openForResultHandler={openForResult} initialValues={item.initialValue} mode={item.mode} linkField={item.linkField} containerEntity={item.containerEntity}></Form>
                     })
                 }
             </InstancesContext.Provider>
