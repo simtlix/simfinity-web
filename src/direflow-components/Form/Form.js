@@ -13,7 +13,7 @@ const { Panel } = Collapse;
 
 
 
-const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, initialValues, mode }) => {
+const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, initialValues, mode, linkField, containerEntity }) => {
 
   const [form] = FormAntd.useForm();
   const intl = useIntl()
@@ -35,7 +35,7 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
   )
 
   const collectionFields = displayEntity.fields.filter(
-    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && !(field.extensions?.relation?.embedded)
+    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && !(field.extensions?.relation?.embedded) && (( field.type.ofType?.name !== containerEntity?.name || field.extensions?.relation?.connectionField !== linkField?.extensions?.relation?.connectionField))
   )
 
   const collectionEmbeddedFields = displayEntity.fields.filter(

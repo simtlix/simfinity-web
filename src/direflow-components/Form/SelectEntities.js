@@ -11,7 +11,7 @@ import { InstancesContext } from './InstancesContext';
 
 
 const { Option } = Select;
-export const SelectEntities = ({ field, name, form, openForResult, label }) => {
+export const SelectEntities = ({ field, name, form, openForResult, label, containerEntity }) => {
   const displayField = field?.extensions?.relation?.displayField;
   const entitiesContext = useContext(EntitiesContext);
   const configContext = useContext(ConfigContext);
@@ -170,7 +170,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label }) => {
   const element = useCallback(()=>{
 
     const onPlusButtonClick = () => {
-      openForResult(form, fixedName, currentEntity.current, createCallback);
+      openForResult(form, fixedName, currentEntity.current, createCallback, field, containerEntity);
     }
 
     return (
