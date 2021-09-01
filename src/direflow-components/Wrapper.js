@@ -7,12 +7,14 @@ import PropTypes from "prop-types";
 
 export const Context = React.createContext();
 
+const local = navigator.language.split(/[-_]/)[0];  // language without region code
+
 let lang = {...en};
 
 
 const Wrapper = (props) => {
 
-    const [locale, setLocale] = useState('en');
+    const [locale, setLocale] = useState(local);
 
     const [messages, setMessages] = useState(lang);
 
