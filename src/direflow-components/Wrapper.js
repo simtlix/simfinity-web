@@ -21,11 +21,9 @@ const Wrapper = (props) => {
     const getData=()=>{
         fetch( props.lang || `./lang/${locale}.json` )
           .then(function(response){
-            console.log(response)
             return response.json();
           })
           .then(function(myJson) {
-            console.log(myJson);
             setMessages(lang => ({...lang, ...myJson}))
           }).catch(
              (e) => console.log(e)
