@@ -78,7 +78,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         console.log(data);
         const item = openForResultForms[name];
 
-        
+
 
         if(name === "root" && mode === "UPDATE") {
             data.id = id;
@@ -94,6 +94,13 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
             });
         } else {
             requestAddNewEntity(item.entity, data, url).then((response) => {
+                console.log("response");
+                console.log(response[item.entity.mutations.add]);
+                if (!response[item.entity.mutations.add]) {
+                    alert("Something was wrong. Try again!");
+                    onSuccess && onSuccess()
+                    return;
+                }
                 data.id = response[item.entity.mutations.add].id;
                 if(instancesRef.current[item.entity.name]){
                     instancesRef.current[item.entity.name][data.id] = data;
