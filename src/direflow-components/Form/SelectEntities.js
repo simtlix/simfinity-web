@@ -51,6 +51,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
 
   }
 
+  //edit form
   useEffect(() => {
     if(initialValue || initialValueFromForm){
       const fetch = async () => {
@@ -79,7 +80,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
           }
         }
 
-        let response = await requestEntity(current, url, 1, 10, selectFilters);
+        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
         if (response && response.data) {
             return response.data.data[current.queryAll];
         }
@@ -94,7 +95,6 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
           }
         }
         
-        
         setResponseEntity(data);
       }
       );
@@ -102,8 +102,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
   }, [initialValue, initialValueFromForm])
 
   useEffect(() => {
-    if (selectValues) {
-
+    //if (selectValues) {
         const fetch = async () => {
           
           let selectFilters = {}
@@ -140,7 +139,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
             }
           }
 
-          let response = await requestEntity(current, url, 1, 10, selectFilters);
+          let response = await requestEntity(current, url,/*, 1, 10, selectFilters*/);
           if (response && response.data) {
               return response.data.data[current.queryAll];
           }
@@ -150,7 +149,7 @@ export const SelectEntities = ({ field, name, form, openForResult, label, contai
         }
         );
       }
-    }
+    //}
   , [selectValues])
 
   const renderSelect = useCallback(()=>{

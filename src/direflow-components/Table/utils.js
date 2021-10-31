@@ -74,13 +74,26 @@ export const requestEntity = async (displayEntities, url, page, size, filters, s
     }
   }
   try {
-    const data = JSON.stringify({
-      query: `{
-        ${entityName}(${buildFilters(filters)} pagination:{page:${page} size:${size} count:true} ${sort?`sort:{terms:[{field:"${sort.field}" order:${sort.order}}]}`:""}){
-                ${formatQueryFields}
-              }
-            }`,
-    });
+    let data;
+    if (filters&&page&&size) {
+      data = JSON.stringify({
+        query: `{
+          ${entityName}(${buildFilters(filters)} pagination:{page:${page} size:${size} count:true} ${sort?`sort:{terms:[{field:"${sort.field}" order:${sort.order}}]}`:""}){
+                  ${formatQueryFields}
+                }
+              }`,
+      });
+    }
+    else {
+      data = JSON.stringify({
+        query: `{
+          ${entityName}{
+                  ${formatQueryFields}
+                }
+              }`,
+      });
+    }
+    
 
     const config = {
       method: "POST",

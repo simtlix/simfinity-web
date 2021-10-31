@@ -94,9 +94,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
             });
         } else {
             requestAddNewEntity(item.entity, data, url).then((response) => {
-                console.log("response");
-                console.log(response[item.entity.mutations.add]);
-                if (!response[item.entity.mutations.add]) {
+                if (!response) {
                     alert("Something was wrong. Try again!");
                     onSuccess && onSuccess()
                     return;

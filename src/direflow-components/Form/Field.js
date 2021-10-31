@@ -12,6 +12,7 @@ export const Field = ({field, parentFieldName, entity, form, openForResult, rend
     const fieldName = parentFieldName ? [parentFieldName, field.name] : field.name;
     const nameField = field?.name != null ? field.name : "";
     const label = intl.formatMessage({ id: `entity.${entity.name}.fields.${nameField}`, defaultMessage: nameField.toUpperCase() });
+    const dateFormat = 'YYYY/MM/DD';
     if (field?.extensions?.stateMachine) {
         return null;
     } else if (field?.type?.kind === "OBJECT" &&
@@ -61,7 +62,7 @@ export const Field = ({field, parentFieldName, entity, form, openForResult, rend
             return (
                 <Col span={span}>
                     <FormAntd.Item key={fieldName} name={fieldName} label={renderLabel?label:undefined}>
-                        <DatePicker onBlur={onConfirm} onPressEnter={onConfirm} ref={reference}/>
+                        <DatePicker format={dateFormat} onBlur={onConfirm} onPressEnter={onConfirm} ref={reference} />
                     </FormAntd.Item>
                 </Col>
             );
