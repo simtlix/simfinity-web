@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const deleteEntity = async (displayEntities, id, url) => {
-  const entityName = displayEntities.mutations.delete
+  const entityName = displayEntities.mutations.delete;
   try {
     const data = JSON.stringify({
       query: `mutation {
@@ -12,8 +12,8 @@ export const deleteEntity = async (displayEntities, id, url) => {
     });
 
     const config = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       url,
       data,
     };
