@@ -27,11 +27,7 @@ export const requestAddNewEntity = async (displayEntities, userInput, url) => {
     };
 
     const response = await axios(config);
-    console.log("service")
-    console.log(response.data);
     const responseData = response.data && response.data.data;
-    const responseError = response.data && response.data.errors && response.data.errors[0].cause.message;
-    console.log(responseError);
     return responseData;
   } catch (error) {
     console.log(error);
