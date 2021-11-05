@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   Table as TableAntd,
   Input,
@@ -9,10 +11,10 @@ import {
   Switch,
   DatePicker,
   Row,
-  Col
-} from "antd";
-import PropTypes from "prop-types";
-import { requestEntity } from "./utils";
+  Col,
+} from 'antd';
+import PropTypes from 'prop-types';
+import { requestEntity } from './utils';
 import {
   isBoolean,
   isNumber,
@@ -20,30 +22,36 @@ import {
   isDate,
   isEnum,
   capitalize,
-} from "../utils";
-import { SearchOutlined, PlusOutlined } from "@ant-design/icons";
+} from '../utils';
+import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 
-import { FormattedMessage, useIntl } from "react-intl";
-import DeleteButton from "./DeleteButton/DeleteButton";
-import EditButton from "./EditButton/EditButton";
-import "antd/dist/antd.css";
+import { FormattedMessage, useIntl } from 'react-intl';
+import DeleteButton from './DeleteButton/DeleteButton';
+import EditButton from './EditButton/EditButton';
+import 'antd/dist/antd.css';
 
 const { Option } = Select;
 
-const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpdateRequested}) => {
+const Table = ({
+  displayEntity = null,
+  url,
+  entities,
+  onCreateRequested,
+  onUpdateRequested,
+}) => {
   const intl = useIntl();
   const [resultList, setResultList] = useState([]);
   const [columns, setColumns] = useState([]);
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
-    position: ["bottomCenter"],
-    pageSizeOptions: ["10", "20", "25", "30"],
+    position: ['bottomCenter'],
+    pageSizeOptions: ['10', '20', '25', '30'],
     showSizeChanger: true,
     showQuickJumper: true,
     showTotal: (total) => {
       return intl.formatMessage(
-        { id: "table.total", defaultMessage: "Total {total} items" },
+        { id: 'table.total', defaultMessage: 'Total {total} items' },
         { total }
       );
     },
@@ -51,7 +59,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
   const [totalCount, setTotalCount] = useState(0);
   const [filters, setFilters] = useState({});
   const searchInput = useRef(null);
-  const [selectedOperator, setSelectedOperator] = useState("EQ");
+  const [selectedOperator, setSelectedOperator] = useState('EQ');
   const [selectValuesFilter, setSelectValuesFilter] = useState(undefined);
   const [selectValues, setSelectValues] = useState();
   const [sort, setSort] = useState();
@@ -63,8 +71,8 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
 
       const fetch = async () => {
         let selectFilters = {};
-        const propName = dataIndex.split(".")[0];
-        const fieldName = dataIndex.split(".")[1];
+        const propName = dataIndex.split('.')[0];
+        const fieldName = dataIndex.split('.')[1];
         let current;
 
         entities.forEach(async (item) => {
@@ -86,20 +94,20 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
             value: selectedKeys,
             key: propName,
             field: fieldName,
-            operator: isString(currentField) ? "LIKE" : "EQ",
+            operator: isString(currentField) ? 'LIKE' : 'EQ',
             entity: {
               type: {
-                kind: "OBJECT",
+                kind: 'OBJECT',
               },
               extensions: {
                 relation: {
                   displayFieldScalarType: isString(currentField)
-                    ? "String"
+                    ? 'String'
                     : isNumber(currentField)
-                    ? "Int"
+                    ? 'Int'
                     : isBoolean(currentField)
-                    ? "Boolean"
-                    : "DateTime",
+                    ? 'Boolean'
+                    : 'DateTime',
                 },
               },
             },
@@ -108,17 +116,17 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
           selectFilters[fieldName] = {
             value: selectedKeys,
             key: fieldName,
-            operator: isString(currentField) ? "LIKE" : "EQ",
+            operator: isString(currentField) ? 'LIKE' : 'EQ',
             entity: {
               type: {
                 name: isString(currentField)
-                  ? "String"
+                  ? 'String'
                   : isNumber(currentField)
-                  ? "Int"
+                  ? 'Int'
                   : isBoolean(currentField)
-                  ? "Boolean"
-                  : "DateTime",
-                kind: "SCALAR",
+                  ? 'Boolean'
+                  : 'DateTime',
+                kind: 'SCALAR',
               },
             },
           };
@@ -183,7 +191,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
       delete newState[entity.name];
       return newState;
     });
-    console.log("handleReset");
+    console.log('handleReset');
   };
 
   const getObjectFilterOptions = (selectValuesParam) => {
@@ -195,7 +203,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
   };
 
   const getOptions = (entity) => {
-    if (entity.type.kind !== "OBJECT") {
+    if (entity.type.kind !== 'OBJECT') {
       return (
         <>
           <Option value="EQ">=</Option>
@@ -203,9 +211,9 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
           <Option value="LTE">&lt;=</Option>
           <Option value="GT">&gt;</Option>
           <Option value="GTE">&gt;=</Option>
-          {(entity.type.name === "String" ||
-            (entity.type.kind === "NON_NULL" &&
-              entity.type.ofType.name === "String")) && (
+          {(entity.type.name === 'String' ||
+            (entity.type.kind === 'NON_NULL' &&
+              entity.type.ofType.name === 'String')) && (
             <Option value="LIKE">Contains</Option>
           )}
         </>
@@ -223,18 +231,18 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
     (dataIndex, type) => {
       const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
         confirm();
-        if (entity.type.kind !== "OBJECT") {
+        if (entity.type.kind !== 'OBJECT') {
           setFilters((previous) => {
             const newState = { ...previous };
             newState[entity.name] = {
               value: selectedKeys[0],
               key:
-                dataIndex.indexOf(".") > 0
-                  ? dataIndex.split(".")[0]
+                dataIndex.indexOf('.') > 0
+                  ? dataIndex.split('.')[0]
                   : dataIndex,
               field:
-                dataIndex.indexOf(".") > 0
-                  ? dataIndex.split(".")[1]
+                dataIndex.indexOf('.') > 0
+                  ? dataIndex.split('.')[1]
                   : undefined,
               entity,
               operator: selectedOperator,
@@ -243,8 +251,8 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
           });
         } else {
           let current;
-          const propName = dataIndex.split(".")[0];
-          const fieldName = dataIndex.split(".")[1];
+          const propName = dataIndex.split('.')[0];
+          const fieldName = dataIndex.split('.')[1];
 
           entities.forEach(async (item) => {
             if (item.name === entity.type.name) {
@@ -265,17 +273,17 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
             operator: selectedOperator,
             entity: {
               type: {
-                kind: "OBJECT",
+                kind: 'OBJECT',
               },
               extensions: {
                 relation: {
                   displayFieldScalarType: isString(currentField)
-                    ? "String"
+                    ? 'String'
                     : isNumber(currentField)
-                    ? "Int"
+                    ? 'Int'
                     : isBoolean(currentField)
-                    ? "Boolean"
-                    : "DateTime",
+                    ? 'Boolean'
+                    : 'DateTime',
                 },
               },
             },
@@ -314,16 +322,16 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
         }) => (
           <div style={{ padding: 8 }}>
             <div>
-              <Space style={{ display: "flex", flexDirection: "row" }}>
+              <Space style={{ display: 'flex', flexDirection: 'row' }}>
                 <Select
                   defaultValue="EQ"
-                  style={{ marginBottom: 8, display: "block", flex: 1 }}
+                  style={{ marginBottom: 8, display: 'block', flex: 1 }}
                   onChange={setSelectedOperator}
                 >
                   {getOptions(type)}
                 </Select>
 
-                {type.type.kind !== "OBJECT" ? (
+                {type.type.kind !== 'OBJECT' ? (
                   <>
                     {(isEnum(type) || isString(type)) && (
                       <Input
@@ -341,7 +349,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                         style={{
                           width: 200,
                           marginBottom: 8,
-                          display: "block",
+                          display: 'block',
                           flex: 2,
                         }}
                       />
@@ -358,7 +366,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                         style={{
                           width: 200,
                           marginBottom: 8,
-                          display: "block",
+                          display: 'block',
                           flex: 2,
                         }}
                       />
@@ -369,7 +377,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                         onChange={(e) => {
                           setSelectedKeys(e ? [e] : []);
                         }}
-                        style={{ marginBottom: 8, display: "block", flex: 2 }}
+                        style={{ marginBottom: 8, display: 'block', flex: 2 }}
                       />
                     )}
                     {isDate(type) && (
@@ -378,7 +386,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                         onChange={(e) => {
                           setSelectedKeys(e ? [e] : []);
                         }}
-                        style={{ marginBottom: 8, display: "block", flex: 2 }}
+                        style={{ marginBottom: 8, display: 'block', flex: 2 }}
                       />
                     )}
                   </>
@@ -387,7 +395,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                     style={{
                       width: 200,
                       marginBottom: 8,
-                      display: "block",
+                      display: 'block',
                       flex: 2,
                     }}
                     showSearch
@@ -398,7 +406,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                     filterOption={false}
                     onSearch={(value) => {
                       setSelectedKeys(value);
-                      setSelectedOperator("EQ");
+                      setSelectedOperator('EQ');
                       setSelectValuesFilter({
                         selectedKeys: value,
                         confirm,
@@ -408,7 +416,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                     }}
                     onChange={(value) => {
                       setSelectedKeys(value);
-                      setSelectedOperator("EQ");
+                      setSelectedOperator('EQ');
                       handleSearch(
                         [value],
                         confirm,
@@ -464,7 +472,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
           </div>
         ),
         filterIcon: (filtered) => (
-          <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
+          <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
         ),
         onFilterDropdownVisibleChange: (visible) => {
           if (visible) {
@@ -484,16 +492,15 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
     isDate,
     setColumns
   ) => {
-
     const filteredColumns = displayEntity.fields.filter((entity) => {
       if (
-        entity.name !== "id" &&
-        entity.type.kind !== "LIST" &&
-        entity.type.kind !== "OBJECT"
+        entity.name !== 'id' &&
+        entity.type.kind !== 'LIST' &&
+        entity.type.kind !== 'OBJECT'
       ) {
         return true;
       } else if (
-        entity.type.kind === "OBJECT" &&
+        entity.type.kind === 'OBJECT' &&
         entity?.extensions?.relation?.displayField
       ) {
         return true;
@@ -508,7 +515,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
         defaultMessage: capitalize(entity.name),
       }),
       ...getColumnSearchProps(
-        entity.type.kind === "OBJECT" &&
+        entity.type.kind === 'OBJECT' &&
           entity?.extensions?.relation?.displayField
           ? `${entity.name}.${entity.extensions.relation.displayField}`
           : entity.name,
@@ -517,7 +524,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
       dataIndex: entity.name,
       sorter: true,
       key:
-        entity.type.kind === "OBJECT" &&
+        entity.type.kind === 'OBJECT' &&
         entity?.extensions?.relation?.displayField
           ? `${entity.name}.${entity.extensions.relation.displayField}`
           : entity.name,
@@ -531,18 +538,22 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
     }));
 
     pasedColumns.push({
-      title: "Action",
-      key: "action",
+      title: 'Action',
+      key: 'action',
       render: (text, record) => (
         <Space size="middle">
           <DeleteButton
             record={record}
             displayEntity={displayEntity}
             handleRefresh={() => {
-              setLastDeleted(record.id)
+              setLastDeleted(record.id);
             }}
           />
-          <EditButton onClick={()=>{onUpdateRequested(record.id)}}></EditButton>
+          <EditButton
+            onClick={() => {
+              onUpdateRequested(record.id);
+            }}
+          ></EditButton>
         </Space>
       ),
     });
@@ -577,7 +588,7 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
                 if (element[prop] === null) {
                   myObj[prop] = null;
                 } else {
-                  if (typeof element[prop] === "object") {
+                  if (typeof element[prop] === 'object') {
                     let _valueObject = Object.values(element[prop]);
                     myObj[prop] = _valueObject[0];
                   } else {
@@ -615,10 +626,10 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
     if (sorter) {
       setSort((sortPrevious) => {
         const order =
-          sorter.order === "descend"
-            ? "DESC"
-            : sorter.order === "ascend"
-            ? "ASC"
+          sorter.order === 'descend'
+            ? 'DESC'
+            : sorter.order === 'ascend'
+            ? 'ASC'
             : null;
         if (
           sortPrevious?.field !== sorter.columnKey ||
@@ -634,38 +645,36 @@ const Table = ({ displayEntity = null, url, entities,  onCreateRequested, onUpda
 
   return (
     <>
-    <Row>
-      <Col span={24}>
-        <Space direction={"vertical"} style={{width:"100%"}}>
-          <Row>
-            <Col span={24} style={{display:"flex", justifyContent:"flex-end"}}>
-              <Button
+      <Row>
+        <Col span={24}>
+          <Space direction={'vertical'} style={{ width: '100%' }}>
+            <Row>
+              <Col
+                span={24}
+                style={{ display: 'flex', justifyContent: 'flex-end' }}
+              >
+                <Button
                   type="primary"
-                  onClick={() =>
-                    onCreateRequested()
-                  }
+                  onClick={() => onCreateRequested()}
                   icon={<PlusOutlined />}
                   size="large"
-                >
-                </Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col span={24}>
-              <TableAntd
-              columns={columns}
-              dataSource={resultList}
-              onChange={handleTableChange}
-              pagination={{ ...pagination, total: totalCount }}
-              />
-            </Col>
-          </Row>
-        </Space>
-      </Col>
-    </Row>
-    
+                ></Button>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={24}>
+                <TableAntd
+                  columns={columns}
+                  dataSource={resultList}
+                  onChange={handleTableChange}
+                  pagination={{ ...pagination, total: totalCount }}
+                />
+              </Col>
+            </Row>
+          </Space>
+        </Col>
+      </Row>
     </>
-    
   );
 };
 

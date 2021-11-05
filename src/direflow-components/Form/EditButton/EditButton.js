@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import React from "react";
-import { EditOutlined } from "@ant-design/icons";
-import {Button } from "antd";
+import React from 'react';
+import { EditOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 export function EditButton({ onClick }) {
   return (
