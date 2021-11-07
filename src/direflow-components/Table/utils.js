@@ -119,7 +119,6 @@ export const requestEntity = async (
     }
   }
   try {
-<<<<<<< HEAD
     let data;
     if (filters&&page&&size) {
       data = JSON.stringify({
@@ -140,19 +139,6 @@ export const requestEntity = async (
       });
     }
     
-=======
-    const data = JSON.stringify({
-      query: `{
-        ${entityName}(${buildFilters(
-        filters
-      )} pagination:{page:${page} size:${size} count:true} ${
-        sort ? `sort:{terms:[{field:"${sort.field}" order:${sort.order}}]}` : ''
-      }){
-                ${formatQueryFields}
-              }
-            }`,
-    });
->>>>>>> main
 
     const config = {
       method: 'POST',
