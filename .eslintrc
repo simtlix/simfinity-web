@@ -1,31 +1,38 @@
 {
   "env": {
-      "browser": true,
-      "es6": true,
-      "node": true
+    "browser": true,
+    "es6": true,
+    "node": true,
+    "jest": true
   },
   "settings": {
-      "pragma": "React",
-      "version": "detect"
+    "pragma": "React",
+    "version": "detect"
   },
   "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended"
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:json/recommended"
   ],
   "globals": {
-      "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
   },
   "parserOptions": {
-      "ecmaFeatures": {
-          "jsx": true
-      },
-      "ecmaVersion": 2018,
-      "sourceType": "module"
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
   },
   "plugins": [
-      "react"
+    "react",
+    "prettier"
   ],
   "rules": {
-  }
+    "react/react-in-jsx-scope": "off",
+    "prettier/prettier": ["error", {"singleQuote": true, "parser": "flow"}]
+  },
+  "parser": "babel-eslint"
 }

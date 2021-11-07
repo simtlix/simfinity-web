@@ -1,9 +1,16 @@
-import React from "react";
-import { Form as FormAntd, Input, Select, DatePicker, InputNumber, Col } from "antd";
-import { SelectEntities } from "./SelectEntities";
-import { EmbeddedForm } from "./EmbeddedForm";
+import React from 'react';
+import {
+  Form as FormAntd,
+  Input,
+  Select,
+  DatePicker,
+  InputNumber,
+  Col,
+} from 'antd';
+import { SelectEntities } from './SelectEntities';
+import { EmbeddedForm } from './EmbeddedForm';
 import { isDate, isEnum, isNumber } from './utils';
-import { useIntl } from "react-intl";
+import { useIntl } from 'react-intl';
 const { Option } = Select;
 
 
@@ -84,5 +91,3 @@ export const Field = ({field, parentFieldName, entity, form, openForResult, rend
         }
     }
 };
-
-

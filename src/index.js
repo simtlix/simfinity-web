@@ -11,9 +11,7 @@
 
 import SimfinityWeb from './direflow-components';
 
-
 SimfinityWeb.then((element) => {
-
   /**
    * Access DOM node when it's mounted
    */
