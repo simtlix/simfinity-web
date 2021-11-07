@@ -110,7 +110,7 @@ export const SelectEntities = ({
   }, [initialValue, initialValueFromForm]);
 
   useEffect(() => {
-    if (selectValues) {
+    //if (selectValues) {
       const fetch = async () => {
         let selectFilters = {};
 
@@ -151,7 +151,7 @@ export const SelectEntities = ({
           },
         };
 
-        let response = await requestEntity(current, url, 1, 10, selectFilters);
+        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
         if (response && response.data) {
           return response.data.data[current.queryAll];
         }
@@ -159,7 +159,7 @@ export const SelectEntities = ({
       fetch().then((data) => {
         setResponseEntity(data);
       });
-    }
+    //}
   }, [selectValues]);
 
   const renderSelect = useCallback(() => {
