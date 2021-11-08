@@ -33,6 +33,7 @@ export const Field = ({
     id: `entity.${entity.name}.fields.${nameField}`,
     defaultMessage: nameField.toUpperCase(),
   });
+  const dateFormat = 'YYYY/MM/DD';
   if (field?.extensions?.stateMachine) {
     return null;
   } else if (
@@ -118,6 +119,7 @@ export const Field = ({
             label={renderLabel ? label : undefined}
           >
             <DatePicker
+              format={dateFormat}
               onBlur={onConfirm}
               onPressEnter={onConfirm}
               ref={reference}
