@@ -658,7 +658,10 @@ const Table = ({
                   onClick={() => onCreateRequested()}
                   icon={<PlusOutlined />}
                   size="large"
-                ></Button>
+                  ghost
+                >
+                  Add
+                </Button>
               </Col>
             </Row>
             <Row>
