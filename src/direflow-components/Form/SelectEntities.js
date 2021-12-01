@@ -172,7 +172,7 @@ export const SelectEntities = ({
       );
     });
     return options;
-    // eslint-disable-next-line
+    
   }, [responseEntity]);
 
   // siempre se va a mandar el id como field en este tipo de conexion ?
