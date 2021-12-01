@@ -90,7 +90,10 @@ export const SelectEntities = ({
           },
         };
 
-        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
+        let response = await requestEntity(
+          current,
+          url /* 1, 10, selectFilters*/
+        );
         if (response && response.data) {
           return response.data.data[current.queryAll];
         }
@@ -112,54 +115,57 @@ export const SelectEntities = ({
 
   useEffect(() => {
     //if (selectValues) {
-      const fetch = async () => {
-        let selectFilters = {};
+    const fetch = async () => {
+      let selectFilters = {};
 
-        let current;
+      let current;
 
-        const descriptionField = field.extensions?.relation?.displayField;
+      const descriptionField = field.extensions?.relation?.displayField;
 
-        entitiesContext.forEach(async (item) => {
-          if (item.name === field.type.name) {
-            current = item;
-          }
-        });
-
-        currentEntity.current = current;
-
-        let currentField;
-        current.fields.forEach((item) => {
-          if (item.name === descriptionField) {
-            currentField = item;
-          }
-        });
-
-        selectFilters[descriptionField] = {
-          value: selectValues,
-          key: descriptionField,
-          operator: isString(currentField) ? 'LIKE' : 'EQ',
-          entity: {
-            type: {
-              name: isString(currentField)
-                ? 'String'
-                : isNumber(currentField)
-                ? 'Int'
-                : isBoolean(currentField)
-                ? 'Boolean'
-                : 'DateTime',
-              kind: 'SCALAR',
-            },
-          },
-        };
-
-        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
-        if (response && response.data) {
-          return response.data.data[current.queryAll];
+      entitiesContext.forEach(async (item) => {
+        if (item.name === field.type.name) {
+          current = item;
         }
-      };
-      fetch().then((data) => {
-        setResponseEntity(data);
       });
+
+      currentEntity.current = current;
+
+      let currentField;
+      current.fields.forEach((item) => {
+        if (item.name === descriptionField) {
+          currentField = item;
+        }
+      });
+
+      selectFilters[descriptionField] = {
+        value: selectValues,
+        key: descriptionField,
+        operator: isString(currentField) ? 'LIKE' : 'EQ',
+        entity: {
+          type: {
+            name: isString(currentField)
+              ? 'String'
+              : isNumber(currentField)
+              ? 'Int'
+              : isBoolean(currentField)
+              ? 'Boolean'
+              : 'DateTime',
+            kind: 'SCALAR',
+          },
+        },
+      };
+
+      let response = await requestEntity(
+        current,
+        url /* 1, 10, selectFilters*/
+      );
+      if (response && response.data) {
+        return response.data.data[current.queryAll];
+      }
+    };
+    fetch().then((data) => {
+      setResponseEntity(data);
+    });
     //}
     // eslint-disable-next-line
   }, [selectValues]);
@@ -172,7 +178,7 @@ export const SelectEntities = ({
       );
     });
     return options;
-    
+    // eslint-disable-next-line
   }, [responseEntity]);
 
   // siempre se va a mandar el id como field en este tipo de conexion ?
