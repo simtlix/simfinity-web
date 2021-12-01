@@ -142,6 +142,11 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
       });
     } else {
       requestAddNewEntity(item.entity, data, url).then((response) => {
+        if (!response[item.entity.mutations.add]) {
+          alert("Something was wrong. Try again!");
+          onSuccess && onSuccess()
+          return;
+        }
         data.id = response[item.entity.mutations.add].id;
         if (instancesRef.current[item.entity.name]) {
           instancesRef.current[item.entity.name][data.id] = data;

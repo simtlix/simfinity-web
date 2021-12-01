@@ -62,6 +62,7 @@ export const SelectEntities = ({
     form.setFieldsValue(first);
   };
 
+  //edit form
   useEffect(() => {
     if (initialValue || initialValueFromForm) {
       const fetch = async () => {
@@ -89,7 +90,7 @@ export const SelectEntities = ({
           },
         };
 
-        let response = await requestEntity(current, url, 1, 10, selectFilters);
+        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
         if (response && response.data) {
           return response.data.data[current.queryAll];
         }
@@ -103,7 +104,6 @@ export const SelectEntities = ({
             instancesContext.current[current.name][data[0].id] = data[0];
           }
         }
-
         setResponseEntity(data);
       });
     }
@@ -111,7 +111,7 @@ export const SelectEntities = ({
   }, [initialValue, initialValueFromForm]);
 
   useEffect(() => {
-    if (selectValues) {
+    //if (selectValues) {
       const fetch = async () => {
         let selectFilters = {};
 
@@ -152,7 +152,7 @@ export const SelectEntities = ({
           },
         };
 
-        let response = await requestEntity(current, url, 1, 10, selectFilters);
+        let response = await requestEntity(current, url,/* 1, 10, selectFilters*/);
         if (response && response.data) {
           return response.data.data[current.queryAll];
         }
@@ -160,7 +160,7 @@ export const SelectEntities = ({
       fetch().then((data) => {
         setResponseEntity(data);
       });
-    }
+    //}
     // eslint-disable-next-line
   }, [selectValues]);
   const renderSelect = useCallback(() => {
