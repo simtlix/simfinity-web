@@ -28,6 +28,7 @@ const Wrapper = (props) => {
 
   useEffect(() => {
     getData();
+    // eslint-disable-next-line
   }, []);
 
   function selectLanguage(e) {

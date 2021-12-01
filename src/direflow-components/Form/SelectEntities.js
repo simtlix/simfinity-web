@@ -107,6 +107,7 @@ export const SelectEntities = ({
         setResponseEntity(data);
       });
     }
+    // eslint-disable-next-line
   }, [initialValue, initialValueFromForm]);
 
   useEffect(() => {
@@ -160,8 +161,8 @@ export const SelectEntities = ({
         setResponseEntity(data);
       });
     }
+    // eslint-disable-next-line
   }, [selectValues]);
-
   const renderSelect = useCallback(() => {
     const options = responseEntity?.map((item) => {
       return (
@@ -171,6 +172,7 @@ export const SelectEntities = ({
       );
     });
     return options;
+    // eslint-disable-next-line
   }, [responseEntity]);
 
   // siempre se va a mandar el id como field en este tipo de conexion ?
@@ -226,6 +228,7 @@ export const SelectEntities = ({
         </Space>
       </FormAntd.Item>
     );
+    // eslint-disable-next-line
   }, [responseEntity, initialValue, initialValueFromForm]);
 
   return element();

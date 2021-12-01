@@ -78,6 +78,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         return newState;
       });
     },
+    // eslint-disable-next-line
     [entitiesStack, openForResultForms]
   );
 
@@ -120,6 +121,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         }
       });
     }
+    // eslint-disable-next-line
   }, []);
 
   const onSubmit = (data, name) => {
@@ -193,6 +195,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         </InstancesContext.Provider>
       </FormAntd.Provider>
     );
+    // eslint-disable-next-line
   }, [entitiesStack]);
 
   return render();
