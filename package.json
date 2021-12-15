@@ -9,7 +9,6 @@
     "url": "https://github.com/simtlix/simfinity-web"
   },
   "main": "build/direflowBundle.js",
-  "homepage": "https://myusername.github.io/my-app",
   "files": [
     "build"
   ],
