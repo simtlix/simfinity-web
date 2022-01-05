@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "author": "Multiscreen Technology Group - SimTLiX SRL",
   "license": "SEE LICENSE IN LICENSE",
+  "homepage": "https://simtlix.github.io/simfinity-web",
   "repository": {
     "type": "git",
     "url": "https://github.com/simtlix/simfinity-web"
@@ -13,6 +14,8 @@
     "build"
   ],
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "direflow-scripts start",
     "build": "direflow-scripts build",
     "build:lib": "direflow-scripts build:lib",
@@ -20,9 +23,7 @@
     "lint": "eslint src/ --fix",
     "prettier": "prettier --single-quote --write src/",
     "prepare": "husky install",
-    "pre-commit": "lint-staged",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "pre-commit": "lint-staged"
   },
   "dependencies": {
     "antd": "^4.13.1",
