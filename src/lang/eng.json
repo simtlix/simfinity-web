@@ -1,13 +1,11 @@
 {
-    
-    "selectentity.tooltip": "Create..",
+  "selectentity.tooltip": "Create..",
 
-    "table.search": "Search {field}",
-    "table.filter.search": "Sarch",
-    "table.filter.reset": "Reset",
-    "table.filter.filter": "Filter",
-    "table.total": "Total {total} items",
-    "form.collection.ok": "Ok",
-    "form.collection.cancel": "Cancel"
-
+  "table.search": "Search {field}",
+  "table.filter.search": "Search",
+  "table.filter.reset": "Reset",
+  "table.filter.filter": "Filter",
+  "table.total": "Total {total} items",
+  "form.collection.ok": "Ok",
+  "form.collection.cancel": "Cancel"
 }

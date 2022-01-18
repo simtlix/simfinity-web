@@ -437,7 +437,6 @@ const Table = ({
                 onClick={() =>
                   handleSearch(selectedKeys, confirm, dataIndex, type)
                 }
-                icon={<PlusOutlined />}
                 size="small"
                 style={{ width: 90 }}
               >
