@@ -37,6 +37,13 @@ jobs:
       with:
         name: production-files
         path: ./build
+    - name: Create deploy folder
+      run: mkdir deploy
+    - name: Copy content from build folder to deploy folder
+      run: cp -r ./build/ ./deploy
+      run: cp -r ./public/ ./deploy
+    - name: Add script tag into index.html
+      run: sed -i '4 i <script src="./direflowBundle.js"></script>' ./deploy/index.html
   
   deploy:
     name: Deploy
@@ -49,10 +56,10 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: production-files
-        path: ./build
+        path: ./deploy
 
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-        publish_dir: ./build
+        publish_dir: ./deploy
