@@ -37,19 +37,21 @@ const App = ({ url }) => {
     });
   }, [url]);
 
-  const handleClick = (entity, ind) => {
-    // eslint-disable-next-line
-    setCurrentEntity(entity);
-    setResultTitle(
-      intl.formatMessage({
-        id: `entity.${entity.name}.plural`,
-        defaultMessage: `Resultados de ${entity.name}`,
-      })
-    );
-    setSelectedKey(ind.toString());
-  };
   const renderEntities = entities.map((entity, index) => (
-    <Menu.Item key={index} onClick={() => handleClick(entity, index)}>
+    <Menu.Item
+      key={index}
+      onClick={() => {
+        // eslint-disable-next-line
+        setCurrentEntity(entity);
+        setResultTitle(
+          intl.formatMessage({
+            id: `entity.${entity.name}.plural`,
+            defaultMessage: `Resultados de ${entity.name}`,
+          })
+        );
+        setSelectedKey(index.toString());
+      }}
+    >
       <Paragraph
         style={{
           color: 'white',
