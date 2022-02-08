@@ -38,6 +38,7 @@ const App = ({ url }) => {
   }, [url]);
 
   const handleClick = (entity, ind) => {
+    // eslint-disable-next-line
     setCurrentEntity(entity);
     setResultTitle(
       intl.formatMessage({
