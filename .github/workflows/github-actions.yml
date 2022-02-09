@@ -44,7 +44,7 @@ jobs:
     - name: Copy content from public folder to deploy folder
       run: cp -r ./public/ ./deploy
     - name: Add script tag into index.html
-      run: sed -i '4 i <script src="./direflowBundle.js"></script>' ./deploy/index.html
+      run: sed -i '4 i <script src="./direflowBundle.js"></script>' './deploy/index.html'
   
   deploy:
     name: Deploy
