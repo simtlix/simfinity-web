@@ -36,6 +36,7 @@ const App = ({ url }) => {
   }, [url]);
 
   useEffect(() => {
+    // usar useCallBack
     const handleClick = (entity, ind) => {
       setCurrentEntity(entity);
       setResultTitle(
