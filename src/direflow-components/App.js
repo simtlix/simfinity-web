@@ -10,7 +10,7 @@ import { ConfigContext } from './config-context';
 import 'antd/dist/antd.css';
 import CRUD from './CRUD/CRUD';
 
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
 const App = ({ url }) => {
@@ -22,11 +22,9 @@ const App = ({ url }) => {
   const [resultTitle, setResultTitle] = useState('');
   const [selectedKey, setSelectedKey] = useState('0');
   const intl = useIntl();
-
   useEffect(() => {
     requestEntities(url).then((entities) => {
       if (entities) {
-        //console.log(entities);
         setAllEntities(entities);
         const filterEmbeddedEntity = entities.filter(
           (entity) => entity?.queryAll
@@ -37,24 +35,28 @@ const App = ({ url }) => {
     });
   }, [url]);
 
-  const renderEntities = entities.map((entity, index) => (
-    <Menu.Item
-      key={index}
-      onClick={() => {
-        // eslint-disable-next-line
-        setCurrentEntity(entity);
-        setResultTitle(
-          intl.formatMessage({
-            id: `entity.${entity.name}.plural`,
-            defaultMessage: `Resultados de ${entity.name}`,
-          })
-        );
-        setSelectedKey(index.toString());
-      }}
-    >
-      <Paragraph
+  useEffect(() => {
+    if (entities[0]?.name) {
+      handleClick(entities[0], 0);
+    }
+  }, [entities]);
+  const handleClick = (entity, ind) => {
+    setCurrentEntity(entity);
+    setResultTitle(
+      intl.formatMessage({
+        id: `entity.${entity.name}.plural`,
+        defaultMessage: `Resultados de ${entity.name}`,
+      })
+    );
+    setSelectedKey(ind.toString());
+  };
+  const renderEntities = entities.map((entity, index) => {
+    return (
+      <Menu.Item
+        key={index}
+        className="fadeIn"
+        onClick={() => handleClick(entity, index)}
         style={{
-          color: 'white',
           textTransform: 'uppercase',
           fontWeight: 'bold',
         }}
@@ -63,13 +65,9 @@ const App = ({ url }) => {
           id={`entity.${entity.name}.plural`}
           defaultMessage={entity.name}
         ></FormattedMessage>
-      </Paragraph>
-    </Menu.Item>
-  ));
-
-  // const onShowFormBtn = () => {
-  //   setShowForm(!showForm);
-  // };
+      </Menu.Item>
+    );
+  });
 
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -83,7 +81,13 @@ const App = ({ url }) => {
               style={{ minHeight: '100vh', display: 'flex', flex: 'auto' }}
             >
               <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+                <Menu
+                  theme="dark"
+                  selectedKeys={[selectedKey]}
+                  mode="inline"
+                  style={{ marginTop: '60px' }}
+                  hidden={collapsed}
+                >
                   {renderEntities}
                 </Menu>
               </Sider>
@@ -94,8 +98,14 @@ const App = ({ url }) => {
                 >
                   {' '}
                 </Header>
-                <Content style={{ margin: '0 16px' }}>
-                  <Title level={2} style={{ textAlign: 'center' }}>
+                <Content style={{ margin: '0 16px' }} className="fadeInLonger">
+                  <Title
+                    level={2}
+                    style={{
+                      textAlign: 'center',
+                      paddingTop: 12,
+                    }}
+                  >
                     {resultTitle}
                   </Title>
 

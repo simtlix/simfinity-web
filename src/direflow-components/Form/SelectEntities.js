@@ -229,6 +229,7 @@ export const SelectEntities = ({
               onClick={onPlusButtonClick}
               style={{ display: 'inline-block' }}
               icon={<PlusOutlined />}
+              ghost
             />
           </Tooltip>
         </Space>

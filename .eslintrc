@@ -1,4 +1,5 @@
 {
+  "ignorePatterns": ["*.css", "**/vendor/*.css"],
   "env": {
     "browser": true,
     "es6": true,
