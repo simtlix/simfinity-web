@@ -40,9 +40,9 @@ jobs:
     - name: Create deploy folder
       run: mkdir deploy
     - name: Copy content from build folder to deploy folder
-      run: cp -r ./build/ ./deploy
+      run: cp -r ./build/. ./deploy
     - name: Copy content from public folder to deploy folder
-      run: cp -r ./public/ ./deploy
+      run: cp -r ./public/. ./deploy
     - name: Add script tag into index.html
       run: sed -i '4 i <script src="./direflowBundle.js"></script>' './deploy/index.html'
   
