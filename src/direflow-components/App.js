@@ -130,7 +130,7 @@ const App = ({ url }) => {
                     ></CRUD>
                   )}
                 </Content>
-                <Footer style={{ textAlign: 'center' }}>Simtlix ©2021</Footer>
+                <Footer style={{ textAlign: 'center' }}>Simtlix ©2022</Footer>
                 <div ref={popupRef}></div>
               </Layout>
             </Layout>
