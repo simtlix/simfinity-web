@@ -52,9 +52,9 @@ jobs:
         path: ./deploy
     - name: Branch name
       run: echo running on branch ${GITHUB_REF}
-      run: echo running on branch ${GITHUB_REF#refs/*/}
-      run: echo running on branch ${GITHUB_REF#refs/heads/}
-      run: echo running on branch ${GITHUB_REF##*/}
+    - run: echo running on branch ${GITHUB_REF#refs/*/}
+    - run: echo running on branch ${GITHUB_REF#refs/heads/}
+    - run: echo running on branch ${GITHUB_REF##*/}
 
   deploy:
     name: Deploy
