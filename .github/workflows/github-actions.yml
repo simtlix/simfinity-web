@@ -50,20 +50,35 @@ jobs:
       with:
         name: production-files
         path: ./deploy
-    - name: Branch name
-      run: echo running on branch ${GITHUB_HEAD_REF}
-    - run: echo running on branch ${GITHUB_REF#refs/*/}
-    - run: echo running on branch ${GITHUB_REF#refs/heads/}
-    - run: echo running on branch ${GITHUB_REF##*/}
-    - uses: nelonoel/branch-name@v1
-    # Use branch name for whatever purpose
-    - run: echo ${BRANCH_NAME}
 
   deploy:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
     steps:
+    - name: Branch name
+      run: echo running on branch ${GITHUB_HEAD_REF}
+    - run: echo running on branch ${GITHUB_REF#refs/*/}
+    - run: echo running on branch ${GITHUB_REF#refs/heads/}
+    - run: echo running on branch ${GITHUB_REF##*/}
+    - run: echo "branch_name=${GITHUB_REF#refs/heads/}"
+    - run: echo "branch_name=${GITHUB_HEAD_REF}"
+    
+    # extract branch name
+    - name: Extract branch name
+      if: github.event_name != 'pull_request'
+      shell: bash
+      run: echo "branch_name=${GITHUB_REF#refs/heads/}" >> $GITHUB_ENV
+      id: extract_branch
+
+    # extract branch name on pull request
+    - name: Print branch name
+      if: github.event_name == 'pull_request'
+      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+
+    # print branch name
+    - name: Get branch name
+      run: echo "${{ env.branch_name }}" # This will output the branch name
     - name: Download artifact
       uses: actions/download-artifact@v2
       with:
