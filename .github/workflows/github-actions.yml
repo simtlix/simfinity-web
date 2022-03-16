@@ -58,8 +58,11 @@ jobs:
     steps:
     - name: Branch name
       run: echo running on branch ${GITHUB_HEAD_REF}
+    - run: echo running on branch ${GITHUB_REF#refs}
     - run: echo running on branch ${GITHUB_REF#refs/*/}
     - run: echo running on branch ${GITHUB_REF#refs/heads/}
+    - run: echo running on branch ${GITHUB_REF#refs/heads/*/}
+    - run: echo running on branch ${GITHUB_REF##*/}
     - run: echo running on branch ${GITHUB_REF##*/}
     - run: echo "branch_name=${GITHUB_REF#refs/heads/}"
     - run: echo "branch_name=${GITHUB_HEAD_REF}"
@@ -74,7 +77,7 @@ jobs:
     # extract branch name on pull request
     - name: Print branch name
       if: github.event_name == 'pull_request'
-      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+      run: echo "branch_name=" >> $GITHUB_ENV
 
     # print branch name
     - name: Get branch name
