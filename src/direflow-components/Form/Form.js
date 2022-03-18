@@ -62,7 +62,12 @@ const Form = ({
     <>
       <Row style={{ display: visible ? '' : 'none' }}>
         <Col span={24}>
-          <FormAntd form={form} initialValues={initialValues} name={name}>
+          <FormAntd
+            style={{ marginLeft: '30px' }}
+            form={form}
+            initialValues={initialValues}
+            name={name}
+          >
             <Row gutter={24}>
               <FormItems
                 fields={filteredFields}
@@ -73,8 +78,8 @@ const Form = ({
             </Row>
             {collectionFields.length > 0 && (
               <Row>
-                <Col span={24}>
-                  <Collapse>
+                <Col span={22}>
+                  <Collapse style={{ marginBottom: 20, marginLeft: 10 }}>
                     {collectionFields.map((field, index) => {
                       let data = [];
                       if (initialValues) {
@@ -111,7 +116,11 @@ const Form = ({
 
             {displayEntity != null ? (
               <FormAntd.Item>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  style={{ marginLeft: '10px' }}
+                  type="primary"
+                  htmlType="submit"
+                >
                   Submit
                 </Button>
               </FormAntd.Item>

@@ -103,6 +103,7 @@ export const Field = ({
             label={renderLabel ? label : undefined}
           >
             <InputNumber
+              style={{ width: '150px' }}
               onBlur={onConfirm}
               onPressEnter={onConfirm}
               ref={reference}
@@ -141,6 +142,7 @@ export const Field = ({
             ]}
           >
             <Input
+              style={{ width: '150px' }}
               onBlur={onConfirm}
               onPressEnter={onConfirm}
               ref={reference}
