@@ -83,7 +83,7 @@ jobs:
     # extract branch name on pull request
     - name: Print branch name
       if: github.event_name == 'pull_request'
-      run: echo "branch_name=${GITHUB_REF#refs}" >> $GITHUB_ENV
+      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
 
     # print branch name
     - name: Get branch name
