@@ -64,6 +64,9 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
+    environment: 
+      name: github-pages
+      url: https://simtlix.github.io/simfinity-web/${{ env.branch_name }}
     steps:
     - name: Branch name
       run: echo running on branch ${GITHUB_HEAD_REF}
