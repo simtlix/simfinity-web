@@ -52,6 +52,17 @@ jobs:
       with:
         name: pull-request-files
         path: ./deploy
+        
+  delete-artifacts:
+    name: Delete Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kolpav/purge-artifacts-action@v1
+        with:
+          token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+          expire-in: 7days # Setting this to 0 will delete all artifacts
+          onlyPrefix: pull-request
+          exceptPrefix: production 
 
   deploy:
     name: Deploy
