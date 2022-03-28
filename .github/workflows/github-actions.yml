@@ -60,7 +60,6 @@ jobs:
         with:
           token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
           expire-in: 0days
-          onlyPrefix: pull-request
 
   deploy:
     name: Deploy
