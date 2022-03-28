@@ -32,11 +32,6 @@ jobs:
       run: npm run prettier
     - name: Build
       run: npm run build --if-present
-    - name: Upload production-ready build files
-      uses: actions/upload-artifact@v2
-      with:
-        name: production-files
-        path: ./build
     - name: Create deploy folder
       run: mkdir deploy
     - name: Copy content from build folder to deploy folder
@@ -45,20 +40,18 @@ jobs:
       run: cp -r ./public/. ./deploy
     - name: Add script tag into index.html
       run: sed -i '4 i <script src="./direflowBundle.js"></script>' './deploy/index.html'
-    - name: Upload production-ready build files
+    - name: Upload production-ready build files on main branch
+      if: github.event_name != 'pull_request'
       uses: actions/upload-artifact@v2
       with:
         name: production-files
         path: ./deploy
-
-  delete:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: strumwolf/delete-deployment-environment@v2
-        with:
-          token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          environment: github-pages
-          onlyRemoveDeployments: true
+    - name: Upload production-ready build files on pull_request
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v2
+      with:
+        name: pull-request-files
+        path: ./deploy
 
   deploy:
     name: Deploy
@@ -91,10 +84,17 @@ jobs:
     # print branch name
     - name: Get branch name
       run: echo "${{ env.branch_name }}" # This will output the branch name
-    - name: Download artifact
+    - name: Download artifact on main branch
+      if: github.event_name != 'pull_request'
       uses: actions/download-artifact@v2
       with:
         name: production-files
+        path: ./deploy
+    - name: Download artifact on pull_request
+      if: github.event_name == 'pull_request'
+      uses: actions/download-artifact@v2
+      with:
+        name: pull-request-files
         path: ./deploy
     - name: Deploy to gh-pages
       uses: peaceiris/actions-gh-pages@v3
