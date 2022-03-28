@@ -14,7 +14,6 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x, 14.x, 16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     
     steps:
     - name: Checkout code
@@ -60,9 +59,8 @@ jobs:
       - uses: kolpav/purge-artifacts-action@v1
         with:
           token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          expire-in: 7days # Setting this to 0 will delete all artifacts
+          expire-in: 0days
           onlyPrefix: pull-request
-          exceptPrefix: production 
 
   deploy:
     name: Deploy
@@ -74,21 +72,15 @@ jobs:
     steps:
     - name: Branch name
       run: echo running on branch ${GITHUB_HEAD_REF}
-    - run: echo running on branch ${GITHUB_REF#refs/*/}
-    - run: echo running on branch ${GITHUB_REF#refs/heads/}
-    - run: echo running on branch ${GITHUB_REF##*/}
-    - run: echo "branch_name=${GITHUB_REF#refs/heads/}"
-    - run: echo "branch_name=${GITHUB_HEAD_REF}"
 
-    # extract branch name
-    - name: Extract branch name
+    # extract branch name on main branch
+    - name: Extract branch name on main branch
       if: github.event_name != 'pull_request'
-      shell: bash
       run: echo "branch_name=" >> $GITHUB_ENV
       id: extract_branch
 
     # extract branch name on pull request
-    - name: Print branch name
+    - name: Extract branch name on pull request
       if: github.event_name == 'pull_request'
       run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
 
