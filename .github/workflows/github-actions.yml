@@ -51,15 +51,6 @@ jobs:
       with:
         name: pull-request-files
         path: ./deploy
-        
-  delete-artifacts:
-    name: Delete Artifacts
-    runs-on: ubuntu-latest
-    steps:
-      - uses: kolpav/purge-artifacts-action@v1
-        with:
-          token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
-          expire-in: 0days
 
   deploy:
     name: Deploy
@@ -73,13 +64,13 @@ jobs:
       run: echo running on branch ${GITHUB_HEAD_REF}
 
     # extract branch name on main branch
-    - name: Extract branch name on main branch
+    - name: Save branch name on main branch
       if: github.event_name != 'pull_request'
-      run: echo "branch_name=" >> $GITHUB_ENV
+      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
       id: extract_branch
 
     # extract branch name on pull request
-    - name: Extract branch name on pull request
+    - name: Save branch name on pull request
       if: github.event_name == 'pull_request'
       run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
 
@@ -98,9 +89,19 @@ jobs:
       with:
         name: pull-request-files
         path: ./deploy
-    - name: Deploy to gh-pages
+    - name: Deploy to gh-pages on main branch
+      if: github.event_name != 'pull_request'
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
         publish_dir: ./deploy
         destination_dir: ${{ env.branch_name }}
+        keep_files: true
+    - name: Deploy to gh-pages on pull_request
+      if: github.event_name == 'pull_request'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+        publish_dir: ./deploy
+        destination_dir: ${{ env.branch_name }}
+        keep_files: false
