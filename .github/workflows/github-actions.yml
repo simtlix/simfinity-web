@@ -70,7 +70,7 @@ jobs:
     # save branch name on pull request
     - name: Save branch name on pull request
       if: github.event_name == 'pull_request'
-      run: echo "branch_name=${{github.event.number}}" >> $GITHUB_ENV
+      run: echo "branch_name=pr${{github.event.number}}" >> $GITHUB_ENV
 
     - name: Download artifact on main branch
       if: github.event_name != 'pull_request'
