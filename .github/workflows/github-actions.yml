@@ -64,7 +64,11 @@ jobs:
     # save branch name on main branch
     - name: Save branch name on main branch
       if: github.event_name != 'pull_request'
+<<<<<<< HEAD
       run: echo "branch_name=main" >> $GITHUB_ENV
+=======
+      run: echo "branch_name=${{ github.head_ref }}" >> $GITHUB_ENV
+>>>>>>> e579d78b3370f7f74cc172fee4b1617f71f8da68
       id: extract_branch
 
     # save branch name on pull request
