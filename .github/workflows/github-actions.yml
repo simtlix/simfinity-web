@@ -61,7 +61,7 @@ jobs:
       url: https://simtlix.github.io/simfinity-web/${{ env.branch_name }}
     steps:
 
-    # save branch name on main branch
+    # save branch name on main branch.
     - name: Save branch name on main branch
       if: github.event_name != 'pull_request'
       run: echo "branch_name=${{ github.head_ref }}" >> $GITHUB_ENV
