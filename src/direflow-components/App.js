@@ -34,10 +34,23 @@ const App = ({ url }) => {
       }
     });
   }, [url]);
+
   useEffect(() => {
+    // usar useCallBack
+    const handleClick = (entity, ind) => {
+      setCurrentEntity(entity);
+      setResultTitle(
+        intl.formatMessage({
+          id: `entity.${entity.name}.plural`,
+          defaultMessage: `Resultados de ${entity.name}`,
+        })
+      );
+      setSelectedKey(ind.toString());
+    };
     if (entities[0]?.name) {
       handleClick(entities[0], 0);
     }
+    // eslint-disable-next-line
   }, [entities]);
   const handleClick = (entity, ind) => {
     setCurrentEntity(entity);

@@ -1,0 +1,102 @@
+name: Build & deploy
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run code style check
+      run: npm run lint
+    - name: Run code formatter
+      run: npm run prettier
+    - name: Build
+      run: npm run build --if-present
+    - name: Create deploy folder
+      run: mkdir deploy
+    - name: Copy content from build folder to deploy folder
+      run: cp -r ./build/. ./deploy
+    - name: Copy content from public folder to deploy folder
+      run: cp -r ./public/. ./deploy
+    - name: Add script tag into index.html
+      run: sed -i '4 i <script src="./direflowBundle.js"></script>' './deploy/index.html'
+    - name: Upload production-ready build files on main branch
+      if: github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v2
+      with:
+        name: production-files
+        path: ./deploy
+    - name: Upload production-ready build files on pull_request
+      if: github.event_name == 'pull_request'
+      uses: actions/upload-artifact@v2
+      with:
+        name: pull-request-files
+        path: ./deploy
+
+  deploy:
+    name: Deploy
+    needs: build
+    runs-on: ubuntu-latest
+    environment: 
+      name: github-pages
+      url: https://simtlix.github.io/simfinity-web/${{ env.branch_name }}
+    steps:
+
+    # save branch name on main branch
+    - name: Save branch name on main branch
+      if: github.event_name != 'pull_request'
+      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+      id: extract_branch
+
+    # save branch name on pull request
+    - name: Save branch name on pull request
+      if: github.event_name == 'pull_request'
+      run: echo "branch_name=pr${{github.event.number}}" >> $GITHUB_ENV
+
+    - name: Download artifact on main branch
+      if: github.event_name != 'pull_request'
+      uses: actions/download-artifact@v2
+      with:
+        name: production-files
+        path: ./deploy
+    - name: Download artifact on pull_request
+      if: github.event_name == 'pull_request'
+      uses: actions/download-artifact@v2
+      with:
+        name: pull-request-files
+        path: ./deploy
+    - name: Deploy to gh-pages on main branch
+      if: github.event_name != 'pull_request'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+        publish_dir: ./deploy
+        destination_dir: ${{ env.branch_name }}
+        keep_files: true
+    - name: Deploy to gh-pages on pull_request
+      if: github.event_name == 'pull_request'
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.ACTIONS_DEPLOY_ACCESS_TOKEN }}
+        publish_dir: ./deploy
+        destination_dir: ${{ env.branch_name }}
+        keep_files: false

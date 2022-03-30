@@ -181,6 +181,7 @@ const Table = ({
       };
       fetch();
     }
+    // eslint-disable-next-line
   }, [selectValuesFilter, displayEntity, entities, url]);
 
   const handleReset = (clearFilters, entity) => {
@@ -482,6 +483,7 @@ const Table = ({
         },
       };
     },
+    // eslint-disable-next-line
     [selectValues, selectedOperator]
   );
 
@@ -564,6 +566,7 @@ const Table = ({
     if (displayEntity) {
       createColumns(displayEntity, getColumnSearchProps, isDate, setColumns);
     }
+    // eslint-disable-next-line
   }, [getColumnSearchProps]);
 
   useEffect(() => {
@@ -604,6 +607,7 @@ const Table = ({
         }
       });
     }
+    // eslint-disable-next-line
   }, [displayEntity, pagination, filters, url, sort, lastDeleted]);
 
   const handleTableChange = (pagination, filters, sorter) => {
