@@ -60,23 +60,18 @@ jobs:
       name: github-pages
       url: https://simtlix.github.io/simfinity-web/${{ env.branch_name }}
     steps:
-    - name: Branch name
-      run: echo running on branch ${GITHUB_HEAD_REF}
 
-    # extract branch name on main branch
+    # save branch name on main branch
     - name: Save branch name on main branch
       if: github.event_name != 'pull_request'
       run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
       id: extract_branch
 
-    # extract branch name on pull request
+    # save branch name on pull request
     - name: Save branch name on pull request
       if: github.event_name == 'pull_request'
-      run: echo "branch_name=${GITHUB_HEAD_REF}" >> $GITHUB_ENV
+      run: echo "branch_name=${{github.event.number}}" >> $GITHUB_ENV
 
-    # print branch name
-    - name: Get branch name
-      run: echo "${{ env.branch_name }}" # This will output the branch name
     - name: Download artifact on main branch
       if: github.event_name != 'pull_request'
       uses: actions/download-artifact@v2
