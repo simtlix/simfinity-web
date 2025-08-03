@@ -3,6 +3,7 @@ import { IntlProvider } from 'react-intl';
 import en from '../lang/eng.json';
 import App from './App';
 import PropTypes from 'prop-types';
+import './App.css';
 
 export const Context = React.createContext();
 

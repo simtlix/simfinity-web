@@ -3,7 +3,6 @@ import React from 'react';
 import { Form as FormAntd, Button, Row, Col, Collapse, Space } from 'antd';
 import { FormItems } from './FormItems';
 import Collection from './Collection';
-import 'antd/dist/antd.css';
 import { useIntl } from 'react-intl';
 import { isDate } from './utils';
 import moment from 'moment';

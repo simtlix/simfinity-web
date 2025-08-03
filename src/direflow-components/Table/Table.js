@@ -28,7 +28,6 @@ import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { FormattedMessage, useIntl } from 'react-intl';
 import DeleteButton from './DeleteButton/DeleteButton';
 import EditButton from './EditButton/EditButton';
-import 'antd/dist/antd.css';
 
 const { Option } = Select;
 

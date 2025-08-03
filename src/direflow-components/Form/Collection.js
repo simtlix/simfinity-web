@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
 import React, { useRef, useContext, useState, useEffect } from 'react';
-import 'antd/dist/antd.css';
 import { Table, Input, Button, Space, Form, Row, Col } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { EntitiesContext } from '../entities-context';

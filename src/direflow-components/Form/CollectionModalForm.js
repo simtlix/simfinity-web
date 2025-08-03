@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
-import 'antd/dist/antd.css';
-import { Form, Button, Space, Row, Col } from 'antd';
+import { Form, Button, Row, Col, Space } from 'antd';
 import { FormItems } from './FormItems';
 import { FormattedMessage } from 'react-intl';
 import { isDate } from './utils';

@@ -4,7 +4,6 @@ import { EntitiesContext } from '../entities-context';
 import { Col, Row, Card } from 'antd';
 import { FormItems } from './FormItems';
 import { useIntl } from 'react-intl';
-import 'antd/dist/antd.css';
 
 export const EmbeddedForm = ({ field, form, openForResult, entity, span }) => {
   const nameField = field?.name != null ? field.name : '';

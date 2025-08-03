@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Layout, Menu, Typography, ConfigProvider } from 'antd';
-import { Styled } from 'direflow-component';
 import PropTypes from 'prop-types';
 import { requestEntities } from './utils';
-import styles from './App.css';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { EntitiesContext } from './entities-context';
 import { ConfigContext } from './config-context';
-import 'antd/dist/antd.css';
 import CRUD from './CRUD/CRUD';
+import './App.css';
 
 const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
@@ -88,53 +86,46 @@ const App = ({ url }) => {
     <ConfigContext.Provider value={{ url }}>
       <EntitiesContext.Provider value={allEntities}>
         <ConfigProvider getPopupContainer={() => popupRef.current}>
-          <Styled styles={styles}>
-            <Layout
-              style={{ minHeight: '100vh', display: 'flex', flex: 'auto' }}
-            >
-              <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <Menu
-                  theme="dark"
-                  selectedKeys={[selectedKey]}
-                  mode="inline"
-                  style={{ marginTop: '60px' }}
-                  hidden={collapsed}
+          <Layout style={{ minHeight: '100vh', display: 'flex', flex: 'auto' }}>
+            <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+              <Menu
+                theme="dark"
+                selectedKeys={[selectedKey]}
+                mode="inline"
+                style={{ marginTop: '60px' }}
+                hidden={collapsed}
+              >
+                {renderEntities}
+              </Menu>
+            </Sider>
+            <Layout className="site-layout">
+              <Header className="site-layout-background" style={{ padding: 0 }}>
+                {' '}
+              </Header>
+              <Content style={{ margin: '0 16px' }} className="fadeInLonger">
+                <Title
+                  level={2}
+                  style={{
+                    textAlign: 'center',
+                    paddingTop: 12,
+                  }}
                 >
-                  {renderEntities}
-                </Menu>
-              </Sider>
-              <Layout className="site-layout">
-                <Header
-                  className="site-layout-background"
-                  style={{ padding: 0 }}
-                >
-                  {' '}
-                </Header>
-                <Content style={{ margin: '0 16px' }} className="fadeInLonger">
-                  <Title
-                    level={2}
-                    style={{
-                      textAlign: 'center',
-                      paddingTop: 12,
-                    }}
-                  >
-                    {resultTitle}
-                  </Title>
+                  {resultTitle}
+                </Title>
 
-                  {currentEntity && (
-                    <CRUD
-                      entity={currentEntity}
-                      key={currentEntity.name}
-                      entities={allEntities}
-                      url={url}
-                    ></CRUD>
-                  )}
-                </Content>
-                <Footer style={{ textAlign: 'center' }}>Simtlix ©2021</Footer>
-                <div ref={popupRef}></div>
-              </Layout>
+                {currentEntity && (
+                  <CRUD
+                    entity={currentEntity}
+                    key={currentEntity.name}
+                    entities={allEntities}
+                    url={url}
+                  ></CRUD>
+                )}
+              </Content>
+              <Footer style={{ textAlign: 'center' }}>Simtlix ©2021</Footer>
+              <div ref={popupRef}></div>
             </Layout>
-          </Styled>
+          </Layout>
         </ConfigProvider>
       </EntitiesContext.Provider>
     </ConfigContext.Provider>
