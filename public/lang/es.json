@@ -1,0 +1,35 @@
+{
+    "entity.episode.simple" : "Episodio",
+    "entity.episode.plural" : "Episodios",
+    "entity.episode.fields.name": "Nombre",
+    "entity.episode.fields.number": "Numero",
+    "entity.episode.fields.date": "Fecha",
+    "entity.episode.fields.season": "Temporada",
+
+    "entity.season.simple" : "Temporada",
+    "entity.season.plural" : "Temporadas",
+    "entity.season.fields.number": "Numero",
+    "entity.season.fields.year": "Año",
+    "entity.season.fields.state": "State",
+    "entity.season.fields.serie": "Serie",
+    "entity.season.fields.episodes": "Episodios",
+    
+    "entity.serie.simple" : "Serie",
+    "entity.serie.plural" : "Series",
+    "entity.serie.fields.name": "Nombre",
+    "entity.serie.fields.director": "Director",
+    "entity.serie.fields.stars": "Stars",
+    "entity.serie.fields.seasons": "Temporadas",
+    "entity.serie.fields.country": "Pais",
+
+    "entity.assignedStarAndSerie.simple" : "assignedStarAndSerie",
+    "entity.assignedStarAndSerie.plural" : "assignedStarsAndSeries",
+    "entity.assignedStarAndSerie.fields.serie": "Serie",
+    "entity.assignedStarAndSerie.fields.star": "Star",
+
+    "entity.star.simple" : "Star",
+    "entity.star.plural" : "Stars",
+    "entity.star.fields.name": "Nombre",
+    "entity.star.fields.series": "Series"
+
+}

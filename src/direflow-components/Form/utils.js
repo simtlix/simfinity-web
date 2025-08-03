@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const requestAddNewEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.add;
-  const responseFields = "id";
+  const responseFields = 'id';
   const objUserInput = userInput;
   // we have the format {"propertyName": "propertyValue"}
   const json = JSON.stringify(objUserInput);
   // convert {"propertyName": "propertyValue"} to {propertyName: "propertyValue"}
-  const unquoted = json.replace(/"([^"]+)":/g, "$1:");
+  const unquoted = json.replace(/"([^"]+)":/g, '$1:');
 
   try {
     const data = JSON.stringify({
@@ -20,8 +20,8 @@ export const requestAddNewEntity = async (displayEntities, userInput, url) => {
     });
 
     const config = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       url: url,
       data,
     };
@@ -36,20 +36,20 @@ export const requestAddNewEntity = async (displayEntities, userInput, url) => {
 
 export const requestUpdateEntity = async (displayEntities, userInput, url) => {
   const mutationField = displayEntities.mutations.update;
-  const responseFields = "id";
+  const responseFields = 'id';
   const objUserInput = userInput;
-  Object.keys(objUserInput).forEach(key =>{
-    if(objUserInput[key]?.added) {
-      objUserInput[key].added.forEach(item => {
+  Object.keys(objUserInput).forEach((key) => {
+    if (objUserInput[key]?.added) {
+      objUserInput[key].added.forEach((item) => {
         delete item.id;
-      })
+      });
     }
-  })
+  });
 
   // we have the format {"propertyName": "propertyValue"}
   const json = JSON.stringify(objUserInput);
   // convert {"propertyName": "propertyValue"} to {propertyName: "propertyValue"}
-  const unquoted = json.replace(/"([^"]+)":/g, "$1:");
+  const unquoted = json.replace(/"([^"]+)":/g, '$1:');
 
   try {
     const data = JSON.stringify({
@@ -62,8 +62,8 @@ export const requestUpdateEntity = async (displayEntities, userInput, url) => {
     });
 
     const config = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       url: url,
       data,
     };
@@ -77,39 +77,41 @@ export const requestUpdateEntity = async (displayEntities, userInput, url) => {
 };
 
 export const isBoolean = (field) => {
-  if(field.type.name === "Boolean" || field.type?.ofType?.name === "Boolean")
+  if (field.type.name === 'Boolean' || field.type?.ofType?.name === 'Boolean')
     return true;
-  else
-    return false;
-}
+  else return false;
+};
 
 export const isNumber = (field) => {
-  if(field.type.name === "Int" || field.type?.ofType?.name === "Int" || field.type.name === "Float" || field.type?.ofType?.name === "Float")
+  if (
+    field.type.name === 'Int' ||
+    field.type?.ofType?.name === 'Int' ||
+    field.type.name === 'Float' ||
+    field.type?.ofType?.name === 'Float'
+  )
     return true;
-  else
-    return false;
-}
+  else return false;
+};
 
 export const isString = (field) => {
-  if(field.type.name === "String" || field.type?.ofType?.name === "String")
+  if (field.type.name === 'String' || field.type?.ofType?.name === 'String')
     return true;
-  else
-    return false;
-}
+  else return false;
+};
 
 export const isDate = (field) => {
-  if(field.type.name === "Date" || field.type?.ofType?.name === "Date" || field.type.name === "DateTime" || field.type?.ofType?.name === "DateTime")
+  if (
+    field.type.name === 'Date' ||
+    field.type?.ofType?.name === 'Date' ||
+    field.type.name === 'DateTime' ||
+    field.type?.ofType?.name === 'DateTime'
+  )
     return true;
-  else
-    return false;
-}
+  else return false;
+};
 
 export const isEnum = (field) => {
-  if(field.type.kind === "ENUM" || field.type?.ofType?.kind === "ENUM")
+  if (field.type.kind === 'ENUM' || field.type?.ofType?.kind === 'ENUM')
     return true;
-  else
-    return false;
-}
-
-
-
+  else return false;
+};

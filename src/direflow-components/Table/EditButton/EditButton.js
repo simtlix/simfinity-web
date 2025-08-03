@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import React from "react";
-import { EditOutlined } from "@ant-design/icons";
-import {Button } from "antd";
+import React from 'react';
+import { EditOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 
 function EditButton({ onClick }) {
   return (
@@ -10,9 +10,12 @@ function EditButton({ onClick }) {
         type="primary"
         shape="round"
         icon={<EditOutlined />}
-        size="small"
+        size="Medium"
         onClick={onClick}
-      />
+        ghost
+      >
+        Edit
+      </Button>
     </React.Fragment>
   );
 }

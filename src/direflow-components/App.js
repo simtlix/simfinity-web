@@ -1,19 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Layout, Menu, Typography, Button, ConfigProvider } from "antd";
-import { Styled } from "direflow-component";
-import PropTypes from "prop-types";
-import { requestEntities } from "./utils";
-import Table from "./Table/Table";
-import styles from "./App.css";
-import {FormattedMessage, useIntl} from 'react-intl';
-import { EntitiesContext } from "./entities-context";
-import { ConfigContext } from "./config-context";
+import React, { useEffect, useState, useRef } from 'react';
+import { Layout, Menu, Typography, ConfigProvider } from 'antd';
+import { Styled } from 'direflow-component';
+import PropTypes from 'prop-types';
+import { requestEntities } from './utils';
+import styles from './App.css';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { EntitiesContext } from './entities-context';
+import { ConfigContext } from './config-context';
 import 'antd/dist/antd.css';
-import FormStack from "./Form/FormStack";
-import CRUD from "./CRUD/CRUD";
+import CRUD from './CRUD/CRUD';
 
-
-const { Title, Paragraph } = Typography;
+const { Title } = Typography;
 const { Header, Content, Footer, Sider } = Layout;
 
 const App = ({ url }) => {
@@ -22,16 +19,12 @@ const App = ({ url }) => {
   const [allEntities, setAllEntities] = useState([]);
   const [entities, setEntities] = useState([]);
   const [currentEntity, setCurrentEntity] = useState(null);
-  const [resultTitle, setResultTitle] = useState("");
-  const [selectedKey, setSelectedKey] = useState("0");
+  const [resultTitle, setResultTitle] = useState('');
+  const [selectedKey, setSelectedKey] = useState('0');
   const intl = useIntl();
-
-  const [showForm, setShowForm] = useState(false);
-
   useEffect(() => {
     requestEntities(url).then((entities) => {
       if (entities) {
-        //console.log(entities);
         setAllEntities(entities);
         const filterEmbeddedEntity = entities.filter(
           (entity) => entity?.queryAll
@@ -42,57 +35,102 @@ const App = ({ url }) => {
     });
   }, [url]);
 
+  useEffect(() => {
+    // usar useCallBack
+    const handleClick = (entity, ind) => {
+      setCurrentEntity(entity);
+      setResultTitle(
+        intl.formatMessage({
+          id: `entity.${entity.name}.plural`,
+          defaultMessage: `Resultados de ${entity.name}`,
+        })
+      );
+      setSelectedKey(ind.toString());
+    };
+    if (entities[0]?.name) {
+      handleClick(entities[0], 0);
+    }
+    // eslint-disable-next-line
+  }, [entities]);
   const handleClick = (entity, ind) => {
     setCurrentEntity(entity);
-    setResultTitle(intl.formatMessage({ id:`entity.${entity.name}.plural`, defaultMessage:`Resultados de ${entity.name}`}));
+    setResultTitle(
+      intl.formatMessage({
+        id: `entity.${entity.name}.plural`,
+        defaultMessage: `Resultados de ${entity.name}`,
+      })
+    );
     setSelectedKey(ind.toString());
   };
-  const renderEntities = entities.map((entity, index) => (
-    <Menu.Item key={index} onClick={() => handleClick(entity, index)}>
-      <Paragraph
+  const renderEntities = entities.map((entity, index) => {
+    return (
+      <Menu.Item
+        key={index}
+        className="fadeIn"
+        onClick={() => handleClick(entity, index)}
         style={{
-          color: "white",
-          textTransform: "uppercase",
-          fontWeight: "bold",
+          textTransform: 'uppercase',
+          fontWeight: 'bold',
         }}
       >
-        <FormattedMessage id={`entity.${entity.name}.plural`} defaultMessage={entity.name}></FormattedMessage>
-        
-      </Paragraph>
-    </Menu.Item>
-  ));
-
-  const onShowFormBtn = () => {
-    setShowForm(!showForm);
-  };
+        <FormattedMessage
+          id={`entity.${entity.name}.plural`}
+          defaultMessage={entity.name}
+        ></FormattedMessage>
+      </Menu.Item>
+    );
+  });
 
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
   };
   return (
-    <ConfigContext.Provider value={{url}}>
-      <EntitiesContext.Provider value={allEntities} >
+    <ConfigContext.Provider value={{ url }}>
+      <EntitiesContext.Provider value={allEntities}>
         <ConfigProvider getPopupContainer={() => popupRef.current}>
           <Styled styles={styles}>
-            <Layout style={{ minHeight: "100vh", display: "flex", flex: "auto" }}>
+            <Layout
+              style={{ minHeight: '100vh', display: 'flex', flex: 'auto' }}
+            >
               <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
-                <Menu theme="dark" selectedKeys={[selectedKey]} mode="inline">
+                <Menu
+                  theme="dark"
+                  selectedKeys={[selectedKey]}
+                  mode="inline"
+                  style={{ marginTop: '60px' }}
+                  hidden={collapsed}
+                >
                   {renderEntities}
                 </Menu>
               </Sider>
               <Layout className="site-layout">
-                <Header className="site-layout-background" style={{ padding: 0 }}>
-                  {" "}
+                <Header
+                  className="site-layout-background"
+                  style={{ padding: 0 }}
+                >
+                  {' '}
                 </Header>
-                <Content style={{ margin: "0 16px" }}>
-                  <Title level={2} style={{ textAlign: "center" }}>
+                <Content style={{ margin: '0 16px' }} className="fadeInLonger">
+                  <Title
+                    level={2}
+                    style={{
+                      textAlign: 'center',
+                      paddingTop: 12,
+                    }}
+                  >
                     {resultTitle}
                   </Title>
 
-                    {currentEntity && <CRUD entity={currentEntity} key={currentEntity.name} entities={allEntities} url={url}></CRUD>}
-                  
+                  {currentEntity && (
+                    <CRUD
+                      entity={currentEntity}
+                      key={currentEntity.name}
+                      entities={allEntities}
+                      url={url}
+                    ></CRUD>
+                  )}
                 </Content>
-                <Footer style={{ textAlign: "center" }}>Simtlix ©2021</Footer>
+                <Footer style={{ textAlign: 'center' }}>Simtlix ©2021</Footer>
                 <div ref={popupRef}></div>
               </Layout>
             </Layout>
@@ -100,12 +138,11 @@ const App = ({ url }) => {
         </ConfigProvider>
       </EntitiesContext.Provider>
     </ConfigContext.Provider>
-    
   );
 };
 
 App.defaultProps = {
-  url: "",
+  url: '',
 };
 
 App.propTypes = {
