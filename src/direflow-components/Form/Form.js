@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React from "react";
-import { Form as FormAntd, Button, Row, Col, Collapse} from "antd";
+import { Form as FormAntd, Button, Row, Col, Collapse, Space} from "antd";
 import { FormItems } from "./FormItems";
 import Collection from "./Collection";
 import 'antd/dist/antd.css';
@@ -38,18 +38,17 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
     (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && !(field.extensions?.relation?.embedded) && (( field.type.ofType?.name !== containerEntity?.name || field.extensions?.relation?.connectionField !== linkField?.extensions?.relation?.connectionField))
   )
 
-  const collectionEmbeddedFields = displayEntity.fields.filter(
-    (field) => field.name !== "id" && field.type.kind === "LIST" && field.type.ofType.kind === 'OBJECT' && (field.extensions?.relation?.embedded)
-  )
-
-
   return (
     <>
       <Row style={{display: visible?"":"none"}}>
         <Col span={24}>
           <FormAntd form={form} initialValues={initialValues} name={name} >
+          <Space direction="vertical" style={{ width: "100%" }}>
           <Row gutter={24}>
-            <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={displayEntity}></FormItems>
+              <FormItems fields={filteredFields} form={form} openForResult={openForResultHandler} entity={displayEntity}></FormItems>
+          </Row>
+          <Row>
+          
           </Row>
           { collectionFields.length > 0 && 
               <Row>
@@ -71,15 +70,17 @@ const Form = ({ displayEntity = null, visible=true, name, openForResultHandler, 
                 </Col>
               </Row>
           }
-
-
-            {displayEntity != null ? (
+          
+          {displayEntity != null ? (
               <FormAntd.Item>
                 <Button type="primary" htmlType="submit">
                   Submit
                 </Button>
               </FormAntd.Item>
             ) : null}
+          </Space>
+
+            
             </FormAntd>
         </Col>
       </Row>

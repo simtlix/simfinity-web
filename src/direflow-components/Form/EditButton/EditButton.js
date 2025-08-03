@@ -8,7 +8,6 @@ export function EditButton({ onClick }) {
     <React.Fragment>
       <Button
         type="primary"
-        shape="round"
         icon={<EditOutlined />}
         size="small"
         onClick={onClick}

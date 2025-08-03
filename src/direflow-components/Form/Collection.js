@@ -625,7 +625,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
                       onCreateInlineRequested()
                     }
                     icon={<PlusOutlined />}
-                    size="large"
+                    size="small"
                   >
                   </Button>
               </Col>
@@ -636,7 +636,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
                   {modalVisible && modalMode === "CREATE" && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onSubmit={onCreate} onCancel={()=>setModalVisible(false)}></CollectionModalForm>}
                   {modalVisible && modalMode === "UPDATE" && <CollectionModalForm entity={collectionEntity} collectionField={field} openForResultHandler={openForResult} onSubmit={onUpdate} onCancel={()=>setModalVisible(false)} initialValues={modalDefaultData}></CollectionModalForm>}
 
-                  <Table components={components} columns={columns} dataSource={data} /> 
+                  <Table components={components} columns={columns} dataSource={data} size="small"/> 
                 </Space>
               </Col>
             </Row>
@@ -654,7 +654,7 @@ const Collection = ({field, inline = true, parentId, mode, form, openForResult})
                     onCreateRequested()
                   }
                   icon={<PlusOutlined />}
-                  size="large"
+                  size="small"
                 >
                 </Button>
             </Col>

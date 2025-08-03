@@ -32,7 +32,6 @@ export function DeleteButton({record, onDelete}) {
         <React.Fragment>
             <Button 
                 type="primary" 
-                shape="round" 
                 icon={<DeleteOutlined />} 
                 size="small" 
                 onClick={showDeleteConfirm}/>
