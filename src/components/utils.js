@@ -210,7 +210,7 @@ const isStringOrEnum = (entity) =>
   entity.extensions?.relation?.displayFieldScalarType === 'String';
 
 export const requestEntity = async (
-  displayEntities,
+  displayEntity,
   url,
   page,
   size,
@@ -218,14 +218,14 @@ export const requestEntity = async (
   sort,
   entities
 ) => {
-  // Safety check for undefined displayEntities
-  if (!displayEntities || !displayEntities.fields) {
-    console.warn('displayEntities is undefined or missing fields');
+  // Safety check for undefined displayEntity
+  if (!displayEntity || !displayEntity.fields) {
+    console.warn('displayEntity is undefined or missing fields');
     return null;
   }
   
-  const entityName = displayEntities.queryAll;
-  const fields = displayEntities.fields;
+  const entityName = displayEntity.queryAll;
+  const fields = displayEntity.fields;
   let queryFields = [];
   for (let i = 0; i < fields.length; i++) {
     if (fields[i].extensions == null) {
@@ -237,12 +237,19 @@ export const requestEntity = async (
             const embeddedEntity = entities.filter(
               (item) => item.name === fields[i].type.name
             )[0];
-            let fieldsStr = '';
-            embeddedEntity.fields.forEach(
-              (item) => (fieldsStr = fieldsStr + ` ${item.name} `)
-            );
-            let obj = `${fields[i].name}{${fieldsStr}}`;
-            queryFields.push(obj);
+            
+            // Safety check for embeddedEntity
+            if (!embeddedEntity || !embeddedEntity.fields) {
+              console.warn(`Embedded entity not found for type: ${fields[i].type.name}`);
+              queryFields.push(fields[i].name);
+            } else {
+              let fieldsStr = '';
+              embeddedEntity.fields.forEach(
+                (item) => (fieldsStr = fieldsStr + ` ${item.name} `)
+              );
+              let obj = `${fields[i].name}{${fieldsStr}}`;
+              queryFields.push(obj);
+            }
           } else {
             let obj = `${fields[i].name}{${
               fields[i].extensions.relation.displayField
