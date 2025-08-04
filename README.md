@@ -18,7 +18,7 @@ This project provides a modern web interface for interacting with Simfinity Grap
 
 ### Prerequisites
 
-- **Node.js**: Version 16.3.0 or higher (recommended: Node.js 18+)
+- **Node.js**: Version 18.17.0 or higher (recommended: Node.js 20+)
 - **npm**: Package manager (comes with Node.js)
 
 ### Installation
@@ -91,9 +91,9 @@ simfinity-web/
 
 ## Technology Stack
 
-- **Framework**: Next.js 12.3.4
-- **React**: 17.0.2
-- **UI Library**: Ant Design 4.16.13
+- **Framework**: Next.js 15.4.5
+- **React**: 18.2.0
+- **UI Library**: Ant Design 5.12.0
 - **HTTP Client**: Axios 1.6.0
 - **Internationalization**: react-intl 6.5.0
 - **Date Handling**: Moment.js 2.29.4
