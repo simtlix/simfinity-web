@@ -218,6 +218,12 @@ export const requestEntity = async (
   sort,
   entities
 ) => {
+  // Safety check for undefined displayEntities
+  if (!displayEntities || !displayEntities.fields) {
+    console.warn('displayEntities is undefined or missing fields');
+    return null;
+  }
+  
   const entityName = displayEntities.queryAll;
   const fields = displayEntities.fields;
   let queryFields = [];

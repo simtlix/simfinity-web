@@ -7,7 +7,7 @@ import { useIntl } from 'react-intl';
 import { isDate } from './utils';
 import moment from 'moment';
 
-const { Panel } = Collapse;
+
 
 const Form = ({
   displayEntity = null,
@@ -67,20 +67,20 @@ const Form = ({
               {collectionFields.length > 0 && (
                 <Row>
                   <Col span={22}>
-                    <Collapse style={{ marginBottom: 20, marginLeft: 10 }}>
-                      {collectionFields.map((field, index) => {
+                    <Collapse 
+                      style={{ marginBottom: 20, marginLeft: 10 }}
+                      items={collectionFields.map((field, index) => {
                         let data = [];
                         if (initialValues) {
                           data = initialValues[field.name];
                         }
-                        return (
-                          <Panel
-                            header={intl.formatMessage({
-                              id: `entity.${displayEntity.name}.fields.${field.name}`,
-                              defaultMessage: field.name,
-                            })}
-                            key={index}
-                          >
+                        return {
+                          key: index,
+                          label: intl.formatMessage({
+                            id: `entity.${displayEntity.name}.fields.${field.name}`,
+                            defaultMessage: field.name,
+                          }),
+                          children: (
                             <Collection
                               key={field.name}
                               field={field}
@@ -94,10 +94,10 @@ const Form = ({
                               mode={mode}
                               openForResult={openForResultHandler}
                             />
-                          </Panel>
-                        );
+                          ),
+                        };
                       })}
-                    </Collapse>
+                    />
                   </Col>
                 </Row>
               )}

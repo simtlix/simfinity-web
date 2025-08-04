@@ -473,12 +473,14 @@ const Table = ({
         filterIcon: (filtered) => (
           <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
         ),
-        onFilterDropdownVisibleChange: (visible) => {
-          if (visible) {
-            setTimeout(() => searchInput?.current?.select(), 100);
-          } else {
-            setSelectValues(undefined);
-          }
+        filterDropdownProps: {
+          onOpenChange: (visible) => {
+            if (visible) {
+              setTimeout(() => searchInput?.current?.select(), 100);
+            } else {
+              setSelectValues(undefined);
+            }
+          },
         },
       };
     },

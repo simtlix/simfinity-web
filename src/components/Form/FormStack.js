@@ -15,6 +15,12 @@ import { EntitiesContext } from '../entities-context';
 import { InstancesContext } from './InstancesContext';
 
 const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
+  // Safety check for displayEntity
+  if (!displayEntity) {
+    console.warn('FormStack: displayEntity is null or undefined');
+    return null;
+  }
+
   const [entitiesStack, setEntitiesStack] = useState([
     {
       caller: undefined,
@@ -83,7 +89,7 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
   );
 
   useEffect(() => {
-    if (mode === 'UPDATE') {
+    if (mode === 'UPDATE' && displayEntity) {
       const filtersForEntity = {};
       filtersForEntity.id = {
         value: id,

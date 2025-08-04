@@ -270,10 +270,12 @@ const Collection = ({
             .toLowerCase()
             .includes(value.toLowerCase())
         : '',
-    onFilterDropdownVisibleChange: (visible) => {
-      if (visible) {
-        setTimeout(() => searchInputRef.current.select(), 100);
-      }
+    filterDropdownProps: {
+      onOpenChange: (visible) => {
+        if (visible) {
+          setTimeout(() => searchInputRef.current.select(), 100);
+        }
+      },
     },
   });
 
