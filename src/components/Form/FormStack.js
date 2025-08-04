@@ -117,13 +117,20 @@ const FormStack = ({ displayEntity = null, onSuccess, mode, id }) => {
         undefined,
         entitiesContext
       ).then((response) => {
-        if (response && response.data) {
-          const stored = response.data.data[displayEntity.queryAll][0];
-          setEntitiesStack((old) => {
-            const newState = [...old];
-            newState[0].initialValue = stored;
-            return newState;
-          });
+        if (response && response.data && response.data.data && response.data.data[displayEntity.queryAll]) {
+          const dataArray = response.data.data[displayEntity.queryAll];
+          if (Array.isArray(dataArray) && dataArray.length > 0) {
+            const stored = dataArray[0];
+            setEntitiesStack((old) => {
+              const newState = [...old];
+              newState[0].initialValue = stored;
+              return newState;
+            });
+          } else {
+            console.warn(`No data found for entity: ${displayEntity.queryAll}`);
+          }
+        } else {
+          console.warn(`Invalid response structure for entity: ${displayEntity.queryAll}`);
         }
       });
     }
