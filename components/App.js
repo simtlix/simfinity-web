@@ -59,24 +59,21 @@ const App = ({ url }) => {
     setSelectedKey(ind.toString());
   };
 
-  const renderEntities = entities.map((entity, index) => {
-    return (
-      <Menu.Item
-        key={index}
-        className="fadeIn"
-        onClick={() => handleClick(entity, index)}
-        style={{
-          textTransform: 'uppercase',
-          fontWeight: 'bold',
-        }}
-      >
-        <FormattedMessage
-          id={`entity.${entity.name}.plural`}
-          defaultMessage={entity.name}
-        />
-      </Menu.Item>
-    );
-  });
+  const menuItems = entities.map((entity, index) => ({
+    key: index.toString(),
+    label: (
+      <FormattedMessage
+        id={`entity.${entity.name}.plural`}
+        defaultMessage={entity.name}
+      />
+    ),
+    className: "fadeIn",
+    style: {
+      textTransform: 'uppercase',
+      fontWeight: 'bold',
+    },
+    onClick: () => handleClick(entity, index),
+  }));
 
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -95,9 +92,8 @@ const App = ({ url }) => {
                   mode="inline"
                   style={{ marginTop: '60px' }}
                   hidden={collapsed}
-                >
-                  {renderEntities}
-                </Menu>
+                  items={menuItems}
+                />
               </Sider>
               <Layout className="site-layout">
                 <Header className="site-layout-background" style={{ padding: 0 }} />

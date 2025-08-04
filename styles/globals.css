@@ -1,4 +1,4 @@
-@import 'antd/dist/reset.css';
+/* Ant Design v5 styles are imported via _document.js */
 
 body {
   padding: 0;
