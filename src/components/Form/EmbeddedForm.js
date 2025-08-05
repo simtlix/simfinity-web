@@ -10,7 +10,12 @@ export const EmbeddedForm = ({ field, form, openForResult, entity, span }) => {
   const entitiesContext = useContext(EntitiesContext);
   const intl = useIntl();
 
-  const entityEmbedded = entitiesContext.filter((e) => e.name === field.name);
+  // Handle NON_NULL types - get the actual type name from ofType
+  const typeName = field.type.kind === 'NON_NULL' 
+    ? field.type.ofType.name 
+    : field.type.name;
+  
+  const entityEmbedded = entitiesContext.filter((e) => e.name === typeName);
   const filteredFields = entityEmbedded[0].fields.filter(
     (field) => field.name !== 'id' && field.type.kind !== 'LIST'
   );
