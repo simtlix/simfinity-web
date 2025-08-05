@@ -22,17 +22,25 @@ const Form = ({
   const [form] = FormAntd.useForm();
   const intl = useIntl();
 
+  // Early return if no displayEntity
+  if (!displayEntity) {
+    return null;
+  }
+
+  // Process initial values for date fields
+  const processedInitialValues = { ...initialValues };
   displayEntity.fields.forEach((field) => {
-    if (isDate(field) && initialValues && initialValues[field.name]) {
-      initialValues[field.name] = moment(initialValues[field.name]);
+    if (isDate(field) && processedInitialValues && processedInitialValues[field.name]) {
+      processedInitialValues[field.name] = moment(processedInitialValues[field.name]);
     }
   });
 
-  form.setFieldsValue(initialValues);
-
-  if (!displayEntity) {
-    return;
-  }
+  // Use useEffect to set form values after render
+  React.useEffect(() => {
+    if (processedInitialValues) {
+      form.setFieldsValue(processedInitialValues);
+    }
+  }, [form, processedInitialValues]);
 
   const filteredFields = displayEntity.fields.filter(
     (field) => field.name !== 'id' && field.type.kind !== 'LIST'
@@ -53,7 +61,7 @@ const Form = ({
     <>
       <Row style={{ display: visible ? '' : 'none' }}>
         <Col span={24}>
-          <FormAntd form={form} initialValues={initialValues} name={name}>
+          <FormAntd form={form} initialValues={processedInitialValues} name={name}>
             <Space direction="vertical" style={{ width: '100%' }}>
               <Row gutter={24}>
                 <FormItems
