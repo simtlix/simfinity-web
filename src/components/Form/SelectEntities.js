@@ -33,9 +33,14 @@ export const SelectEntities = ({
   const currentEntity = useRef();
   const fixedName = [name, 'id'];
   const [initialValue, setInitialVaule] = useState();
+  const rawInitialValueFromForm = form.getFieldValue(fixedName);
+  
+  // Extract ID from object if the value is an object
   const initialValueFromForm = initialValue
     ? initialValue
-    : form.getFieldValue(fixedName);
+    : (rawInitialValueFromForm && typeof rawInitialValueFromForm === 'object' && rawInitialValueFromForm.id)
+      ? rawInitialValueFromForm.id
+      : rawInitialValueFromForm;
   const intl = useIntl();
   let current;
 
@@ -78,8 +83,11 @@ export const SelectEntities = ({
 
         currentEntity.current = current;
 
+        // Ensure we have the correct ID value
+        const idValue = initialValue ? initialValue : initialValueFromForm;
+        
         selectFilters['id'] = {
-          value: initialValue ? initialValue : initialValueFromForm,
+          value: idValue,
           key: 'id',
           operator: 'EQ',
           entity: {
