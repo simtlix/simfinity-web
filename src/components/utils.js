@@ -251,12 +251,35 @@ export const requestEntity = async (
               queryFields.push(obj);
             }
           } else {
+            // For non-embedded fields with displayField, include the displayField
             let obj = `${fields[i].name}{${
               fields[i].extensions.relation.displayField
             }${fields[i].extensions.relation.embedded ? '' : ', id'}}`;
             queryFields.push(obj);
           }
-        } else if (fields[i]?.extensions?.relation == null) {
+        } else if (fields[i]?.extensions?.relation) {
+          // Handle fields with relation but no displayField
+          if (fields[i].extensions.relation.embedded && entities) {
+            const embeddedEntity = entities.filter(
+              (item) => item.name === fields[i].type.name
+            )[0];
+            
+            if (!embeddedEntity || !embeddedEntity.fields) {
+              console.warn(`Embedded entity not found for type: ${fields[i].type.name}`);
+              queryFields.push(fields[i].name);
+            } else {
+              let fieldsStr = '';
+              embeddedEntity.fields.forEach(
+                (item) => (fieldsStr = fieldsStr + ` ${item.name} `)
+              );
+              let obj = `${fields[i].name}{${fieldsStr}}`;
+              queryFields.push(obj);
+            }
+          } else {
+            // For non-embedded relation fields without displayField, include id
+            queryFields.push(`${fields[i].name}{id}`);
+          }
+        } else {
           queryFields.push(fields[i].name);
         }
       }
