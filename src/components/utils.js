@@ -62,6 +62,11 @@ export const requestEntities = async (url) => {
 
     const response = await axios(config);
     const responseData = response.data && response.data.data;
+    
+    // Add logging to see the metadata response
+    console.log('=== GRAPHQL METADATA RESPONSE ===');
+    console.log('Full response:', JSON.stringify(responseData, null, 2));
+    
     const types =
       responseData && responseData.__schema && responseData.__schema.types;
     const rootQueryTypes = types
@@ -226,21 +231,34 @@ export const requestEntity = async (
   
   const entityName = displayEntity.queryAll;
   const fields = displayEntity.fields;
+  
+  // Add logging to see what fields are being processed
+  console.log('=== PROCESSING ENTITY FIELDS ===');
+  console.log('Entity name:', entityName);
+  console.log('Fields:', JSON.stringify(fields, null, 2));
+  
   let queryFields = [];
   for (let i = 0; i < fields.length; i++) {
+    console.log(`Processing field ${i}:`, fields[i].name, fields[i]);
+    
     if (fields[i].extensions == null) {
       queryFields.push(fields[i].name);
     } else {
       if (fields[i].type.kind !== 'LIST') {
         if (fields[i]?.extensions?.relation?.displayField) {
           if (fields[i].extensions.relation.embedded && entities) {
+            // Handle NON_NULL types - get the actual type name from ofType
+            const typeName = fields[i].type.kind === 'NON_NULL' 
+              ? fields[i].type.ofType.name 
+              : fields[i].type.name;
+            
             const embeddedEntity = entities.filter(
-              (item) => item.name === fields[i].type.name
+              (item) => item.name === typeName
             )[0];
             
             // Safety check for embeddedEntity
             if (!embeddedEntity || !embeddedEntity.fields) {
-              console.warn(`Embedded entity not found for type: ${fields[i].type.name}`);
+              console.warn(`Embedded entity not found for type: ${typeName}`);
               queryFields.push(fields[i].name);
             } else {
               let fieldsStr = '';
@@ -260,12 +278,17 @@ export const requestEntity = async (
         } else if (fields[i]?.extensions?.relation) {
           // Handle fields with relation but no displayField
           if (fields[i].extensions.relation.embedded && entities) {
+            // Handle NON_NULL types - get the actual type name from ofType
+            const typeName = fields[i].type.kind === 'NON_NULL' 
+              ? fields[i].type.ofType.name 
+              : fields[i].type.name;
+            
             const embeddedEntity = entities.filter(
-              (item) => item.name === fields[i].type.name
+              (item) => item.name === typeName
             )[0];
             
             if (!embeddedEntity || !embeddedEntity.fields) {
-              console.warn(`Embedded entity not found for type: ${fields[i].type.name}`);
+              console.warn(`Embedded entity not found for type: ${typeName}`);
               queryFields.push(fields[i].name);
             } else {
               let fieldsStr = '';
