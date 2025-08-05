@@ -44,8 +44,13 @@ export const SelectEntities = ({
   const intl = useIntl();
   let current;
 
+  // Handle NON_NULL types - get the actual type name from ofType
+  const typeName = field.type.kind === 'NON_NULL' 
+    ? field.type.ofType.name 
+    : field.type.name;
+  
   entitiesContext.forEach(async (item) => {
-    if (item.name === field.type.name) {
+    if (item.name === typeName) {
       current = item;
     }
   });
@@ -76,7 +81,7 @@ export const SelectEntities = ({
         let current;
 
         entitiesContext.forEach(async (item) => {
-          if (item.name === field.type.name) {
+          if (item.name === typeName) {
             current = item;
           }
         });

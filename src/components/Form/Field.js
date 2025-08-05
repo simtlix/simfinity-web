@@ -37,7 +37,8 @@ export const Field = ({
   if (field?.extensions?.stateMachine) {
     return null;
   } else if (
-    field?.type?.kind === 'OBJECT' &&
+    (field?.type?.kind === 'OBJECT' || 
+     (field?.type?.kind === 'NON_NULL' && field?.type?.ofType?.kind === 'OBJECT')) &&
     !field?.extensions?.relation?.embedded
   ) {
     return (
@@ -79,7 +80,8 @@ export const Field = ({
       </Col>
     );
   } else if (
-    field?.type?.kind === 'OBJECT' &&
+    (field?.type?.kind === 'OBJECT' || 
+     (field?.type?.kind === 'NON_NULL' && field?.type?.ofType?.kind === 'OBJECT')) &&
     field?.extensions?.relation?.embedded === true
   ) {
     return (
