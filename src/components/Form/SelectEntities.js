@@ -131,12 +131,14 @@ export const SelectEntities = ({
     const fetch = async () => {
       let selectFilters = {};
 
-      let current;
 
       const descriptionField = field.extensions?.relation?.displayField;
 
+      let current;
+
       entitiesContext.forEach(async (item) => {
-        if (item.name === field.type.name) {
+        
+        if (item.name === typeName) {
           current = item;
         }
       });

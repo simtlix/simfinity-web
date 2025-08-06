@@ -27,27 +27,13 @@ const Form = ({
     return null;
   }
 
-  // Process initial values for date fields and embedded fields
+  // Process initial values for date fields
   const processedInitialValues = { ...initialValues };
   displayEntity.fields.forEach((field) => {
     if (isDate(field) && processedInitialValues && processedInitialValues[field.name]) {
       processedInitialValues[field.name] = moment(processedInitialValues[field.name]);
     }
-    
-    // Process embedded fields with displayField
-    if (field?.extensions?.relation?.embedded && 
-        field?.extensions?.relation?.displayField && 
-        processedInitialValues && 
-        processedInitialValues[field.name]) {
-      const embeddedObject = processedInitialValues[field.name];
-      if (embeddedObject && typeof embeddedObject === 'object') {
-        // Extract the displayField value from the embedded object
-        const displayFieldValue = embeddedObject[field.extensions.relation.displayField];
-        if (displayFieldValue !== undefined) {
-          processedInitialValues[field.name] = displayFieldValue;
-        }
-      }
-    }
+
   });
 
   // Use useEffect to set form values after render
