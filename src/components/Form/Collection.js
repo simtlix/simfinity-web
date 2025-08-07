@@ -437,6 +437,7 @@ const Collection = ({
       const columns = pasedColumns.map((col) => {
         return {
           ...col,
+          render: undefined, // Remove render when using onCell to avoid deprecation warning
           onCell: (record) => ({
             record,
             editable: true,
