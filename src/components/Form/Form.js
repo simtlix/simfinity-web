@@ -4,7 +4,7 @@ import { Form as FormAntd, Button, Row, Col, Collapse, Space } from 'antd';
 import { FormItems } from './FormItems';
 import Collection from './Collection';
 import { useIntl } from 'react-intl';
-import { isDate } from './utils';
+import { isDate, getActualTypeKind } from './utils';
 import moment from 'moment';
 
 
@@ -44,13 +44,13 @@ const Form = ({
   }, [form, processedInitialValues]);
 
   const filteredFields = displayEntity.fields.filter(
-    (field) => field.name !== 'id' && field.type.kind !== 'LIST'
+    (field) => field.name !== 'id' && getActualTypeKind(field) !== 'LIST'
   );
 
   const collectionFields = displayEntity.fields.filter(
     (field) =>
       field.name !== 'id' &&
-      field.type.kind === 'LIST' &&
+      getActualTypeKind(field) === 'LIST' &&
       field.type.ofType.kind === 'OBJECT' &&
       !field.extensions?.relation?.embedded &&
       (field.type.ofType?.name !== containerEntity?.name ||

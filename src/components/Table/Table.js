@@ -22,6 +22,7 @@ import {
   isDate,
   isEnum,
   capitalize,
+  getActualTypeKind,
 } from '../utils';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 
@@ -203,7 +204,7 @@ const Table = ({
   };
 
   const getOptions = (entity) => {
-    if (entity.type.kind !== 'OBJECT') {
+    if (getActualTypeKind(entity) !== 'OBJECT') {
       return (
         <>
           <Option value="EQ">=</Option>
@@ -231,7 +232,7 @@ const Table = ({
     (dataIndex, type) => {
       const handleSearch = (selectedKeys, confirm, dataIndex, entity) => {
         confirm();
-        if (entity.type.kind !== 'OBJECT') {
+        if (getActualTypeKind(entity) !== 'OBJECT') {
           setFilters((previous) => {
             const newState = { ...previous };
             newState[entity.name] = {
@@ -331,7 +332,7 @@ const Table = ({
                   {getOptions(type)}
                 </Select>
 
-                {type.type.kind !== 'OBJECT' ? (
+                {getActualTypeKind(type) !== 'OBJECT' ? (
                   <>
                     {(isEnum(type) || isString(type)) && (
                       <Input
@@ -402,7 +403,7 @@ const Table = ({
                     value={selectedKeys}
                     placeholder={placeholder}
                     defaultActiveFirstOption={false}
-                    showArrow={false}
+                    suffixIcon={null}
                     filterOption={false}
                     onSearch={(value) => {
                       setSelectedKeys(value);
@@ -495,14 +496,16 @@ const Table = ({
     setColumns
   ) => {
     const filteredColumns = displayEntity.fields.filter((entity) => {
+      const actualTypeKind = getActualTypeKind(entity);
+      
       if (
         entity.name !== 'id' &&
-        entity.type.kind !== 'LIST' &&
-        entity.type.kind !== 'OBJECT'
+        actualTypeKind !== 'LIST' &&
+        actualTypeKind !== 'OBJECT'
       ) {
         return true;
       } else if (
-        entity.type.kind === 'OBJECT' &&
+        actualTypeKind === 'OBJECT' &&
         entity?.extensions?.relation?.displayField
       ) {
         return true;
@@ -517,7 +520,7 @@ const Table = ({
         defaultMessage: capitalize(entity.name),
       }),
       ...getColumnSearchProps(
-        entity.type.kind === 'OBJECT' &&
+        getActualTypeKind(entity) === 'OBJECT' &&
           entity?.extensions?.relation?.displayField
           ? `${entity.name}.${entity.extensions.relation.displayField}`
           : entity.name,
@@ -526,7 +529,7 @@ const Table = ({
       dataIndex: entity.name,
       sorter: true,
       key:
-        entity.type.kind === 'OBJECT' &&
+        getActualTypeKind(entity) === 'OBJECT' &&
         entity?.extensions?.relation?.displayField
           ? `${entity.name}.${entity.extensions.relation.displayField}`
           : entity.name,

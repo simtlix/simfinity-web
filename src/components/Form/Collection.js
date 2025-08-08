@@ -4,7 +4,7 @@ import React, { useRef, useContext, useState, useEffect } from 'react';
 import { Table, Input, Button, Space, Form, Row, Col } from 'antd';
 import { SearchOutlined, PlusOutlined } from '@ant-design/icons';
 import { EntitiesContext } from '../entities-context';
-import { isDate } from './utils';
+import { isDate, getActualTypeKind, getActualTypeName } from './utils';
 import { requestEntity, capitalize } from '../utils';
 import { useIntl } from 'react-intl';
 import { ConfigContext } from '../config-context';
@@ -72,7 +72,7 @@ const generateEditableCellForEntity = (entity) => {
 
     if (
       editable &&
-      field?.type?.kind !== 'OBJECT' &&
+      getActualTypeKind(field) !== 'OBJECT' &&
       !field?.extensions?.stateMachine
     ) {
       childNode = editing ? (
@@ -121,14 +121,16 @@ const Collection = ({
   const isEmbedded = field.extensions?.relation?.embedded;
 
   const filteredColumns = collectionEntity.fields.filter((entity) => {
+    const actualTypeKind = getActualTypeKind(entity);
+    
     if (
       entity.name !== 'id' &&
-      entity.type.kind !== 'LIST' &&
-      entity.type.kind !== 'OBJECT'
+      actualTypeKind !== 'LIST' &&
+      actualTypeKind !== 'OBJECT'
     ) {
       return true;
     } else if (
-      entity.type.kind === 'OBJECT' &&
+      actualTypeKind === 'OBJECT' &&
       entity?.extensions?.relation?.displayField &&
       entity?.extensions?.relation?.connectionField !==
         field?.extensions?.relation?.connectionField
@@ -342,7 +344,7 @@ const Collection = ({
         defaultMessage: capitalize(item.name),
       }),
       ...getColumnSearchProps(
-        item.type.kind === 'OBJECT' && item?.extensions?.relation?.displayField
+        getActualTypeKind(item) === 'OBJECT' && item?.extensions?.relation?.displayField
           ? `${item.name}.${item.extensions.relation.displayField}`
           : item.name,
         item
@@ -351,7 +353,7 @@ const Collection = ({
       field: item,
       entity: collectionEntity,
       key:
-        item.type.kind === 'OBJECT' && item?.extensions?.relation?.displayField
+        getActualTypeKind(item) === 'OBJECT' && item?.extensions?.relation?.displayField
           ? `${item.name}.${item.extensions.relation.displayField}`
           : item.name,
       render: (text) => {
@@ -532,10 +534,10 @@ const Collection = ({
         ) {
           value[field.name] = row[field.name];
           valueForTable[field.name] = row[field.name];
-        } else if (field?.type?.kind === 'OBJECT') {
+        } else if (getActualTypeKind(field) === 'OBJECT') {
           value[field.name] = { id: row[field.name].id };
           valueForTable[field.name] =
-            instancesContext.current[field.type.name][row[field.name].id][
+            instancesContext.current[getActualTypeName(field)][row[field.name].id][
               field.extensions.relation.displayField
             ];
         } else if (field?.extensions?.stateMachine) {
@@ -643,9 +645,9 @@ const Collection = ({
     const valueForTable = { ...value };
 
     filteredColumns.forEach((field) => {
-      if (field?.type?.kind === 'OBJECT') {
+      if (getActualTypeKind(field) === 'OBJECT') {
         valueForTable[field.name] =
-          instancesContext.current[field.type.name][
+          instancesContext.current[getActualTypeName(field)][
             valueForTable[field.name].id
           ][field.extensions.relation.displayField];
       }
@@ -656,7 +658,7 @@ const Collection = ({
       return newState;
     });
 
-    const formData = form.getFieldValue(field.name) || {};
+    const formData = form.getFieldValue(field.name) && typeof form.getFieldValue(field.name) !== 'string' ? form.getFieldValue(field.name) : {}
     if (formData.added) {
       formData.added.push(value);
     } else {

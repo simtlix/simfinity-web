@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Form, Button, Row, Col, Space } from 'antd';
 import { FormItems } from './FormItems';
 import { FormattedMessage } from 'react-intl';
-import { isDate } from './utils';
+import { isDate, getActualTypeKind } from './utils';
 import moment from 'moment';
 
 export const CollectionModalForm = ({
@@ -16,21 +16,32 @@ export const CollectionModalForm = ({
 }) => {
   const [form] = Form.useForm();
 
+  // Process initial values for date fields
+  const processedInitialValues = { ...initialValues };
   entity.fields.forEach((field) => {
-    if (isDate(field) && initialValues && initialValues[field.name]) {
-      initialValues[field.name] = moment(initialValues[field.name]);
+    if (isDate(field) && processedInitialValues && processedInitialValues[field.name]) {
+      processedInitialValues[field.name] = moment(processedInitialValues[field.name]);
     }
   });
 
+  // Set initial values on the form
+  useEffect(() => {
+    if (processedInitialValues) {
+      form.setFieldsValue(processedInitialValues);
+    }
+  }, [form, processedInitialValues]);
+
   const filteredFields = entity.fields.filter((field) => {
+    const actualTypeKind = getActualTypeKind(field);
+    
     if (
       field.name !== 'id' &&
-      field.type.kind !== 'LIST' &&
-      field.type.kind !== 'OBJECT'
+      actualTypeKind !== 'LIST' &&
+      actualTypeKind !== 'OBJECT'
     ) {
       return true;
     } else if (
-      field.type.kind === 'OBJECT' &&
+      actualTypeKind === 'OBJECT' &&
       field?.extensions?.relation?.displayField &&
       field?.extensions?.relation?.connectionField !==
         collectionField?.extensions?.relation?.connectionField
@@ -44,28 +55,11 @@ export const CollectionModalForm = ({
   return (
     <Form
       form={form}
-      initialValues={initialValues}
-      wrapperCol={{ sm: 20 }}
-      labelCol={{ sm: 4 }}
+      initialValues={processedInitialValues}
       style={{
         padding: '24px',
         background: '#fbfbfb',
         border: '1px solid #d9d9d9',
-      }}
-      name="form_in_modal"
-      onFinish={() => {
-        form
-          .validateFields()
-          .then((values) => {
-            form.resetFields();
-            if (initialValues) {
-              values.id = initialValues.id;
-            }
-            onSubmit(values);
-          })
-          .catch((info) => {
-            console.log('Validate Failed:', info);
-          });
       }}
     >
       <Row gutter={24}>
@@ -78,8 +72,8 @@ export const CollectionModalForm = ({
       </Row>
       <Row gutter={24}>
         <Col span={24}>
-          <Form.Item wrapperCol={{ sm: 24 }}>
-            <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Space>
               <Button
                 type="primary"
                 onClick={() => {
@@ -109,7 +103,7 @@ export const CollectionModalForm = ({
                 <FormattedMessage id="form.collection.cancel"></FormattedMessage>
               </Button>
             </Space>
-          </Form.Item>
+          </div>
         </Col>
       </Row>
     </Form>

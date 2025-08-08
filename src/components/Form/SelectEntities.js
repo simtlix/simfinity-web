@@ -49,11 +49,7 @@ export const SelectEntities = ({
     ? field.type.ofType.name 
     : field.type.name;
   
-  entitiesContext.forEach(async (item) => {
-    if (item.name === typeName) {
-      current = item;
-    }
-  });
+  current = entitiesContext.find(item => item.name === typeName);
 
   currentEntity.current = current;
 
@@ -78,13 +74,7 @@ export const SelectEntities = ({
       const fetch = async () => {
         let selectFilters = {};
 
-        let current;
-
-        entitiesContext.forEach(async (item) => {
-          if (item.name === typeName) {
-            current = item;
-          }
-        });
+        let current = entitiesContext.find(item => item.name === typeName);
 
         currentEntity.current = current;
 
@@ -105,14 +95,14 @@ export const SelectEntities = ({
 
         let response = await requestEntity(
           current,
-          url /* 1, 10, selectFilters*/
+          url,1, 10, selectFilters
         );
         if (response && response.data) {
           return response.data.data[current.queryAll];
         }
       };
       fetch().then((data) => {
-        if (data) {
+        if (data && data.length > 0) {
           if (instancesContext.current[current.name]) {
             instancesContext.current[current.name][data[0].id] = data[0];
           } else {
@@ -134,14 +124,7 @@ export const SelectEntities = ({
 
       const descriptionField = field.extensions?.relation?.displayField;
 
-      let current;
-
-      entitiesContext.forEach(async (item) => {
-        
-        if (item.name === typeName) {
-          current = item;
-        }
-      });
+      let current = entitiesContext.find(item => item.name === typeName);
 
       currentEntity.current = current;
 
@@ -172,13 +155,21 @@ export const SelectEntities = ({
 
       let response = await requestEntity(
         current,
-        url /* 1, 10, selectFilters*/
+        url, 1, 10, selectFilters
       );
       if (response && response.data) {
         return response.data.data[current.queryAll];
       }
     };
     fetch().then((data) => {
+      if (data && data.length > 0) {
+        if (instancesContext.current[current.name]) {
+          instancesContext.current[current.name][data[0].id] = data[0];
+        } else {
+          instancesContext.current[current.name] = {};
+          instancesContext.current[current.name][data[0].id] = data[0];
+        }
+      }
       setResponseEntity(data);
     });
     //}
@@ -220,7 +211,7 @@ export const SelectEntities = ({
           <Select
             showSearch
             defaultActiveFirstOption={false}
-            showArrow={false}
+            suffixIcon={null}
             filterOption={false}
             onSearch={(value) => setSelectValues(value)}
             notFoundContent={null}

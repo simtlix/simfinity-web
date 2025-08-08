@@ -115,3 +115,17 @@ export const isEnum = (field) => {
     return true;
   else return false;
 };
+
+export const getActualTypeKind = (field) => {
+  if (field.type.kind === 'NON_NULL') {
+    return field.type.ofType.kind;
+  }
+  return field.type.kind;
+};
+
+export const getActualTypeName = (field) => {
+  if (field.type.kind === 'NON_NULL') {
+    return field.type.ofType.name;
+  }
+  return field.type.name;
+};

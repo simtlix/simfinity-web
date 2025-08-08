@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { isDate } from '../utils';
+import { isDate, getActualTypeKind } from '../utils';
 
 const buildFilters = (filters) => {
   if (!filters) return '';
@@ -21,7 +21,7 @@ const buildFilters = (filters) => {
                 ? 'BTW'
                 : linkFilter.operator
             } value:${
-              linkFilter.entity.type.kind !== 'OBJECT'
+              getActualTypeKind(linkFilter.entity) !== 'OBJECT'
                 ? formatValue(
                     linkFilter.value,
                     linkFilter.entity,
@@ -32,7 +32,7 @@ const buildFilters = (filters) => {
           }
         });
         filterStr += ` ${filter.key}:{terms:[${linkFilterStr}]}, `;
-      } else if (filter.entity.type.kind !== 'OBJECT') {
+      } else if (getActualTypeKind(filter.entity) !== 'OBJECT') {
         if (isDate(filter.entity)) {
           filterStr += ` ${filter.key}:{operator:${
             filter.operator === 'EQ' ? 'BTW' : filter.operator

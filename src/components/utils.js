@@ -113,7 +113,7 @@ export const requestEntities = async (url) => {
         for (const field of type.fields) {
           if (field.type.kind === enumKind) {
             const enumType = types.find(
-              (t) => t.kind === enumKind && t.name === field.type.name
+              (t) => t.kind === enumKind && t.name === getActualTypeName(field)
             );
             field.enumValues = enumType.enumValues;
           }
@@ -148,7 +148,7 @@ const buildFilters = (filters) => {
                 ? 'BTW'
                 : linkFilter.operator
             } value:${
-              linkFilter.entity.type.kind !== 'OBJECT'
+              getActualTypeKind(linkFilter.entity) !== 'OBJECT'
                 ? formatValue(
                     linkFilter.value,
                     linkFilter.entity,
@@ -159,7 +159,7 @@ const buildFilters = (filters) => {
           }
         });
         filterStr += ` ${filter.key}:{terms:[${linkFilterStr}]}, `;
-      } else if (filter.entity.type.kind !== 'OBJECT') {
+      } else if (getActualTypeKind(filter.entity) !== 'OBJECT') {
         if (isDate(filter.entity)) {
           filterStr += ` ${filter.key}:{operator:${
             filter.operator === 'EQ' ? 'BTW' : filter.operator
@@ -373,6 +373,20 @@ export const isDate = (field) => {
 
 export const isEnum = (field) => {
   return field.type.kind === 'ENUM' || field.type?.ofType?.kind === 'ENUM';
+};
+
+export const getActualTypeKind = (field) => {
+  if (field.type.kind === 'NON_NULL') {
+    return field.type.ofType.kind;
+  }
+  return field.type.kind;
+};
+
+export const getActualTypeName = (field) => {
+  if (field.type.kind === 'NON_NULL') {
+    return field.type.ofType.name;
+  }
+  return field.type.name;
 };
 
 export const capitalize = (s) => {
